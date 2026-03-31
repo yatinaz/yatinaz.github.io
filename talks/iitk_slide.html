@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Value-Based Decision-Making — Yatin Azad</title>
+<style>
+  body {
+    margin: 0;
+    background: #0a0918;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem;
+    box-sizing: border-box;
+  }
+  svg {
+    width: 100%;
+    max-width: 1100px;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 0 60px rgba(127, 119, 221, 0.15);
+  }
+  .back {
+    position: fixed; top: 18px; left: 22px;
+    color: #7F77DD; font-family: sans-serif;
+    font-size: 13px; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(18, 16, 42, 0.85); padding: 6px 12px;
+    border-radius: 6px; border: 1px solid #2d2d4e;
+    transition: color 0.15s;
+  }
+  .back:hover { color: #AFA9EC; }
+</style>
+</head>
+<body>
+<a class="back" href="../index.html">← Back to portfolio</a>
+<svg viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round"/>
+    </marker>
+  </defs>
+
+  <rect width="900" height="520" fill="#12102a" rx="12"/>
+  <rect x="0" y="0" width="900" height="3" fill="#7F77DD" rx="2"/>
+
+  <text x="450" y="28" font-family="sans-serif" font-size="10" fill="#7F77DD" text-anchor="middle" letter-spacing="3">IIT KANPUR · DECISION LAB · 2022–2023</text>
+  <text x="450" y="54" font-family="sans-serif" font-size="18" font-weight="700" fill="#f0eeff" text-anchor="middle">Value-Based Decision-Making under Stress and Uncertainty</text>
+  <text x="450" y="72" font-family="sans-serif" font-size="11" fill="#AFA9EC" text-anchor="middle">Restless 4-armed bandit · n=105 · 200 trials · 4 conditions · GLMM · R</text>
+
+  <line x1="30" y1="84" x2="870" y2="84" stroke="#1e1c3a" stroke-width="1"/>
+
+  <!-- LEFT COLUMN -->
+  <text x="44" y="102" font-family="sans-serif" font-size="9" fill="#7F77DD" letter-spacing="2">EXPERIMENTAL CONDITIONS</text>
+
+  <text x="186" y="120" font-family="sans-serif" font-size="11" fill="#AFA9EC" text-anchor="middle">stable</text>
+  <text x="290" y="120" font-family="sans-serif" font-size="11" fill="#AFA9EC" text-anchor="middle">volatile</text>
+  <text x="44" y="152" font-family="sans-serif" font-size="10" fill="#AFA9EC">no loss</text>
+  <text x="44" y="204" font-family="sans-serif" font-size="10" fill="#AFA9EC">loss</text>
+
+  <rect x="140" y="130" width="84" height="40" rx="6" fill="#1a1838"/>
+  <text x="182" y="147" font-family="sans-serif" font-size="16" font-weight="700" fill="#9FE1CB" text-anchor="middle">0.58</text>
+  <text x="182" y="163" font-family="sans-serif" font-size="8" fill="#534AB7" text-anchor="middle">p(adv)</text>
+
+  <rect x="248" y="130" width="84" height="40" rx="6" fill="#1a1838"/>
+  <text x="290" y="147" font-family="sans-serif" font-size="16" font-weight="700" fill="#F09595" text-anchor="middle">0.43</text>
+  <text x="290" y="163" font-family="sans-serif" font-size="8" fill="#993C1D" text-anchor="middle">p(adv)</text>
+
+  <rect x="140" y="182" width="84" height="40" rx="6" fill="#1a1838"/>
+  <text x="182" y="199" font-family="sans-serif" font-size="16" font-weight="700" fill="#9FE1CB" text-anchor="middle">0.62</text>
+  <text x="182" y="215" font-family="sans-serif" font-size="8" fill="#534AB7" text-anchor="middle">p(adv)</text>
+
+  <rect x="248" y="182" width="84" height="40" rx="6" fill="#1a1838"/>
+  <text x="290" y="199" font-family="sans-serif" font-size="16" font-weight="700" fill="#F09595" text-anchor="middle">0.46</text>
+  <text x="290" y="215" font-family="sans-serif" font-size="8" fill="#993C1D" text-anchor="middle">p(adv)</text>
+
+  <line x1="225" y1="150" x2="247" y2="150" stroke="#E24B4A" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="225" y1="202" x2="247" y2="202" stroke="#E24B4A" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <text x="44" y="248" font-family="sans-serif" font-size="13" font-weight="500" fill="#d0cef5">Volatility → -26% optimal choices</text>
+  <text x="44" y="268" font-family="sans-serif" font-size="13" font-weight="500" fill="#d0cef5">Loss at start → better performance</text>
+  <text x="44" y="288" font-family="sans-serif" font-size="13" font-weight="500" fill="#d0cef5">Stress → less exploration</text>
+  <text x="44" y="308" font-family="sans-serif" font-size="13" font-weight="500" fill="#d0cef5">Rewards anchor next choice</text>
+
+  <line x1="350" y1="84" x2="350" y2="455" stroke="#1e1c3a" stroke-width="1"/>
+
+  <!-- MIDDLE COLUMN -->
+  <text x="366" y="102" font-family="sans-serif" font-size="9" fill="#7F77DD" letter-spacing="2">REGRESSION ESTIMATES</text>
+  <line x1="530" y1="108" x2="530" y2="318" stroke="#2a2848" stroke-width="1" stroke-dasharray="3 3"/>
+  <text x="530" y="106" font-family="sans-serif" font-size="8" fill="#3C3489" text-anchor="middle">0</text>
+
+  <text x="366" y="122" font-family="sans-serif" font-size="8" fill="#7F77DD" letter-spacing="1">ADV CHOICE</text>
+
+  <text x="478" y="140" font-family="sans-serif" font-size="10" fill="#d0cef5" text-anchor="end">stability</text>
+  <line x1="546" y1="136" x2="572" y2="136" stroke="#AFA9EC" stroke-width="1.5"/>
+  <circle cx="560" cy="136" r="4" fill="#AFA9EC"/>
+  <text x="578" y="140" font-family="sans-serif" font-size="9" fill="#AFA9EC">+0.22***</text>
+
+  <text x="478" y="162" font-family="sans-serif" font-size="10" fill="#d0cef5" text-anchor="end">stress</text>
+  <line x1="506" y1="158" x2="522" y2="158" stroke="#F09595" stroke-width="1.5"/>
+  <circle cx="518" cy="158" r="4" fill="#F09595"/>
+  <text x="578" y="162" font-family="sans-serif" font-size="9" fill="#F09595">-0.10***</text>
+
+  <text x="478" y="184" font-family="sans-serif" font-size="10" fill="#d0cef5" text-anchor="end">avg rewards</text>
+  <line x1="506" y1="180" x2="522" y2="180" stroke="#F09595" stroke-width="1.5"/>
+  <circle cx="518" cy="180" r="4" fill="#F09595"/>
+  <text x="578" y="184" font-family="sans-serif" font-size="9" fill="#F09595">-0.10***</text>
+
+  <text x="478" y="206" font-family="sans-serif" font-size="10" fill="#d0cef5" text-anchor="end">stable × arm diff</text>
+  <line x1="534" y1="202" x2="548" y2="202" stroke="#AFA9EC" stroke-width="1.5"/>
+  <circle cx="541" cy="202" r="4" fill="#AFA9EC"/>
+  <text x="578" y="206" font-family="sans-serif" font-size="9" fill="#AFA9EC">+0.05***</text>
+
+  <line x1="366" y1="216" x2="635" y2="216" stroke="#2a2848" stroke-width="0.5"/>
+  <text x="366" y="230" font-family="sans-serif" font-size="8" fill="#7F77DD" letter-spacing="1">SWITCH</text>
+
+  <text x="478" y="248" font-family="sans-serif" font-size="10" fill="#d0cef5" text-anchor="end">stress</text>
+  <line x1="506" y1="244" x2="522" y2="244" stroke="#F09595" stroke-width="1.5"/>
+  <circle cx="518" cy="244" r="4" fill="#F09595"/>
+  <text x="578" y="248" font-family="sans-serif" font-size="9" fill="#F09595">-0.10***</text>
+
+  <text x="478" y="268" font-family="sans-serif" font-size="10" fill="#d0cef5" text-anchor="end">log trial</text>
+  <line x1="516" y1="264" x2="526" y2="264" stroke="#F09595" stroke-width="1.5"/>
+  <circle cx="524" cy="264" r="4" fill="#F09595"/>
+  <text x="578" y="268" font-family="sans-serif" font-size="9" fill="#F09595">-0.05***</text>
+
+  <text x="478" y="288" font-family="sans-serif" font-size="10" fill="#d0cef5" text-anchor="end">stable × stress</text>
+  <line x1="514" y1="284" x2="524" y2="284" stroke="#F09595" stroke-width="1.5"/>
+  <circle cx="522" cy="284" r="4" fill="#F09595"/>
+  <text x="578" y="288" font-family="sans-serif" font-size="9" fill="#F09595">-0.06*</text>
+
+  <text x="478" y="308" font-family="sans-serif" font-size="10" fill="#d0cef5" text-anchor="end">stable × diff</text>
+  <line x1="518" y1="304" x2="526" y2="304" stroke="#F09595" stroke-width="1.5"/>
+  <circle cx="524" cy="304" r="4" fill="#F09595"/>
+  <text x="578" y="308" font-family="sans-serif" font-size="9" fill="#F09595">-0.03**</text>
+
+  <!-- Best models box -->
+  <rect x="34" y="328" width="596" height="90" rx="8" fill="#1a1838"/>
+  <rect x="34" y="328" width="596" height="3" rx="2" fill="#7F77DD"/>
+  <text x="44" y="348" font-family="sans-serif" font-size="9" fill="#7F77DD" letter-spacing="1">BEST MODELS — 3-WAY INTERACTION</text>
+  <text x="44" y="368" font-family="monospace" font-size="11" fill="#d0cef5">adv ~ loss × volatility × stress + rewards + trial + (1 | ID)</text>
+  <text x="44" y="390" font-family="monospace" font-size="11" fill="#AFA9EC">switch ~ loss × volatility × stress + rewards + log(trial) + (1 | ID)</text>
+  <text x="44" y="410" font-family="sans-serif" font-size="9" fill="#534AB7">Selected from 16 candidate models via AIC · buildmer + GLMMadaptive · R</text>
+
+  <line x1="650" y1="84" x2="650" y2="455" stroke="#1e1c3a" stroke-width="1"/>
+
+  <!-- RIGHT COLUMN -->
+  <text x="662" y="102" font-family="sans-serif" font-size="9" fill="#7F77DD" letter-spacing="2">KEY FINDINGS</text>
+
+  <rect x="660" y="110" width="220" height="52" rx="8" fill="#1a1838"/>
+  <rect x="660" y="110" width="220" height="3" rx="2" fill="#AFA9EC"/>
+  <text x="670" y="131" font-family="sans-serif" font-size="12" font-weight="600" fill="#f0eeff">Volatility impairs choice</text>
+  <text x="670" y="151" font-family="sans-serif" font-size="10" fill="#AFA9EC">Stable environments improve performance</text>
+
+  <rect x="660" y="172" width="220" height="52" rx="8" fill="#1a1838"/>
+  <rect x="660" y="172" width="220" height="3" rx="2" fill="#F09595"/>
+  <text x="670" y="193" font-family="sans-serif" font-size="12" font-weight="600" fill="#f0eeff">Stress reduces exploration</text>
+  <text x="670" y="213" font-family="sans-serif" font-size="10" fill="#F09595">Higher stress → fewer arm switches</text>
+
+  <rect x="660" y="234" width="220" height="52" rx="8" fill="#1a1838"/>
+  <rect x="660" y="234" width="222" height="3" rx="2" fill="#AFA9EC"/>
+  <text x="670" y="255" font-family="sans-serif" font-size="12" font-weight="600" fill="#f0eeff">Loss primes better choices</text>
+  <text x="670" y="275" font-family="sans-serif" font-size="10" fill="#AFA9EC">Monetary loss → more optimal behaviour</text>
+
+  <rect x="660" y="296" width="220" height="52" rx="8" fill="#1a1838"/>
+  <rect x="660" y="296" width="220" height="3" rx="2" fill="#EF9F27"/>
+  <text x="670" y="317" font-family="sans-serif" font-size="12" font-weight="600" fill="#f0eeff">Learning adapts to stability</text>
+  <text x="670" y="337" font-family="sans-serif" font-size="10" fill="#EF9F27">Fewer switches in stable blocks</text>
+
+  <rect x="660" y="358" width="220" height="52" rx="8" fill="#1a1838"/>
+  <rect x="660" y="358" width="220" height="3" rx="2" fill="#AFA9EC"/>
+  <text x="670" y="379" font-family="sans-serif" font-size="12" font-weight="600" fill="#f0eeff">Rewards anchor decisions</text>
+  <text x="670" y="399" font-family="sans-serif" font-size="10" fill="#AFA9EC">High prev reward → unlikely to switch</text>
+
+  <line x1="30" y1="455" x2="870" y2="455" stroke="#1e1c3a" stroke-width="1"/>
+  <text x="856" y="476" font-family="sans-serif" font-size="9" fill="#3C3489" text-anchor="end">Yatin Azad, Pratham Shukla, Arjun Ramakrishnan · IIT Kanpur Decision Lab</text>
+
+</svg>
+</body>
+</html>
