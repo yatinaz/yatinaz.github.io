@@ -68,11 +68,17 @@ header{padding:72px 0 48px;border-bottom:1px solid var(--border)}
 }
 .bio strong{color:var(--text);font-weight:600}
 
-/* ── SECTION HEADING ── */
+/* ── SECTION HEADINGS ── */
 .section-label{
   font-size:0.7rem;font-weight:600;letter-spacing:0.1em;
   text-transform:uppercase;color:var(--text-light);
   margin-bottom:24px;margin-top:48px;
+}
+.section-heading{
+  font-size:0.82rem;font-weight:600;letter-spacing:0.06em;
+  text-transform:uppercase;color:var(--text-muted);
+  margin-bottom:20px;margin-top:48px;
+  padding-bottom:12px;border-bottom:1px solid var(--border);
 }
 
 /* ── PROJECT CARDS ── */
@@ -126,6 +132,39 @@ header{padding:72px 0 48px;border-bottom:1px solid var(--border)}
 .btn-primary:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
 .btn-secondary{background:var(--surface);color:var(--text-muted);border-color:var(--border)}
 .btn-secondary:hover{border-color:var(--accent);color:var(--accent);background:var(--badge-bg)}
+
+/* ── RESEARCH CARDS ── */
+.research{padding-bottom:16px;border-bottom:1px solid var(--border)}
+.rcard{
+  background:#F7F4EE;
+  border:1px solid #DDD6CA;
+  border-radius:12px;
+  padding:26px 28px 22px;
+  margin-bottom:20px;
+  transition:box-shadow 0.2s,transform 0.2s;
+}
+.rcard:hover{box-shadow:0 4px 16px rgba(0,0,0,0.07);transform:translateY(-1px)}
+.rcard-meta{
+  font-size:0.78rem;font-weight:500;
+  color:var(--text-light);font-family:'JetBrains Mono',monospace;
+  margin-bottom:10px;
+}
+.rcard-grade{
+  display:inline-block;
+  background:#F0FDF4;color:#166534;
+  font-size:0.73rem;font-weight:600;
+  padding:3px 9px;border-radius:20px;
+  border:1px solid #BBF7D0;
+  margin-left:8px;font-family:'JetBrains Mono',monospace;
+}
+.rcard-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.rcard-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.rtag{
+  font-size:0.76rem;font-weight:500;
+  padding:3px 10px;border-radius:20px;
+  background:#EDE8DF;color:#57534E;
+  border:1px solid #D6CFC4;
+}
 
 /* ── SKILLS ── */
 .skills{padding:16px 0 40px;border-bottom:1px solid var(--border)}
@@ -185,7 +224,7 @@ footer{padding:36px 0 48px;text-align:center}
       <p>I build <strong>ML pipelines that turn messy biological data into clinical and scientific insight</strong> — across genomics, neuroimaging, and protein engineering.</p>
     </section>
 
-    <p class="section-label">Projects</p>
+    <h2 class="section-heading">ML &amp; Engineering Projects</h2>
 
     <section class="projects">
 
@@ -239,6 +278,51 @@ footer{padding:36px 0 48px;text-align:center}
 
     </section>
 
+    <h2 class="section-heading">Research &amp; Academic Work</h2>
+
+    <section class="research">
+
+      <!-- Research Card 1: Masters Thesis -->
+      <article class="rcard">
+        <p class="rcard-meta">
+          University of Western Australia · 2023–2025
+          <span class="rcard-grade">High Distinction · UWA Global Excellence Scholarship</span>
+        </p>
+        <h2 class="card-title">Effect of Alcohol Hangover on Driving-Related Cognition</h2>
+        <p class="card-desc">Within-subjects crossover study (n=24) quantifying state-dependent changes in decision-making and psychomotor performance. Decomposed 2,000+ reaction-time trials into latent cognitive parameters using hierarchical Bayesian Drift Diffusion Models, revealing impairment signatures masked by mean reaction time.</p>
+        <div class="rcard-tags">
+          <span class="rtag">Hierarchical Bayesian</span>
+          <span class="rtag">DDM</span>
+          <span class="rtag">R</span>
+          <span class="rtag">MCMC</span>
+          <span class="rtag">Crossover Study</span>
+        </div>
+        <div class="rcard-actions">
+          <a class="btn btn-secondary" href="/talks/masters_thesis_2025.pdf" target="_blank" rel="noopener">📄 Thesis PDF</a>
+          <a class="btn btn-secondary" href="/talks/uwa_expo_2025.pdf" target="_blank" rel="noopener">🎤 UWA Expo Talk 2025</a>
+        </div>
+      </article>
+
+      <!-- Research Card 2: Computational Psychiatry -->
+      <article class="rcard">
+        <p class="rcard-meta">IIT Kanpur · 2022–2023</p>
+        <h2 class="card-title">Hierarchical Bayesian Modelling of Human Decision-Making</h2>
+        <p class="card-desc">Inferred trial-by-trial learning states across 10,000+ decisions from 105 participants using hierarchical Bayesian RL models. Identified learning rate variability as a significant driver of between-subject differences in reward sensitivity and choice behaviour.</p>
+        <div class="rcard-tags">
+          <span class="rtag">Bayesian RL</span>
+          <span class="rtag">hBayesDM</span>
+          <span class="rtag">R</span>
+          <span class="rtag">NLME</span>
+          <span class="rtag">Cognitive Science</span>
+        </div>
+        <div class="rcard-actions">
+          <a class="btn btn-secondary" href="/talks/iitd_conclave_2023.pdf" target="_blank" rel="noopener">🎤 IIT Delhi Research Conclave 2023</a>
+          <a class="btn btn-secondary" href="/talks/cogsci_poster.pdf" target="_blank" rel="noopener">📋 CogSci Poster 2022</a>
+        </div>
+      </article>
+
+    </section>
+
     <p class="section-label">Skills</p>
     <section class="skills">
       <div class="skill-tags">
@@ -260,7 +344,7 @@ footer{padding:36px 0 48px;text-align:center}
 
 <footer>
   <div class="container">
-    <p class="footer-open">Open to computational biology, healthcare AI, and genomics ML roles in Bengaluru and Australia.</p>
+    <p class="footer-open">Computational biologist with a research background in cognitive neuroscience and a track record of building production ML systems for genomics and clinical data.</p>
     <a class="footer-email" href="mailto:yatinazadk1@gmail.com">yatinazadk1@gmail.com</a>
   </div>
 </footer>
