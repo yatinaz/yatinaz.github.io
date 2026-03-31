@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Retroviral Wall — An Interactive ML Course</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg-primary: #FAF8F4;
+  --bg-secondary: #F2EEE8;
+  --bg-code: #1E1E2E;
+  --accent: #C0392B;
+  --accent-light: #E8D5D3;
+  --text-primary: #2C2416;
+  --text-secondary: #6B5E4E;
+  --text-muted: #9E8E7E;
+  --border: #E0D8CE;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; scroll-snap-type: y proximity; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 { font-family: 'Bricolage Grotesque', sans-serif; line-height: 1.2; }
+
+/* ── NAV BAR ── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(250,248,244,0.92); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; height: 52px;
+}
+.nav-title { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 14px; color: var(--text-secondary); }
+.nav-dots { display: flex; gap: 10px; align-items: center; }
+.nav-dot {
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--border); cursor: pointer; transition: all 0.3s;
+  border: 2px solid transparent;
+}
+.nav-dot.active { background: var(--accent); border-color: var(--accent); transform: scale(1.25); }
+.nav-dot:hover { background: var(--accent-light); }
+.progress-bar { height: 3px; background: var(--accent); position: absolute; bottom: 0; left: 0; width: 0%; transition: width 0.15s; }
+
+/* ── MODULES ── */
+.module { scroll-snap-align: start; }
+.module-even { background: var(--bg-primary); }
+.module-odd { background: var(--bg-secondary); }
+
+.hero {
+  min-height: 100dvh; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center;
+  padding: 80px 24px 40px;
+}
+.hero-number { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 14px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+.hero-title { font-size: clamp(32px, 6vw, 56px); font-weight: 800; margin-bottom: 20px; max-width: 700px; }
+.hero-subtitle { font-size: 18px; color: var(--text-secondary); max-width: 520px; line-height: 1.7; }
+
+.section {
+  max-width: 780px; margin: 0 auto;
+  padding: 60px 24px;
+}
+.section h3 { font-size: 26px; font-weight: 700; margin-bottom: 18px; }
+.section p { margin-bottom: 16px; color: var(--text-secondary); max-width: 640px; }
+
+/* ── CARDS ── */
+.card {
+  background: white; border-radius: 12px; border: 1px solid var(--border);
+  padding: 24px; margin-bottom: 16px;
+  box-shadow: 0 2px 12px rgba(44,36,22,0.08);
+}
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin: 24px 0; }
+
+/* ── PERSONALITY CARDS ── */
+.actor-card { text-align: center; }
+.actor-avatar {
+  width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-family: 'JetBrains Mono', monospace; font-weight: 500;
+  font-size: 18px; color: white; margin: 0 auto 12px;
+}
+.actor-card h4 { font-size: 16px; margin-bottom: 6px; }
+.actor-card .role { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
+.actor-card .desc { font-size: 14px; color: var(--text-secondary); }
+
+/* ── CODE BLOCKS ── */
+.code-block {
+  background: var(--bg-code); border-radius: 12px; padding: 20px;
+  font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.7;
+  color: #CDD6F4; white-space: pre-wrap; word-break: break-word;
+  overflow-x: hidden; margin: 16px 0;
+  box-shadow: 0 2px 12px rgba(44,36,22,0.08);
+}
+.code-block .kw { color: #CBA6F7; }
+.code-block .str { color: #A6E3A1; }
+.code-block .cmt { color: #6C7086; }
+.code-block .num { color: #FAB387; }
+.code-block .fn { color: #89B4FA; }
+.code-block .op { color: #89DCEB; }
+
+/* ── CODE ↔ ENGLISH ── */
+.translate-container { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin: 24px 0; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 2px 12px rgba(44,36,22,0.08); }
+.translate-code {
+  background: var(--bg-code); padding: 20px; font-family: 'JetBrains Mono', monospace;
+  font-size: 12.5px; line-height: 1.8; color: #CDD6F4; white-space: pre-wrap; word-break: break-word;
+}
+.translate-english {
+  background: white; padding: 20px; font-size: 14px; line-height: 1.8; color: var(--text-secondary);
+}
+.translate-line { padding: 2px 4px; border-radius: 4px; transition: background 0.2s; display: block; }
+.translate-line:hover { background: rgba(192,57,43,0.08); }
+.translate-english .translate-line { border-left: 3px solid var(--accent-light); padding-left: 12px; }
+.translate-english .translate-line:hover { border-left-color: var(--accent); }
+
+@media (max-width: 700px) {
+  .translate-container { grid-template-columns: 1fr; }
+}
+
+/* ── CHAT BUBBLES ── */
+.chat-container { max-width: 440px; margin: 24px auto; }
+.chat-msg { display: flex; gap: 8px; margin-bottom: 10px; opacity: 0; transform: translateY(12px); transition: all 0.4s ease; align-items: flex-start; }
+.chat-msg.visible { opacity: 1; transform: translateY(0); }
+.chat-msg.right { flex-direction: row-reverse; }
+.chat-avatar {
+  width: 32px; height: 32px; min-width: 32px; border-radius: 50%; display: flex;
+  align-items: center; justify-content: center; font-size: 11px; font-weight: 600;
+  color: white; font-family: 'JetBrains Mono', monospace;
+}
+.chat-content { max-width: 72%; }
+.chat-speaker { font-size: 11px; font-weight: 600; margin-bottom: 3px; color: var(--text-muted); }
+.chat-bubble { border-radius: 18px; padding: 10px 14px; font-size: 14px; line-height: 1.5; }
+.chat-bubble.left { background: #F0EDE8; border-radius: 18px 18px 18px 4px; color: var(--text-primary); }
+.chat-bubble.right { background: var(--accent); color: white; border-radius: 18px 18px 4px 18px; }
+
+/* ── MESSAGE FLOW ── */
+.flow-container { margin: 24px 0; }
+.flow-step {
+  display: flex; align-items: center; gap: 12px; padding: 14px 18px;
+  border-radius: 12px; margin-bottom: 8px; border: 1px solid var(--border);
+  background: white; opacity: 0.4; transition: all 0.5s;
+}
+.flow-step.active { opacity: 1; border-color: var(--accent); box-shadow: 0 2px 12px rgba(192,57,43,0.12); }
+.flow-icon {
+  width: 40px; height: 40px; min-width: 40px; border-radius: 10px; display: flex;
+  align-items: center; justify-content: center; font-size: 18px;
+}
+.flow-label { font-weight: 600; font-size: 14px; }
+.flow-value { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); }
+.flow-arrow { text-align: center; color: var(--text-muted); font-size: 18px; margin: 2px 0; }
+.flow-btn {
+  display: inline-block; margin-top: 16px; padding: 10px 24px; background: var(--accent);
+  color: white; border: none; border-radius: 8px; cursor: pointer; font-family: 'DM Sans', sans-serif;
+  font-size: 14px; font-weight: 600;
+}
+.flow-btn:hover { background: #A93226; }
+
+/* ── QUIZ ── */
+.quiz { margin: 32px 0; }
+.quiz-question { font-weight: 600; font-size: 17px; margin-bottom: 16px; color: var(--text-primary); }
+.quiz-option {
+  display: block; width: 100%; text-align: left; padding: 14px 18px;
+  background: white; border: 1px solid var(--border); border-radius: 10px;
+  margin-bottom: 8px; cursor: pointer; font-family: 'DM Sans', sans-serif;
+  font-size: 14px; color: var(--text-primary); transition: all 0.2s;
+}
+.quiz-option:hover { border-color: var(--accent); }
+.quiz-option.correct { background: #E8F5E9; border-color: #4CAF50; }
+.quiz-option.wrong { background: #FFEBEE; border-color: #E53935; }
+.quiz-option.disabled { pointer-events: none; }
+.quiz-feedback { margin-top: 12px; padding: 14px 18px; border-radius: 10px; font-size: 14px; line-height: 1.6; }
+.quiz-feedback.correct { background: #E8F5E9; color: #2E7D32; }
+.quiz-feedback.wrong { background: #FFEBEE; color: #C62828; }
+
+/* ── CALLOUT ── */
+.callout {
+  display: flex; gap: 14px; padding: 20px; border-radius: 12px;
+  background: #FFF9E6; border: 1px solid #F0E0A0; margin: 24px 0;
+}
+.callout-icon { font-size: 22px; flex-shrink: 0; }
+.callout strong { display: block; margin-bottom: 4px; font-size: 15px; }
+.callout p { font-size: 14px; color: var(--text-secondary); margin: 0; }
+
+/* ── TOOLTIP ── */
+.tooltip-term { border-bottom: 1.5px dashed var(--accent); cursor: pointer; color: inherit; }
+
+/* ── DATA FLOW ANIMATION ── */
+.dataflow { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 12px; margin: 32px 0; }
+.dataflow-node {
+  padding: 12px 18px; border-radius: 10px; font-size: 13px; font-weight: 600;
+  text-align: center; transition: all 0.5s; opacity: 0.3;
+}
+.dataflow-node.active { opacity: 1; transform: scale(1.05); }
+.dataflow-arrow { font-size: 20px; color: var(--text-muted); }
+
+/* ── LEAKAGE DIAGRAM ── */
+.leakage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 24px 0; }
+.leakage-panel { border-radius: 12px; padding: 20px; border: 1px solid var(--border); }
+.leakage-panel h4 { font-size: 16px; margin-bottom: 12px; }
+.leakage-panel.bad { background: #FFEBEE; border-color: #FFCDD2; }
+.leakage-panel.good { background: #E8F5E9; border-color: #C8E6C9; }
+.leakage-step { padding: 8px 12px; margin: 6px 0; border-radius: 8px; font-size: 13px; font-family: 'JetBrains Mono', monospace; }
+.leakage-panel.bad .leakage-step { background: #FFCDD2; }
+.leakage-panel.good .leakage-step { background: #C8E6C9; }
+@media (max-width: 600px) { .leakage-grid { grid-template-columns: 1fr; } }
+
+/* ── SCORE TABLE ── */
+.score-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
+.score-table th { background: var(--bg-secondary); font-weight: 600; padding: 10px 14px; text-align: left; border-bottom: 2px solid var(--border); }
+.score-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+.score-table tr:last-child td { border-bottom: none; font-weight: 600; color: var(--accent); }
+
+/* ── MISC ── */
+.tag {
+  display: inline-block; padding: 3px 10px; border-radius: 20px;
+  font-size: 12px; font-weight: 600; margin-right: 6px;
+}
+.spacer { height: 40px; }
+.center { text-align: center; }
+.mt { margin-top: 24px; }
+.mb { margin-bottom: 24px; }
+</style>
+</head>
+<body>
+
+<!-- ── NAVIGATION ── -->
+<nav class="nav">
+  <span class="nav-title">The Retroviral Wall</span>
+  <div class="nav-dots">
+    <div class="nav-dot" data-module="1" title="Module 1"></div>
+    <div class="nav-dot" data-module="2" title="Module 2"></div>
+    <div class="nav-dot" data-module="3" title="Module 3"></div>
+    <div class="nav-dot" data-module="4" title="Module 4"></div>
+    <div class="nav-dot" data-module="5" title="Module 5"></div>
+    <div class="nav-dot" data-module="6" title="Module 6"></div>
+  </div>
+  <div class="progress-bar" id="progressBar"></div>
+</nav>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- MODULE 1 — What Just Happened? -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<div class="module module-odd" id="module1">
+  <div class="hero">
+    <div class="hero-number">Module 1</div>
+    <h1 class="hero-title">What Just Happened?</h1>
+    <p class="hero-subtitle">You ran a Python script. 57 protein sequences went in. A ranked list came out. Here is everything that happened in between.</p>
+  </div>
+
+  <div class="section">
+    <h3>The Crime Scene</h3>
+    <p>Think of yourself as a detective arriving at a scene. The evidence: 57 mysterious protein machines called <span class="tooltip-term" data-tooltip="Reverse Transcriptase: a protein enzyme that copies RNA into DNA. Viruses use it to replicate. Scientists borrowed it for gene editing.">reverse transcriptases (RTs)</span>. Some of them work for <span class="tooltip-term" data-tooltip="Prime editing: a molecular 'find and replace' for DNA. It uses an RT enzyme as the 'writing head' to make precise edits without cutting both DNA strands.">prime editing</span> — a revolutionary way to rewrite DNA. Most do not.</p>
+    <p>Your job: figure out which ones work, and rank the working ones from best to worst. The catch? You cannot run any experiments. You only have each protein's amino acid sequence — its molecular blueprint.</p>
+    <p>This is what <code>retroviral_wall_v14.py</code> does. It reads in protein sequences, extracts clever signals from them, and uses machine learning to predict which RTs are active and how efficient they are.</p>
+  </div>
+
+  <div class="section">
+    <h3>The End-to-End Flow</h3>
+    <p>Follow the data as it moves through the pipeline, step by step:</p>
+    <div class="dataflow" id="dataflow1">
+      <div class="dataflow-node active" style="background:#E8D5D3; color:var(--accent);">rt_sequences.csv<br><small>57 proteins</small></div>
+      <div class="dataflow-arrow">&#8594;</div>
+      <div class="dataflow-node" style="background:#FFF3E0; color:#E65100;">Feature Engineering<br><small>110+ signals</small></div>
+      <div class="dataflow-arrow">&#8594;</div>
+      <div class="dataflow-node" style="background:#E3F2FD; color:#1565C0;">ESM-2 Embeddings<br><small>1280-dim &rarr; 5 PCA</small></div>
+      <div class="dataflow-arrow">&#8594;</div>
+      <div class="dataflow-node" style="background:#F3E5F5; color:#7B1FA2;">LOFO CV<br><small>7 family folds</small></div>
+      <div class="dataflow-arrow">&#8594;</div>
+      <div class="dataflow-node" style="background:#E8F5E9; color:#2E7D32;">Two-Head Model<br><small>LR + XGB/CB</small></div>
+      <div class="dataflow-arrow">&#8594;</div>
+      <div class="dataflow-node" style="background:#FCE4EC; color:#C62828;">Rank Blend<br><small>&beta;=0.66</small></div>
+      <div class="dataflow-arrow">&#8594;</div>
+      <div class="dataflow-node" style="background:#E8D5D3; color:var(--accent);">submission.csv<br><small>Ranked list</small></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Why Only 57?</h3>
+    <p>Each RT costs hundreds of dollars to test in a wet lab. This is not a big-data problem. It is a <em>small-data</em> problem that requires clever ML — every trick counts when you have fewer samples than most people have browser tabs open.</p>
+
+    <div class="callout">
+      <span class="callout-icon">💡</span>
+      <div>
+        <strong>Small data demands simplicity</strong>
+        <p>With 57 samples, complex models memorize rather than learn. This is why the winning classifier is plain logistic regression — the simplest possible linear model. When data is scarce, fewer parameters beat more parameters almost every time.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Code: Loading the Data</h3>
+    <div class="translate-container">
+      <div class="translate-code"><span class="translate-line" data-line="1"><span class="cmt"># ── Load data ──</span></span>
+<span class="translate-line" data-line="2">rt_seq  = pd.<span class="fn">read_csv</span>(DATA_DIR / <span class="str">"rt_sequences.csv"</span>)</span>
+<span class="translate-line" data-line="3">feat_path = DATA_DIR / <span class="str">"handcrafted_features_with_struct.csv"</span></span>
+<span class="translate-line" data-line="4"><span class="kw">if not</span> feat_path.<span class="fn">exists</span>():</span>
+<span class="translate-line" data-line="5">    feat_path = DATA_DIR / <span class="str">"handcrafted_features.csv"</span></span>
+<span class="translate-line" data-line="6">feat_df = pd.<span class="fn">read_csv</span>(feat_path)</span>
+<span class="translate-line" data-line="7">df = feat_df.<span class="fn">merge</span>(</span>
+<span class="translate-line" data-line="8">    rt_seq[[<span class="str">"rt_name"</span>, <span class="str">"active"</span>, <span class="str">"pe_efficiency_pct"</span>, <span class="str">"rt_family"</span>, <span class="str">"protein_length_aa"</span>]],</span>
+<span class="translate-line" data-line="9">    on=<span class="str">"rt_name"</span>,</span>
+<span class="translate-line" data-line="10">)</span></div>
+      <div class="translate-english"><span class="translate-line" data-line="1">Load the 57 RT protein sequences</span>
+<span class="translate-line" data-line="2">Read the main sequence file (names, labels, families)</span>
+<span class="translate-line" data-line="3">Look for the enriched feature file with structural data</span>
+<span class="translate-line" data-line="4">If the enriched file doesn't exist...</span>
+<span class="translate-line" data-line="5">...fall back to the basic feature file</span>
+<span class="translate-line" data-line="6">Read the 110-column feature table</span>
+<span class="translate-line" data-line="7">Join features to sequences by RT name —</span>
+<span class="translate-line" data-line="8">keeping labels, efficiency, family, and length</span>
+<span class="translate-line" data-line="9">Match rows by the RT name column</span>
+<span class="translate-line" data-line="10">Now `df` has everything in one table</span></div>
+    </div>
+  </div>
+
+  <!-- QUIZ 1 -->
+  <div class="section">
+    <div class="quiz" id="quiz1">
+      <div class="quiz-question">You notice the pipeline produces a single ranked list but the problem asks for two things: classifying active/inactive AND ranking by efficiency. Why would one list handle both?</div>
+      <button class="quiz-option" data-correct="false" data-feedback="Not quite. The model does distinguish them internally — the LR classifier specifically handles active vs inactive. But the final output blends both signals into one score.">The model doesn't actually distinguish active from inactive — it just ranks everything</button>
+      <button class="quiz-option" data-correct="true" data-feedback="Exactly right. A high final score means both 'likely active' AND 'likely efficient.' The rank blend (0.66 x classifier + 0.34 x regressor) ensures both classification and ranking contribute to the output. The CLS metric then evaluates both aspects from this single list.">A high-ranked protein is both likely active and likely efficient — one score captures both signals</button>
+      <button class="quiz-option" data-correct="false" data-feedback="The pipeline does produce one list, but the CLS metric explicitly evaluates both classification quality (PR-AUC) and ranking quality (Weighted Spearman) from that single list.">The ranking list is only evaluated on classification, not on efficiency ordering</button>
+      <div class="quiz-feedback" style="display:none;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- MODULE 2 — Meet the Cast -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<div class="module module-even" id="module2">
+  <div class="hero">
+    <div class="hero-number">Module 2</div>
+    <h1 class="hero-title">Meet the Cast</h1>
+    <p class="hero-subtitle">Every good production has a crew. Here are the six key players that make this pipeline work, and how they talk to each other.</p>
+  </div>
+
+  <div class="section">
+    <h3>The Production Crew</h3>
+    <p>Imagine this ML pipeline as a film production. Each component has a specific role. Nobody can do the whole job alone.</p>
+    <div class="card-grid">
+      <div class="card actor-card">
+        <div class="actor-avatar" style="background:#C0392B;">LR</div>
+        <h4>Logistic Regression</h4>
+        <div class="role"><span class="tooltip-term" data-tooltip="Classifier: a model that assigns inputs to categories — here, 'active' or 'inactive.' The LR classifier outputs a probability of being active.">Classifier</span></div>
+        <div class="desc">The casting director. Looks at all 30+ features simultaneously to decide: active or not? Uses <span class="tooltip-term" data-tooltip="L2 regularization (ridge): a penalty on large model weights that prevents overfitting. The C=0.1 parameter controls how strong this penalty is — lower C means more regularization.">L2 regularization</span> (C=0.1) to stay honest with only 57 samples.</div>
+      </div>
+      <div class="card actor-card">
+        <div class="actor-avatar" style="background:#2980B9;">XG</div>
+        <h4>XGBoost Regressor</h4>
+        <div class="role"><span class="tooltip-term" data-tooltip="Regressor: a model that predicts a continuous number — here, the PE efficiency percentage. XGBoost builds 200 small decision trees that each correct the previous tree's mistakes.">Regressor</span> #1</div>
+        <div class="desc">The efficiency estimator. Predicts the actual prime editing efficiency percentage using gradient-boosted trees. Depth-2 trees keep it from memorizing.</div>
+      </div>
+      <div class="card actor-card">
+        <div class="actor-avatar" style="background:#8E44AD;">CB</div>
+        <h4>CatBoost Regressor</h4>
+        <div class="role"><span class="tooltip-term" data-tooltip="CatBoost: a gradient boosting library from Yandex that handles categorical features natively and uses ordered boosting to reduce overfitting. Here it serves as a second opinion alongside XGBoost.">Regressor</span> #2</div>
+        <div class="desc">The second opinion. Same job as XGBoost but uses a different algorithm internally. Averaging the two regressors reduces noise. Two witnesses are better than one.</div>
+      </div>
+      <div class="card actor-card">
+        <div class="actor-avatar" style="background:#27AE60;">LO</div>
+        <h4>LOFO CV</h4>
+        <div class="role"><span class="tooltip-term" data-tooltip="LOFO CV (Leave-One-Family-Out Cross-Validation): a validation strategy where each fold holds out an entire evolutionary family. This tests whether the model can generalize to protein families it has never seen — the real deployment scenario.">Validation</span></div>
+        <div class="desc">The integrity officer. Ensures no evolutionary family appears in both training and testing. 7 folds, one per family. No cheating.</div>
+      </div>
+      <div class="card actor-card">
+        <div class="actor-avatar" style="background:#E67E22;">E2</div>
+        <h4>ESM-2 Embeddings</h4>
+        <div class="role"><span class="tooltip-term" data-tooltip="ESM-2: a 650-million-parameter protein language model from Meta AI. It reads protein sequences like GPT reads English — the embeddings capture evolutionary and structural patterns learned from millions of proteins.">Feature Source</span></div>
+        <div class="desc">The language expert. A protein language model (650M params) that reads amino acid sequences and produces 1280-dimensional embeddings capturing deep evolutionary patterns.</div>
+      </div>
+      <div class="card actor-card">
+        <div class="actor-avatar" style="background:#16A085;">FS</div>
+        <h4>FoldSeek Features</h4>
+        <div class="role"><span class="tooltip-term" data-tooltip="FoldSeek: a tool that compares 3D protein structures at the speed of sequence search. It produces TM-scores measuring structural similarity to reference proteins like MMLV and HIV-1 RT.">Feature Source</span></div>
+        <div class="desc">The structural analyst. Compares each RT's predicted 3D shape to known active RTs. The <span class="tooltip-term" data-tooltip="TM-score: a metric from 0 to 1 measuring structural similarity between two proteins. Above 0.5 means they share the same overall fold. The best active RTs have TM > 0.9 to MMLV.">TM-score</span> features are the strongest predictors of activity.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Group Chat: A Prediction Run</h3>
+    <p>Here is what it sounds like when these components collaborate on a prediction:</p>
+    <div class="chat-container" id="groupChat">
+      <div class="chat-msg left">
+        <div class="chat-avatar" style="background:#16A085;">FS</div>
+        <div class="chat-content">
+          <div class="chat-speaker">FoldSeek</div>
+          <div class="chat-bubble left">Just finished structural alignment. 57 RTs compared against MMLV, HIV-1, and 5 other templates. TM-scores ready.</div>
+        </div>
+      </div>
+      <div class="chat-msg right">
+        <div class="chat-avatar" style="background:#E67E22;">E2</div>
+        <div class="chat-content">
+          <div class="chat-speaker">ESM-2</div>
+          <div class="chat-bubble right">1280-dim embeddings done. That's a lot of dimensions for 57 samples though...</div>
+        </div>
+      </div>
+      <div class="chat-msg left">
+        <div class="chat-avatar" style="background:#27AE60;">LO</div>
+        <div class="chat-content">
+          <div class="chat-speaker">LOFO CV</div>
+          <div class="chat-bubble left">Hold on — I need to hide the Retroviral family first. No peeking! PCA gets fitted on training data ONLY.</div>
+        </div>
+      </div>
+      <div class="chat-msg right">
+        <div class="chat-avatar" style="background:#C0392B;">LR</div>
+        <div class="chat-content">
+          <div class="chat-speaker">LR Classifier</div>
+          <div class="chat-bubble right">Got the fold. 45 training samples. Checking who's active... P(active) computed for the held-out family.</div>
+        </div>
+      </div>
+      <div class="chat-msg left">
+        <div class="chat-avatar" style="background:#2980B9;">XG</div>
+        <div class="chat-content">
+          <div class="chat-speaker">XGBoost</div>
+          <div class="chat-bubble left">Running efficiency predictions on the actives. 200 trees, depth 2. Sample weights = sqrt(efficiency + 0.01).</div>
+        </div>
+      </div>
+      <div class="chat-msg right">
+        <div class="chat-avatar" style="background:#8E44AD;">CB</div>
+        <div class="chat-content">
+          <div class="chat-speaker">CatBoost</div>
+          <div class="chat-bubble right">Same here. My predictions are slightly different — that's the point. We average out each other's mistakes.</div>
+        </div>
+      </div>
+      <div class="chat-msg left">
+        <div class="chat-avatar" style="background:#E74C3C;">BL</div>
+        <div class="chat-content">
+          <div class="chat-speaker">Rank Blender</div>
+          <div class="chat-bubble left">Combining your ranks... &beta;=0.66 for LR, 0.34 for regressors. Converting to fractional ranks first — no scale mismatches on my watch.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Code: The LR Pipeline</h3>
+    <div class="translate-container">
+      <div class="translate-code"><span class="translate-line" data-line="1"><span class="kw">def</span> <span class="fn">_lr</span>():</span>
+<span class="translate-line" data-line="2">    <span class="str">"""Return a fresh LR pipeline: median imputation + z-scaling + L2 LR."""</span></span>
+<span class="translate-line" data-line="3">    <span class="kw">return</span> Pipeline([</span>
+<span class="translate-line" data-line="4">        (<span class="str">"imp"</span>, SimpleImputer(strategy=<span class="str">"median"</span>)),</span>
+<span class="translate-line" data-line="5">        (<span class="str">"sc"</span>,  StandardScaler()),</span>
+<span class="translate-line" data-line="6">        (<span class="str">"m"</span>,   LogisticRegression(</span>
+<span class="translate-line" data-line="7">            C=<span class="num">0.1</span>, penalty=<span class="str">"l2"</span>, class_weight=<span class="str">"balanced"</span>,</span>
+<span class="translate-line" data-line="8">            max_iter=<span class="num">2000</span>, random_state=SEED,</span>
+<span class="translate-line" data-line="9">        )),</span>
+<span class="translate-line" data-line="10">    ])</span></div>
+      <div class="translate-english"><span class="translate-line" data-line="1">Define a function that creates a fresh classifier</span>
+<span class="translate-line" data-line="2">Three steps chained together in a pipeline:</span>
+<span class="translate-line" data-line="3">Step 1 → Step 2 → Step 3, in order</span>
+<span class="translate-line" data-line="4">Step 1: fill missing values with the median of that column</span>
+<span class="translate-line" data-line="5">Step 2: scale each feature to mean=0, std=1</span>
+<span class="translate-line" data-line="6">Step 3: Logistic Regression with...</span>
+<span class="translate-line" data-line="7">C=0.1 (strong regularization), L2 penalty, auto-balance classes</span>
+<span class="translate-line" data-line="8">Run up to 2000 iterations, use seed 42 for reproducibility</span>
+<span class="translate-line" data-line="9">(end of LR config)</span>
+<span class="translate-line" data-line="10">Return the assembled pipeline, ready to .fit() and .predict()</span></div>
+    </div>
+  </div>
+
+  <!-- QUIZ 2 -->
+  <div class="section">
+    <div class="quiz" id="quiz2">
+      <div class="quiz-question">The pipeline uses Logistic Regression for classification but XGBoost + CatBoost for regression. A teammate suggests replacing LR with XGBoost for classification too, since "XGBoost is always better." What's the flaw in their reasoning?</div>
+      <button class="quiz-option" data-correct="false" data-feedback="XGBoost does use all features, but at depth 2, each tree only considers 2 features per branch. LR uses all 30+ features simultaneously in one linear boundary.">XGBoost can't handle the features in this dataset</button>
+      <button class="quiz-option" data-correct="true" data-feedback="Exactly. With n=57, a depth-2 tree model picks just 2 features per branch and overfits to small patterns. LR draws one linear boundary using all 30+ features simultaneously, which generalizes better at this scale. More complex is not always better — it depends on your data size.">With only 57 samples, tree models overfit. LR's simplicity is an advantage at this scale, not a weakness.</button>
+      <button class="quiz-option" data-correct="false" data-feedback="XGBoost can output probabilities. The real issue is that at n=57, tree classifiers overfit — they select too few features per split and learn noise instead of signal.">XGBoost can't output probabilities, only regression values</button>
+      <div class="quiz-feedback" style="display:none;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- MODULE 3 — Speaking the Language of Proteins -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<div class="module module-odd" id="module3">
+  <div class="hero">
+    <div class="hero-number">Module 3</div>
+    <h1 class="hero-title">Speaking the Language of Proteins</h1>
+    <p class="hero-subtitle">Raw protein sequences are gibberish to a model. Feature engineering translates them into structured signals — like filling out a detailed medical intake form.</p>
+  </div>
+
+  <div class="section">
+    <h3>The Medical Intake Form</h3>
+    <p>When you visit a doctor, you don't hand them your genome. You fill out a form: height, weight, blood pressure, allergies, family history. These structured signals help the doctor quickly assess your health.</p>
+    <p><span class="tooltip-term" data-tooltip="Feature engineering: the process of transforming raw data (here, protein sequences) into structured numerical signals that a model can learn from. Often the most impactful part of an ML pipeline.">Feature engineering</span> does the same for proteins. The raw sequence <code>MKLVFFA...</code> means nothing to a model. But "structural similarity to MMLV = 0.98" and "thumb identity = 66%" are actionable signals.</p>
+    <p>This pipeline extracts 110+ features in five categories, each telling the model something different about each protein.</p>
+  </div>
+
+  <div class="section">
+    <h3>The Five Feature Categories</h3>
+    <div class="card-grid">
+      <div class="card">
+        <h4 style="color:#1565C0;">FoldSeek TM-scores</h4>
+        <p style="font-size:13px;">How similar is this RT's 3D shape to known working RTs? The strongest signal. <span class="tooltip-term" data-tooltip="TM-score to MMLV: structural similarity between the candidate RT and MMLV — the 'gold standard' RT used in prime editing. Scores near 1.0 mean nearly identical folds.">foldseek_TM_MMLV</span> alone gives AUC ~0.78.</p>
+      </div>
+      <div class="card">
+        <h4 style="color:#2E7D32;">Biophysical</h4>
+        <p style="font-size:13px;">Stability, solubility, charge. Does this protein fold properly? Is it stable enough to function? <code>camsol_score</code>, <code>instability_index</code>.</p>
+      </div>
+      <div class="card">
+        <h4 style="color:#E65100;">Thermal Stability</h4>
+        <p style="font-size:13px;">Predicted fraction of structure surviving at 55/60/65 degrees C. Heat-resistant enzymes tend to be more active.</p>
+      </div>
+      <div class="card">
+        <h4 style="color:#7B1FA2;">New Structural</h4>
+        <p style="font-size:13px;"><code>thumb_fident</code> (rho=<strong>0.901</strong>) and <code>n_hairpins_found</code> (rho=<strong>0.816</strong>) — the two strongest regressor signals, absent from the baseline.</p>
+      </div>
+      <div class="card">
+        <h4 style="color:#C62828;">ESM-2 PCA</h4>
+        <p style="font-size:13px;">5 components from a 1280-dim protein language model embedding. Captures evolutionary patterns invisible to hand-crafted features. <span class="tooltip-term" data-tooltip="PCA (Principal Component Analysis): a technique that reduces high-dimensional data to fewer dimensions while preserving the most variance. Here, 1280 ESM-2 dimensions are compressed to 5 PCA components.">PCA</span> compresses 1280 dims to 5.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>The Star Feature: Thumb Subdomain Identity</h3>
+    <p>The <span class="tooltip-term" data-tooltip="Thumb subdomain: a structural domain of the RT enzyme that grips the RNA/DNA hybrid during synthesis. Think of it as the 'handle' of the molecular machine. Its sequence identity to MMLV's thumb is the strongest predictor of PE efficiency.">thumb subdomain</span> is a structural domain of the RT enzyme — think of it as the "grip" that holds the DNA/RNA hybrid while writing. The <code>thumb_fident</code> feature measures how similar each RT's thumb is to the known best RT (MMLV).</p>
+    <p>With a Spearman correlation of <strong>0.901</strong>, this single feature almost perfectly predicts efficiency among active RTs. It suggests that thumb geometry is the dominant factor in prime editing success — a testable biological hypothesis discovered through ML.</p>
+
+    <div class="callout">
+      <span class="callout-icon">💡</span>
+      <div>
+        <strong>Domain knowledge beats raw features</strong>
+        <p>The generic ESM-2 embeddings (1280 dimensions) are less informative than one carefully chosen structural feature. In ML, knowing <em>what</em> to measure often matters more than measuring <em>everything</em>.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Code: Feature Engineering</h3>
+    <div class="translate-container">
+      <div class="translate-code"><span class="translate-line" data-line="1">df[<span class="str">"TM_ratio_MMLVPE_telo"</span>] = df[<span class="str">"foldseek_TM_MMLVPE"</span>] / (df[<span class="str">"foldseek_TM_Telomerase"</span>] + <span class="num">1e-6</span>)</span>
+<span class="translate-line" data-line="2">df[<span class="str">"is_broken_enzyme"</span>]     = df[<span class="str">"triad_best_rmsd"</span>].<span class="fn">isna</span>().<span class="fn">astype</span>(<span class="kw">int</span>)</span>
+<span class="translate-line" data-line="3">df[<span class="str">"length_to_TM_ratio"</span>]   = df[<span class="str">"protein_length_aa"</span>] / (df[<span class="str">"foldseek_best_TM"</span>] + <span class="num">1e-5</span>)</span>
+<span class="translate-line" data-line="4">df[<span class="str">"is_no_thumb"</span>]          = df[<span class="str">"thumb_fident"</span>].<span class="fn">isna</span>().<span class="fn">astype</span>(<span class="kw">int</span>)</span>
+<span class="translate-line" data-line="5">df[<span class="str">"is_no_hairpin"</span>]        = df[<span class="str">"n_hairpins_found"</span>].<span class="fn">isna</span>().<span class="fn">astype</span>(<span class="kw">int</span>)</span></div>
+      <div class="translate-english"><span class="translate-line" data-line="1">Ratio: how much more does this RT look like MMLV vs Telomerase? Higher = more MMLV-like</span>
+<span class="translate-line" data-line="2">Flag: is the catalytic triad missing? (1e-6 prevents division by zero) If broken, probably inactive</span>
+<span class="translate-line" data-line="3">Ratio: protein length divided by best structural match. Large + low TM = bad sign</span>
+<span class="translate-line" data-line="4">Flag: does this RT have no detectable thumb subdomain? If missing, likely inactive</span>
+<span class="translate-line" data-line="5">Flag: were no beta-hairpins found? Missing hairpins correlate with low efficiency</span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Code: The NaN Strategy</h3>
+    <div class="translate-container">
+      <div class="translate-code"><span class="translate-line" data-line="1"><span class="kw">def</span> <span class="fn">_fill</span>(X):</span>
+<span class="translate-line" data-line="2">    <span class="str">"""Replace NaN with -999 sentinel (tree-model-friendly missingness encoding)."""</span></span>
+<span class="translate-line" data-line="3">    <span class="kw">return</span> np.<span class="fn">where</span>(np.<span class="fn">isnan</span>(X), <span class="num">-999.0</span>, X)</span></div>
+      <div class="translate-english"><span class="translate-line" data-line="1">Define a function to handle missing values for tree models</span>
+<span class="translate-line" data-line="2">Trees can learn "if value == -999, this means data is missing" as a useful split</span>
+<span class="translate-line" data-line="3">Everywhere a value is NaN, replace it with -999. Trees treat this as a learnable signal.</span></div>
+    </div>
+
+    <div class="callout">
+      <span class="callout-icon">💡</span>
+      <div>
+        <strong>Two models, two <span class="tooltip-term" data-tooltip="Imputation: the process of filling in missing values. Different models prefer different strategies — tree models can learn from sentinel values, while linear models need statistically meaningful fills like the median.">imputation</span> strategies</strong>
+        <p>Tree models (XGBoost, CatBoost) get -999 sentinels because they can learn "missing = informative." The LR classifier gets median imputation + z-scaling because linear models need numerically meaningful inputs. The same data, prepared two different ways.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ 3 -->
+  <div class="section">
+    <div class="quiz" id="quiz3">
+      <div class="quiz-question">A colleague adds 50 new features (sequence length squared, amino acid percentages, etc.) to the model. Cross-validation score drops. They're confused — "more information should help!" What happened?</div>
+      <button class="quiz-option" data-correct="false" data-feedback="The code can technically handle hundreds of features. The problem is statistical, not computational.">The code crashed because it can't handle that many columns</button>
+      <button class="quiz-option" data-correct="true" data-feedback="Correct. With 57 samples and 50+ extra features, the model finds spurious correlations in training that don't hold in test. This is called overfitting — the curse of dimensionality. Each feature adds noise that the small dataset can't distinguish from real signal.">With only 57 samples, adding noisy features causes overfitting — the model learns noise instead of signal</button>
+      <button class="quiz-option" data-correct="false" data-feedback="Feature names don't matter to the model. The issue is that with 57 samples, each extra feature that doesn't carry real signal adds more noise for the model to accidentally memorize.">The new features have confusing names that the model misinterprets</button>
+      <div class="quiz-feedback" style="display:none;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- MODULE 4 — The Two-Headed Oracle -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<div class="module module-even" id="module4">
+  <div class="hero">
+    <div class="hero-number">Module 4</div>
+    <h1 class="hero-title">The Two-Headed Oracle</h1>
+    <p class="hero-subtitle">One head classifies. One head ranks. A judge blends their testimony. This is the heart of the architecture.</p>
+  </div>
+
+  <div class="section">
+    <h3>Two Expert Witnesses</h3>
+    <p>Imagine a courtroom. Two expert witnesses testify about each RT protein:</p>
+    <p><strong>Witness 1 (LR Classifier):</strong> "In my professional opinion, this protein has an 82% chance of being active for prime editing." This witness speaks in probabilities — confident yes/no judgments.</p>
+    <p><strong>Witness 2 (XGB+CB Regressor):</strong> "Based on my analysis, this protein would achieve approximately 23.4% editing efficiency." This witness speaks in continuous values — how good, not just whether.</p>
+    <p>The judge (rank blender) must combine these two different scales of testimony into a single verdict.</p>
+  </div>
+
+  <div class="section">
+    <h3>Why Ranks Fix Everything</h3>
+    <p>Here is the key insight: a 0.7 probability from <span class="tooltip-term" data-tooltip="Logistic regression: the simplest linear classifier. It draws a straight line (or hyperplane) through feature space and outputs a probability of belonging to each class. Despite its simplicity, it often outperforms complex models on small datasets.">logistic regression</span> and a 0.7% efficiency from <span class="tooltip-term" data-tooltip="XGBoost (Extreme Gradient Boosting): a popular tree-based ML algorithm that builds many small decision trees sequentially, where each new tree corrects the errors of the previous ones.">XGBoost</span> are completely different numbers on completely different scales.</p>
+    <p>You cannot average them. Instead, <span class="tooltip-term" data-tooltip="Rank blending: converting model outputs to their percentile ranks (0 to 1) before combining them. This puts all models on the same scale regardless of their original output ranges.">rank blending</span> converts each to "what percentile is this sample at?" Now both are on a 0-to-1 scale, and you can blend them.</p>
+    <p>The formula: <code>final = 0.66 x rank(LR) + 0.34 x rank(regressor)</code>. The <span class="tooltip-term" data-tooltip="Beta: the blending weight. Beta=0.66 means 66% of the final score comes from classification rank, 34% from regression rank. Found by sweeping 0.00 to 1.00 in 0.01 steps.">beta</span> of 0.66 means the classifier gets twice the weight of the regressor.</p>
+  </div>
+
+  <div class="section">
+    <h3>Message Flow: A Single RT Through Both Heads</h3>
+    <p>Watch one protein travel through the full pipeline. Click "Play" to animate:</p>
+    <div class="flow-container" id="messageFlow">
+      <div class="flow-step" data-step="0">
+        <div class="flow-icon" style="background:#E8D5D3;">&#129516;</div>
+        <div><div class="flow-label">Input RT</div><div class="flow-value">AVIRE-RT (Retroviral family)</div></div>
+      </div>
+      <div class="flow-arrow">&darr;</div>
+      <div class="flow-step" data-step="1">
+        <div class="flow-icon" style="background:#FFEBEE;">LR</div>
+        <div><div class="flow-label">LR Classifier</div><div class="flow-value">P(active) = 0.82</div></div>
+      </div>
+      <div class="flow-arrow">&darr;</div>
+      <div class="flow-step" data-step="2">
+        <div class="flow-icon" style="background:#FFF3E0;">&#8593;</div>
+        <div><div class="flow-label">Rank (LR)</div><div class="flow-value">LR_rank = 0.91 (52nd of 57)</div></div>
+      </div>
+      <div class="flow-arrow">&darr;</div>
+      <div class="flow-step" data-step="3">
+        <div class="flow-icon" style="background:#E3F2FD;">XG</div>
+        <div><div class="flow-label">XGB + CatBoost Regressor</div><div class="flow-value">efficiency = 23.4%</div></div>
+      </div>
+      <div class="flow-arrow">&darr;</div>
+      <div class="flow-step" data-step="4">
+        <div class="flow-icon" style="background:#F3E5F5;">&#8593;</div>
+        <div><div class="flow-label">Rank (Regressor)</div><div class="flow-value">Reg_rank = 0.88 (50th of 57)</div></div>
+      </div>
+      <div class="flow-arrow">&darr;</div>
+      <div class="flow-step" data-step="5">
+        <div class="flow-icon" style="background:#E8F5E9;">&#9878;</div>
+        <div><div class="flow-label">Blend: 0.66 x 0.91 + 0.34 x 0.88</div><div class="flow-value">Final Score = 0.90</div></div>
+      </div>
+    </div>
+    <div class="center"><button class="flow-btn" id="flowPlayBtn">&#9654; Play Animation</button></div>
+  </div>
+
+  <div class="section">
+    <h3>Code: The Beta Sweep</h3>
+    <div class="translate-container">
+      <div class="translate-code"><span class="translate-line" data-line="1">best_cls, best_beta = <span class="num">-1.0</span>, <span class="num">0.66</span></span>
+<span class="translate-line" data-line="2"><span class="kw">for</span> beta <span class="kw">in</span> np.<span class="fn">arange</span>(<span class="num">0.0</span>, <span class="num">1.01</span>, <span class="num">0.01</span>):</span>
+<span class="translate-line" data-line="3">    f   = beta * (<span class="fn">rankdata</span>(clf_oof) / <span class="fn">len</span>(df)) + (<span class="num">1</span> - beta) * (<span class="fn">rankdata</span>(reg_oof) / <span class="fn">len</span>(df))</span>
+<span class="translate-line" data-line="4">    cls, pr, ws = <span class="fn">compute_cls</span>(y_bin, f, y_eff)</span>
+<span class="translate-line" data-line="5">    <span class="kw">if</span> cls > best_cls:</span>
+<span class="translate-line" data-line="6">        best_cls, best_beta = cls, <span class="fn">float</span>(beta)</span></div>
+      <div class="translate-english"><span class="translate-line" data-line="1">Start with no best score. Default beta = 0.66</span>
+<span class="translate-line" data-line="2">Try every blend weight from 0.00 to 1.00 in steps of 0.01</span>
+<span class="translate-line" data-line="3">Blend: beta x classifier_rank + (1-beta) x regressor_rank. Both normalized to [0,1]</span>
+<span class="translate-line" data-line="4">Compute the CLS metric (harmonic mean of PR-AUC and Weighted Spearman)</span>
+<span class="translate-line" data-line="5">If this blend beats the current best...</span>
+<span class="translate-line" data-line="6">...save it as the new best. Winner at the end is beta=0.66</span></div>
+    </div>
+  </div>
+
+  <!-- QUIZ 4 -->
+  <div class="section">
+    <div class="quiz" id="quiz4">
+      <div class="quiz-question">A user reports that the classification is perfect (all active RTs correctly identified) but the ranking among active RTs is completely wrong. The CLS score is 0.52. Why isn't it higher despite perfect classification?</div>
+      <button class="quiz-option" data-correct="false" data-feedback="0.52 is technically a valid CLS score. The issue is that the harmonic mean punishes imbalance between the two sub-metrics.">0.52 is actually impossible — CLS is always between 0 and 1</button>
+      <button class="quiz-option" data-correct="true" data-feedback="Exactly. CLS is the harmonic mean: 2 x PR-AUC x WSpearman / (PR-AUC + WSpearman). If PR-AUC is ~1.0 but WSpearman is ~0.35, the harmonic mean is ~0.52. Unlike a regular average (which would give ~0.68), the harmonic mean penalizes imbalance. You need both heads working well.">CLS uses a harmonic mean — it punishes imbalance. Perfect classification with bad ranking still yields a low score.</button>
+      <button class="quiz-option" data-correct="false" data-feedback="The beta weight controls how much each head contributes, but the real issue here is the harmonic mean — even with a different beta, bad ranking drags down CLS.">The beta weight is wrong — it should be 0.34 instead of 0.66</button>
+      <div class="quiz-feedback" style="display:none;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- MODULE 5 — The Cheating Prevention System -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<div class="module module-odd" id="module5">
+  <div class="hero">
+    <div class="hero-number">Module 5</div>
+    <h1 class="hero-title">The Cheating Prevention System</h1>
+    <p class="hero-subtitle">The difference between an open-book exam and a closed-book exam. And the subtle bug that inflated scores by 0.10.</p>
+  </div>
+
+  <div class="section">
+    <h3>The Open-Book Exam Problem</h3>
+    <p>Imagine taking a test where you accidentally had the answer key visible. You would score artificially high — not because you learned the material, but because the answers leaked into your preparation.</p>
+    <p><span class="tooltip-term" data-tooltip="Data leakage: when information from the test set accidentally influences the training process, causing inflated performance estimates. The model appears to perform well in evaluation but fails in real deployment.">Data leakage</span> in ML is exactly this. The model "sees" test data during training, inflating its apparent performance. When deployed on truly new data, it fails.</p>
+    <p>This pipeline has two anti-cheating systems: <span class="tooltip-term" data-tooltip="LOFO (Leave-One-Family-Out): each fold holds out an entire evolutionary family of RTs. This is the strictest possible CV for this dataset — it tests whether the model can generalize across evolutionary lineages.">LOFO</span> cross-validation and per-fold <span class="tooltip-term" data-tooltip="PCA fitted inside each fold: the critical fix. If PCA is fitted on all 57 samples before splitting, the test set's variance structure leaks into training features. Fitting PCA only on training data prevents this.">PCA</span> fitting.</p>
+  </div>
+
+  <div class="section">
+    <h3>Why LOFO, Not Random K-Fold?</h3>
+    <p>The 57 RTs come from 7 evolutionary families: Retroviral, Retron, LTR Retrotransposon, Group II Intron, CRISPR-associated, Unclassified, and Other.</p>
+    <p>Random <span class="tooltip-term" data-tooltip="Cross-validation: a technique for estimating model performance by repeatedly splitting data into train and test sets. K-fold creates K random splits; LOFO creates splits based on biological families.">cross-validation</span> would mix family members across train and test. The model could learn "if it looks like an MMLV-family protein, it's active" — memorizing family membership rather than learning biology.</p>
+    <p>LOFO holds out an entire family per fold. If the Retroviral family (12 RTs, 10 active) is in the test set, the model must predict activity <em>without ever seeing a Retroviral RT in training</em>. This is the real deployment scenario: predicting on an RT from a brand-new evolutionary lineage.</p>
+  </div>
+
+  <div class="section">
+    <h3>The PCA Leakage Bug</h3>
+    <p>This was the single most impactful fix in the entire project: <strong>+0.099 CLS</strong>, from 0.677 to 0.776.</p>
+    <p>The bug: ESM-2 embeddings (1280 dimensions per protein) were reduced to 5 PCA components. But PCA was fitted on <em>all 57 samples</em> before the LOFO split. This meant test-set variance structure leaked into the training features.</p>
+
+    <div class="leakage-grid">
+      <div class="leakage-panel bad">
+        <h4>&#10060; Leaky PCA (Before Fix)</h4>
+        <div class="leakage-step">1. Load all 57 embeddings</div>
+        <div class="leakage-step">2. Fit PCA on ALL 57 &#8592; LEAK!</div>
+        <div class="leakage-step">3. Transform all 57 to 5 dims</div>
+        <div class="leakage-step">4. Split into train/test folds</div>
+        <div class="leakage-step">5. Train model on "clean" data?</div>
+        <p style="margin-top:12px; font-size:13px; color:#C62828;">Test data shaped the PCA axes. The model "saw" test patterns encoded in the training features. Score: inflated by +0.10.</p>
+      </div>
+      <div class="leakage-panel good">
+        <h4>&#9989; Fixed PCA (Per-Fold)</h4>
+        <div class="leakage-step">1. Load all 57 embeddings</div>
+        <div class="leakage-step">2. Split into train/test folds</div>
+        <div class="leakage-step">3. Fit PCA on TRAIN ONLY</div>
+        <div class="leakage-step">4. Transform train with PCA</div>
+        <div class="leakage-step">5. Transform test with same PCA</div>
+        <p style="margin-top:12px; font-size:13px; color:#2E7D32;">Test data never influences PCA axes. The model is evaluated honestly. Score: real performance.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Code: PCA Inside Each Fold</h3>
+    <div class="translate-container">
+      <div class="translate-code"><span class="translate-line" data-line="1"><span class="kw">for</span> fam <span class="kw">in</span> <span class="fn">sorted</span>(<span class="fn">set</span>(families)):</span>
+<span class="translate-line" data-line="2">    tr = np.<span class="fn">where</span>(families != fam)[<span class="num">0</span>]</span>
+<span class="translate-line" data-line="3">    te = np.<span class="fn">where</span>(families == fam)[<span class="num">0</span>]</span>
+<span class="translate-line" data-line="4"></span>
+<span class="translate-line" data-line="5">    <span class="cmt"># PCA fitted inside fold to prevent leakage</span></span>
+<span class="translate-line" data-line="6">    pf = PCA(n_components=PCA_N, random_state=SEED)</span>
+<span class="translate-line" data-line="7">    pt = pf.<span class="fn">fit_transform</span>(all_embs[tr])</span>
+<span class="translate-line" data-line="8">    pe = pf.<span class="fn">transform</span>(all_embs[te])</span></div>
+      <div class="translate-english"><span class="translate-line" data-line="1">Loop over each RT family (7 total)</span>
+<span class="translate-line" data-line="2">Training set = every RT NOT in this family</span>
+<span class="translate-line" data-line="3">Test set = every RT IN this family</span>
+<span class="translate-line" data-line="4"></span>
+<span class="translate-line" data-line="5">Critical: PCA is created fresh each fold</span>
+<span class="translate-line" data-line="6">New PCA object — never seen any data yet</span>
+<span class="translate-line" data-line="7">fit_transform: learn PCA axes FROM TRAIN ONLY, then transform train</span>
+<span class="translate-line" data-line="8">transform: apply the SAME axes to test — but test didn't shape them</span></div>
+    </div>
+
+    <div class="callout">
+      <span class="callout-icon">💡</span>
+      <div>
+        <strong>Any transformation that "looks at" the data must go inside the CV loop</strong>
+        <p>PCA, StandardScaler, imputation — anything that computes statistics from data (means, variances, principal components) must be fitted only on training data. This applies to every ML project, not just this one. If you see <code>fit_transform</code> before the train/test split, that is a red flag.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ 5 -->
+  <div class="section">
+    <div class="quiz" id="quiz5">
+      <div class="quiz-question">You're reviewing a teammate's ML pipeline and notice they compute feature means for imputation using the entire dataset, then split into train/test. The model's test accuracy is 95%. After moving imputation inside the CV loop, accuracy drops to 78%. What does this tell you?</div>
+      <button class="quiz-option" data-correct="false" data-feedback="Moving imputation inside the loop is always the correct approach. The 78% is the real performance — the 95% was inflated by leakage.">The imputation fix introduced a bug — 95% was the real accuracy</button>
+      <button class="quiz-option" data-correct="false" data-feedback="While you could try better imputation, the key lesson is that the 95% was fake. The 17% drop represents the amount of leakage — the model was 'cheating' by that much.">The imputation strategy is wrong — try a different fill method</button>
+      <button class="quiz-option" data-correct="true" data-feedback="Exactly right. The 17-point drop is exactly the magnitude of leakage. The model was 'studying with the answer key' — test set statistics were encoded in the imputed training features. The 78% is the honest score. This is exactly what happened with the PCA leakage bug in this project (+0.10 inflated CLS).">The 17% difference was entirely due to leakage — the 78% is the honest score and the 95% was always a lie</button>
+      <div class="quiz-feedback" style="display:none;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- MODULE 6 — Reading the Score Card -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<div class="module module-even" id="module6">
+  <div class="hero">
+    <div class="hero-number">Module 6</div>
+    <h1 class="hero-title">Reading the Score Card</h1>
+    <p class="hero-subtitle">A report card that penalizes C grades even if you have straight A's elsewhere. Understanding the CLS metric and the journey to 0.803.</p>
+  </div>
+
+  <div class="section">
+    <h3>What Is CLS?</h3>
+    <p>The <span class="tooltip-term" data-tooltip="CLS (Classification + Scoring): the harmonic mean of PR-AUC and Weighted Spearman. It evaluates both classification quality and ranking quality simultaneously, penalizing models that excel at one but fail at the other.">CLS metric</span> = <span class="tooltip-term" data-tooltip="Harmonic mean: a type of average that heavily penalizes low values. For two numbers, HM = 2ab/(a+b). If one value is close to 0, the harmonic mean is dragged down regardless of how high the other is.">harmonic mean</span> of <span class="tooltip-term" data-tooltip="PR-AUC (Precision-Recall Area Under Curve): measures how well the model separates active from inactive RTs. Higher means fewer false positives when identifying active proteins.">PR-AUC</span> and <span class="tooltip-term" data-tooltip="Weighted Spearman: a rank correlation metric where high-efficiency RTs contribute more to the score. It measures how well the model ranks active RTs by their actual efficiency, with more weight on the most efficient ones.">Weighted Spearman</span>.</p>
+    <p>Think of a report card. Your regular GPA takes the average — a straight-A student with one C still has a high GPA. But the <em>harmonic</em> mean is harsh: one C drags the whole score down dramatically.</p>
+    <p><code>CLS = 2 x PR-AUC x WSpearman / (PR-AUC + WSpearman)</code></p>
+    <p>If classification is perfect (PR-AUC = 1.0) but ranking is random (WSpearman = 0.0), CLS = 0. You need both to be good.</p>
+  </div>
+
+  <div class="section">
+    <h3>Code: Computing CLS</h3>
+    <div class="translate-container">
+      <div class="translate-code"><span class="translate-line" data-line="1"><span class="kw">def</span> <span class="fn">weighted_spearman</span>(pred, true_eff, weights):</span>
+<span class="translate-line" data-line="2">    pr = np.<span class="fn">argsort</span>(np.<span class="fn">argsort</span>(pred)).<span class="fn">astype</span>(<span class="kw">float</span>)</span>
+<span class="translate-line" data-line="3">    tr = np.<span class="fn">argsort</span>(np.<span class="fn">argsort</span>(true_eff)).<span class="fn">astype</span>(<span class="kw">float</span>)</span>
+<span class="translate-line" data-line="4">    w  = weights / weights.<span class="fn">sum</span>()</span>
+<span class="translate-line" data-line="5">    mp = np.<span class="fn">dot</span>(w, pr)</span>
+<span class="translate-line" data-line="6">    mt = np.<span class="fn">dot</span>(w, tr)</span>
+<span class="translate-line" data-line="7">    cov = np.<span class="fn">sum</span>(w * (pr - mp) * (tr - mt))</span>
+<span class="translate-line" data-line="8">    sp  = np.<span class="fn">sqrt</span>(np.<span class="fn">sum</span>(w * (pr - mp) ** <span class="num">2</span>))</span>
+<span class="translate-line" data-line="9">    st  = np.<span class="fn">sqrt</span>(np.<span class="fn">sum</span>(w * (tr - mt) ** <span class="num">2</span>))</span>
+<span class="translate-line" data-line="10">    <span class="kw">return</span> <span class="fn">max</span>(cov / (sp * st), <span class="num">0.0</span>)</span></div>
+      <div class="translate-english"><span class="translate-line" data-line="1">Compute how well predicted ranks match true efficiency ranks</span>
+<span class="translate-line" data-line="2">Convert predictions to ranks (double argsort trick)</span>
+<span class="translate-line" data-line="3">Convert true efficiencies to ranks the same way</span>
+<span class="translate-line" data-line="4">Normalize weights so they sum to 1 (high-efficiency RTs weigh more)</span>
+<span class="translate-line" data-line="5">Weighted mean of predicted ranks</span>
+<span class="translate-line" data-line="6">Weighted mean of true ranks</span>
+<span class="translate-line" data-line="7">Weighted covariance between predicted and true ranks</span>
+<span class="translate-line" data-line="8">Weighted std dev of predicted ranks</span>
+<span class="translate-line" data-line="9">Weighted std dev of true ranks</span>
+<span class="translate-line" data-line="10">Return correlation (cov / product of std devs), floored at 0</span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>The Two-Era Story</h3>
+    <p>This project evolved through two distinct eras, each optimizing for a different metric.</p>
+
+    <table class="score-table">
+      <thead><tr><th>Version</th><th>CLS</th><th>PR-AUC</th><th>WSpearman</th><th>Key Change</th></tr></thead>
+      <tbody>
+        <tr><td>v8</td><td>0.487</td><td>0.563</td><td>0.429</td><td>First two-head architecture</td></tr>
+        <tr><td>v9</td><td>0.677</td><td>0.727</td><td>0.633</td><td>XGB+CB, full FoldSeek TMs</td></tr>
+        <tr><td>v10</td><td>0.776</td><td>0.768</td><td>0.798</td><td>LR classifier, PCA fix, thumb_fident</td></tr>
+        <tr><td>v11</td><td>0.791</td><td>0.799</td><td>0.783</td><td>hbonds_per_res added</td></tr>
+        <tr><td>v14</td><td>0.803</td><td>0.811</td><td>0.796</td><td>n_strands, isoelectric_point, beta=0.66</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <span class="callout-icon">💡</span>
+      <div>
+        <strong>Bug fixes beat feature engineering</strong>
+        <p>The PCA leakage fix (v9 to v10) gained +0.099 CLS. All subsequent feature engineering from v10 to v14 gained only +0.027 combined. Before adding complexity, audit your validation pipeline. The biggest gains often come from fixing what you already have.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Era 1 vs Era 2</h3>
+    <p><strong>Era 1 (v1-v7):</strong> Optimized for <span class="tooltip-term" data-tooltip="Macro-F1: the average F1-score across classes. In Era 1, the goal was binary classification — active or not. But this metric gives no credit for ranking active RTs by efficiency.">Macro-F1</span> and Retroviral true positives. Pure classification. The problem: a binary classifier gives <em>identical</em> scores to all active RTs (Weighted Spearman = 0). Great at finding actives, terrible at ranking them.</p>
+    <p><strong>Era 2 (v8-v14):</strong> The CLS metric forced a complete redesign. Now the model needs to both classify AND rank. This is why the two-head architecture exists — one head per sub-metric. The <span class="tooltip-term" data-tooltip="Ensemble: combining multiple models to get a better prediction than any single model alone. Here, XGBoost and CatBoost regressors are averaged, then rank-blended with LR.">ensemble</span> approach lets each head specialize.</p>
+  </div>
+
+  <!-- QUIZ 6 -->
+  <div class="section">
+    <div class="quiz" id="quiz6">
+      <div class="quiz-question">A user reports: "The model ranks most active RTs correctly, but it ranks two inactive RTs above several active ones." Which component would you investigate first, and why?</div>
+      <button class="quiz-option" data-correct="false" data-feedback="The regressors predict efficiency, but the issue here is that inactive proteins are being ranked too high — that's primarily a classification problem. The LR classifier should give low probabilities to inactive RTs, pushing them down in the final blend.">The XGB/CB regressors — they handle efficiency ranking</button>
+      <button class="quiz-option" data-correct="true" data-feedback="Correct. If inactive RTs are ranked above active ones, the classifier isn't separating them well enough. The LR classifier's P(active) drives 66% of the final score through the rank blend. Investigate the LR predictions for those two inactive RTs — are their feature profiles unusually similar to active RTs? Check FoldSeek TM-scores especially.">The LR classifier — it controls 66% of the final score and should push inactive RTs to the bottom</button>
+      <button class="quiz-option" data-correct="false" data-feedback="The beta weight is optimized via grid search, so changing it is unlikely to fix a specific misclassification. The root cause is more likely in the classifier's feature signals for those specific RTs.">The beta parameter — try a different blend weight</button>
+      <button class="quiz-option" data-correct="false" data-feedback="LOFO handles validation honesty, not individual prediction quality. The issue is in the model's features or the classifier itself, not in how folds are split.">The LOFO split — maybe those RTs are in a difficult fold</button>
+      <div class="quiz-feedback" style="display:none;"></div>
+    </div>
+  </div>
+
+  <div class="section center" style="padding-bottom: 80px;">
+    <h3>Course Complete</h3>
+    <p style="margin: 0 auto;">You now understand the full Retroviral Wall pipeline: from raw protein sequences through feature engineering, two-head modeling, rank blending, and honest evaluation with LOFO CV. The key lessons — small data demands simplicity, leakage detection matters more than feature engineering, and domain knowledge beats raw dimensionality — apply to every ML project you will touch.</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- JAVASCRIPT -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<script>
+(function() {
+  'use strict';
+
+  // ── TOOLTIPS ──
+  function initTooltips() {
+    document.querySelectorAll('.tooltip-term').forEach(function(term) {
+      var tooltip = null;
+      term.addEventListener('mouseenter', function() {
+        tooltip = document.createElement('div');
+        tooltip.className = 'tooltip-popup';
+        tooltip.textContent = this.dataset.tooltip;
+        document.body.appendChild(tooltip);
+        var rect = this.getBoundingClientRect();
+        tooltip.style.cssText =
+          'position:fixed; z-index:9999; max-width:260px; padding:8px 12px;' +
+          'background:#2C2416; color:#FAF8F4; border-radius:8px; font-size:13px;' +
+          'line-height:1.5; pointer-events:none; font-family:"DM Sans",sans-serif;';
+        var top = rect.top - tooltip.offsetHeight - 8;
+        tooltip.style.left = Math.min(rect.left, window.innerWidth - 280) + 'px';
+        tooltip.style.top = (top < 8 ? rect.bottom + 8 : top) + 'px';
+      });
+      term.addEventListener('mouseleave', function() {
+        if (tooltip) { tooltip.remove(); tooltip = null; }
+      });
+    });
+  }
+
+  // ── NAVIGATION + PROGRESS ──
+  function initNav() {
+    var dots = document.querySelectorAll('.nav-dot');
+    var modules = document.querySelectorAll('.module');
+    var progressBar = document.getElementById('progressBar');
+
+    dots.forEach(function(dot) {
+      dot.addEventListener('click', function() {
+        var mod = document.getElementById('module' + this.dataset.module);
+        if (mod) mod.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+
+    function updateNav() {
+      var scrollTop = window.scrollY;
+      var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      var progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      progressBar.style.width = progress + '%';
+
+      var currentModule = 1;
+      modules.forEach(function(mod, i) {
+        var rect = mod.getBoundingClientRect();
+        if (rect.top < window.innerHeight * 0.5) currentModule = i + 1;
+      });
+      dots.forEach(function(dot, i) {
+        dot.classList.toggle('active', i + 1 === currentModule);
+      });
+    }
+
+    window.addEventListener('scroll', updateNav, { passive: true });
+    updateNav();
+  }
+
+  // ── DATAFLOW ANIMATION ──
+  function initDataflow() {
+    var nodes = document.querySelectorAll('#dataflow1 .dataflow-node');
+    var observed = false;
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting && !observed) {
+          observed = true;
+          nodes.forEach(function(node, i) {
+            setTimeout(function() { node.classList.add('active'); }, i * 400);
+          });
+        }
+      });
+    }, { threshold: 0.3 });
+    var container = document.getElementById('dataflow1');
+    if (container) observer.observe(container);
+  }
+
+  // ── GROUP CHAT ANIMATION ──
+  function initGroupChat() {
+    var msgs = document.querySelectorAll('#groupChat .chat-msg');
+    var played = false;
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting && !played) {
+          played = true;
+          msgs.forEach(function(msg, i) {
+            setTimeout(function() { msg.classList.add('visible'); }, i * 600);
+          });
+        }
+      });
+    }, { threshold: 0.2 });
+    var container = document.getElementById('groupChat');
+    if (container) observer.observe(container);
+  }
+
+  // ── MESSAGE FLOW ANIMATION ──
+  function initMessageFlow() {
+    var steps = document.querySelectorAll('#messageFlow .flow-step');
+    var btn = document.getElementById('flowPlayBtn');
+    var playing = false;
+
+    function playFlow() {
+      if (playing) return;
+      playing = true;
+      steps.forEach(function(s) { s.classList.remove('active'); });
+      steps.forEach(function(step, i) {
+        setTimeout(function() {
+          step.classList.add('active');
+          if (i === steps.length - 1) {
+            setTimeout(function() { playing = false; }, 500);
+          }
+        }, i * 700);
+      });
+    }
+
+    if (btn) btn.addEventListener('click', function() {
+      steps.forEach(function(s) { s.classList.remove('active'); });
+      playing = false;
+      setTimeout(playFlow, 100);
+    });
+
+    // Auto-play on scroll
+    var autoPlayed = false;
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting && !autoPlayed) {
+          autoPlayed = true;
+          playFlow();
+        }
+      });
+    }, { threshold: 0.3 });
+    var container = document.getElementById('messageFlow');
+    if (container) observer.observe(container);
+  }
+
+  // ── QUIZZES ──
+  function initQuizzes() {
+    document.querySelectorAll('.quiz').forEach(function(quiz) {
+      var answered = false;
+      var options = quiz.querySelectorAll('.quiz-option');
+      var feedbackEl = quiz.querySelector('.quiz-feedback');
+
+      options.forEach(function(opt) {
+        opt.addEventListener('click', function() {
+          if (answered) return;
+          answered = true;
+
+          var isCorrect = this.dataset.correct === 'true';
+          var feedback = this.dataset.feedback;
+
+          options.forEach(function(o) {
+            o.classList.add('disabled');
+            if (o.dataset.correct === 'true') o.classList.add('correct');
+          });
+          if (!isCorrect) this.classList.add('wrong');
+
+          feedbackEl.textContent = feedback;
+          feedbackEl.className = 'quiz-feedback ' + (isCorrect ? 'correct' : 'wrong');
+          feedbackEl.style.display = 'block';
+        });
+      });
+    });
+  }
+
+  // ── CODE↔ENGLISH HOVER SYNC ──
+  function initTranslateHover() {
+    document.querySelectorAll('.translate-container').forEach(function(container) {
+      var codeLines = container.querySelectorAll('.translate-code .translate-line');
+      var englishLines = container.querySelectorAll('.translate-english .translate-line');
+
+      function highlight(lineNum) {
+        codeLines.forEach(function(cl) {
+          cl.style.background = cl.dataset.line === lineNum ? 'rgba(192,57,43,0.12)' : '';
+        });
+        englishLines.forEach(function(el) {
+          el.style.background = el.dataset.line === lineNum ? 'rgba(192,57,43,0.06)' : '';
+          el.style.borderLeftColor = el.dataset.line === lineNum ? 'var(--accent)' : '';
+        });
+      }
+
+      function clearHighlight() {
+        codeLines.forEach(function(cl) { cl.style.background = ''; });
+        englishLines.forEach(function(el) { el.style.background = ''; el.style.borderLeftColor = ''; });
+      }
+
+      [codeLines, englishLines].forEach(function(lines) {
+        lines.forEach(function(line) {
+          line.addEventListener('mouseenter', function() { highlight(this.dataset.line); });
+          line.addEventListener('mouseleave', clearHighlight);
+        });
+      });
+    });
+  }
+
+  // ── INIT ──
+  document.addEventListener('DOMContentLoaded', function() {
+    initTooltips();
+    initNav();
+    initDataflow();
+    initGroupChat();
+    initMessageFlow();
+    initQuizzes();
+    initTranslateHover();
+  });
+})();
+</script>
+</body>
+</html>

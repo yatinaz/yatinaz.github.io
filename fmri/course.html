@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>fMRI Biomarker Detection — Interactive Course</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg-1:#FAF7F2;--bg-2:#EDE8DF;--bg-dark:#1E1E2E;
+  --accent:#D94F3D;--accent-soft:#F5E6E3;--accent2:#4B9BE8;
+  --text:#1A1714;--text-muted:#6B6560;--border:#DDD5C8;
+  --white:#FFFFFF;
+  --kw:#CBA6F7;--fn:#89B4FA;--str:#A6E3A1;
+  --num:#FAB387;--cm:#6C7086;--var:#CDD6F4;--op:#89DCEB;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-snap-type:y proximity;scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg-1);overflow-x:hidden;}
+h1,h2,h3,h4{font-family:'Bricolage Grotesque',sans-serif;}
+code,pre{font-family:'JetBrains Mono',monospace;}
+
+/* SCROLL SECTIONS */
+.module{min-height:100dvh;min-height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;justify-content:center;position:relative;padding:60px 20px;}
+.module:nth-child(odd){background:var(--bg-1);}
+.module:nth-child(even){background:var(--bg-2);}
+.module-inner{max-width:900px;margin:0 auto;width:100%;}
+
+/* NAV */
+#nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;}
+.nav-brand{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:15px;color:var(--accent);}
+.nav-progress{display:flex;gap:8px;align-items:center;}
+.nav-dot{width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:background .3s,transform .3s;}
+.nav-dot.active{background:var(--accent);transform:scale(1.35);}
+.nav-dot.done{background:var(--accent2);}
+.nav-label{font-size:12px;color:var(--text-muted);margin-left:8px;}
+
+/* HERO */
+.hero-tag{display:inline-block;background:var(--accent-soft);color:var(--accent);font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;letter-spacing:.04em;text-transform:uppercase;margin-bottom:18px;}
+.hero-title{font-size:clamp(38px,6vw,72px);font-weight:800;line-height:1.1;margin-bottom:20px;}
+.hero-sub{font-size:18px;color:var(--text-muted);max-width:560px;line-height:1.65;margin-bottom:32px;}
+.hero-cta{display:inline-block;background:var(--accent);color:#fff;padding:14px 28px;border-radius:10px;font-weight:600;font-size:15px;cursor:pointer;transition:transform .2s,box-shadow .2s;border:none;}
+.hero-cta:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(217,79,61,.35);}
+.stat-row{display:flex;gap:32px;margin-top:40px;flex-wrap:wrap;}
+.stat{border-left:3px solid var(--accent);padding-left:16px;}
+.stat-num{font-family:'Bricolage Grotesque',sans-serif;font-size:32px;font-weight:800;color:var(--accent);}
+.stat-label{font-size:13px;color:var(--text-muted);}
+
+/* MODULE HEADERS */
+.mod-num{font-size:12px;font-weight:600;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;}
+.mod-title{font-size:clamp(28px,4vw,48px);font-weight:800;line-height:1.15;margin-bottom:14px;}
+.mod-sub{font-size:16px;color:var(--text-muted);line-height:1.65;max-width:600px;margin-bottom:36px;}
+
+/* CARDS */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:24px 0;}
+.card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:22px;transition:transform .2s,box-shadow .2s;}
+.card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.08);}
+.card-icon{font-size:28px;margin-bottom:10px;}
+.card-title{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;margin-bottom:6px;}
+.card-desc{font-size:13px;color:var(--text-muted);line-height:1.6;}
+
+/* CALLOUTS */
+.callout{border-radius:12px;padding:18px 22px;margin:24px 0;border-left:4px solid;}
+.callout-aha{background:#FFF9F0;border-color:#F5A623;}
+.callout-warn{background:#FFF0EE;border-color:var(--accent);}
+.callout-info{background:#F0F4FF;border-color:var(--accent2);}
+.callout-win{background:#F0FFF7;border-color:#34C786;}
+.callout-title{font-weight:700;font-size:14px;margin-bottom:4px;}
+.callout-aha .callout-title{color:#B8770D;}
+.callout-warn .callout-title{color:var(--accent);}
+.callout-info .callout-title{color:var(--accent2);}
+.callout-win .callout-title{color:#1E9E5E;}
+.callout p{font-size:14px;line-height:1.65;color:var(--text-muted);margin-top:4px;}
+
+/* CODE TRANSLATION */
+.translation{display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:14px;overflow:hidden;border:1px solid var(--border);margin:24px 0;}
+@media(max-width:640px){.translation{grid-template-columns:1fr;}}
+.trans-code{background:var(--bg-dark);padding:24px;overflow-x:auto;}
+.trans-code pre{font-size:12.5px;line-height:1.8;white-space:pre-wrap;word-break:break-word;}
+.trans-english{background:var(--white);padding:24px;}
+.trans-english-title{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;}
+.trans-line{display:flex;gap:10px;margin-bottom:12px;align-items:flex-start;}
+.trans-num{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--border);min-width:18px;padding-top:2px;}
+.trans-explain{font-size:13px;line-height:1.65;color:var(--text-muted);}
+.trans-explain strong{color:var(--text);}
+
+/* GROUP CHAT */
+.chat{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:20px;margin:24px 0;max-height:420px;overflow-y:auto;}
+.chat-title{font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px;}
+.chat-msg{display:flex;gap:10px;margin-bottom:14px;opacity:0;transform:translateY(10px);transition:opacity .4s,transform .4s;}
+.chat-msg.show{opacity:1;transform:translateY(0);}
+.chat-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;font-weight:600;}
+.chat-bubble{background:var(--bg-2);border-radius:14px 14px 14px 4px;padding:10px 14px;max-width:340px;}
+.chat-bubble.right{background:var(--accent-soft);border-radius:14px 14px 4px 14px;margin-left:auto;}
+.chat-sender{font-size:11px;font-weight:600;color:var(--accent);margin-bottom:3px;}
+.chat-text{font-size:13px;line-height:1.6;color:var(--text);}
+.chat-row-right{flex-direction:row-reverse;}
+.chat-play{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:14px;transition:opacity .2s;}
+.chat-play:hover{opacity:.85;}
+
+/* DATA FLOW */
+.flow{margin:24px 0;}
+.flow-steps{display:flex;flex-direction:column;gap:4px;}
+.flow-step{display:flex;align-items:flex-start;gap:16px;padding:12px 0;opacity:.4;transition:opacity .4s;}
+.flow-step.lit{opacity:1;}
+.flow-num{width:38px;height:38px;border-radius:50%;background:var(--accent-soft);border:2px solid var(--accent);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;}
+.flow-body{flex:1;}
+.flow-title{font-weight:600;font-size:15px;margin-bottom:2px;}
+.flow-desc{font-size:13px;color:var(--text-muted);line-height:1.6;}
+.flow-arrow{text-align:left;color:var(--border);font-size:20px;margin:2px 0 2px 18px;}
+.flow-btn{background:var(--bg-dark);color:var(--white);border:none;border-radius:8px;padding:8px 18px;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:16px;transition:opacity .2s;}
+.flow-btn:hover{opacity:.85;}
+
+/* QUIZ */
+.quiz{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:24px;margin:28px 0;}
+.quiz-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);margin-bottom:10px;}
+.quiz-q{font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:700;line-height:1.35;margin-bottom:18px;}
+.quiz-opts{display:flex;flex-direction:column;gap:10px;}
+.quiz-opt{padding:13px 18px;border-radius:10px;border:2px solid var(--border);cursor:pointer;font-size:14px;transition:border-color .2s,background .2s;line-height:1.5;}
+.quiz-opt:hover{border-color:var(--accent);background:var(--accent-soft);}
+.quiz-opt.correct{border-color:#34C786;background:#F0FFF7;color:#1A5C3A;}
+.quiz-opt.wrong{border-color:var(--accent);background:var(--accent-soft);color:#8B1A0C;}
+.quiz-feedback{margin-top:16px;padding:14px 18px;border-radius:10px;font-size:14px;line-height:1.65;display:none;}
+.quiz-feedback.show{display:block;}
+.quiz-feedback.correct{background:#F0FFF7;color:#1A5C3A;}
+.quiz-feedback.wrong{background:var(--accent-soft);color:#8B1A0C;}
+
+/* AUC JOURNEY */
+.auc-timeline{display:flex;flex-direction:column;gap:8px;margin:24px 0;}
+.auc-row{display:flex;align-items:center;gap:12px;}
+.auc-version{font-size:12px;font-weight:600;min-width:80px;color:var(--text-muted);}
+.auc-bar-wrap{flex:1;height:28px;background:var(--bg-2);border-radius:6px;overflow:hidden;}
+.auc-bar{height:100%;border-radius:6px;display:flex;align-items:center;padding:0 10px;font-size:12px;font-weight:700;color:#fff;transition:width 1.2s cubic-bezier(.22,1,.36,1);}
+.auc-val{font-size:13px;font-weight:700;min-width:48px;text-align:right;}
+
+/* ARCHITECTURE DIAGRAM */
+.arch{display:flex;flex-direction:column;align-items:center;gap:8px;margin:28px 0;}
+.arch-box{background:var(--white);border:2px solid var(--border);border-radius:12px;padding:14px 28px;font-weight:600;font-size:14px;text-align:center;min-width:200px;}
+.arch-box.accent{border-color:var(--accent);background:var(--accent-soft);}
+.arch-box.blue{border-color:var(--accent2);background:#F0F4FF;}
+.arch-arrow{font-size:22px;color:var(--text-muted);}
+.arch-row{display:flex;gap:16px;justify-content:center;align-items:center;}
+
+/* TOOLTIPS */
+.tt{border-bottom:1px dashed var(--accent);cursor:pointer;color:inherit;}
+.tooltip-popup{position:fixed;z-index:9999;background:var(--bg-dark);color:var(--var);padding:10px 14px;border-radius:10px;font-size:13px;line-height:1.6;max-width:280px;pointer-events:none;opacity:0;transition:opacity .2s;box-shadow:0 8px 24px rgba(0,0,0,.25);}
+.tooltip-popup.show{opacity:1;}
+.tooltip-popup strong{color:var(--op);}
+
+/* HIGHLIGHT */
+.hl-kw{color:var(--kw);}
+.hl-fn{color:var(--fn);}
+.hl-str{color:var(--str);}
+.hl-num{color:var(--num);}
+.hl-cm{color:var(--cm);font-style:italic;}
+.hl-var{color:var(--var);}
+.hl-op{color:var(--op);}
+.hl-cls{color:#F38BA8;}
+
+/* DIVIDER */
+.divider{width:48px;height:4px;background:var(--accent);border-radius:2px;margin:32px 0;}
+
+/* BADGE */
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;margin:2px;}
+.badge-red{background:var(--accent-soft);color:var(--accent);}
+.badge-blue{background:#F0F4FF;color:var(--accent2);}
+.badge-green{background:#F0FFF7;color:#1E9E5E;}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:14px;margin:16px 0;}
+th{background:var(--bg-2);padding:10px 14px;text-align:left;font-weight:600;font-size:12px;text-transform:uppercase;color:var(--text-muted);letter-spacing:.04em;}
+td{padding:10px 14px;border-bottom:1px solid var(--border);}
+tr:last-child td{border-bottom:none;}
+
+/* SCROLL PROGRESS */
+#scroll-progress{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:200;transition:width .1s;}
+
+/* COMPLETE */
+.complete-wrap{text-align:center;padding:40px 20px;}
+.complete-icon{font-size:64px;margin-bottom:16px;}
+.complete-title{font-family:'Bricolage Grotesque',sans-serif;font-size:40px;font-weight:800;margin-bottom:12px;}
+.complete-sub{font-size:18px;color:var(--text-muted);line-height:1.65;max-width:480px;margin:0 auto;}
+
+/* MOBILE */
+@media(max-width:640px){
+  .module{padding:80px 16px 48px;}
+  .hero-title{font-size:36px;}
+  .stat-row{gap:20px;}
+  .translation{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div id="scroll-progress"></div>
+
+<nav id="nav" aria-label="Course navigation">
+  <div class="nav-brand">fMRI Biomarker</div>
+  <div class="nav-progress" id="navDots" aria-label="Module progress"></div>
+  <div class="nav-label" id="navLabel">Module 1 of 7</div>
+</nav>
+
+<div id="tooltip-el" class="tooltip-popup" role="tooltip" aria-live="polite"></div>
+
+<!-- ══════════════════ MODULE 1: THE USER JOURNEY ══════════════════ -->
+<section class="module" id="mod-0" aria-labelledby="m0-title">
+<div class="module-inner">
+  <div class="hero-tag">Module 1 — What This App Does</div>
+  <h1 class="hero-title" id="m0-title">You upload a brain scan.<br/>Here's what happens.</h1>
+  <p class="hero-sub">An AI system that reads a patient's <span class="tt" data-tip="<strong>fMRI</strong> = Functional MRI. A brain scanner that watches which parts of your brain are active by measuring blood flow. Like a heatmap for your thoughts.">fMRI</span> scan and says: <em>"This looks like schizophrenia — and here's the brain circuitry evidence."</em></p>
+  <button class="hero-cta" onclick="startFlow('main-flow')">▶ Watch the data journey</button>
+
+  <div class="stat-row">
+    <div class="stat"><div class="stat-num">0.718</div><div class="stat-label">AUC — Schizophrenia</div></div>
+    <div class="stat"><div class="stat-num">326</div><div class="stat-label">Training subjects</div></div>
+    <div class="stat"><div class="stat-num">6,670</div><div class="stat-label">Brain connections measured</div></div>
+    <div class="stat"><div class="stat-num">15</div><div class="stat-label">Literature features used</div></div>
+  </div>
+</div>
+</section>
+
+<!-- MODULE 1b: DATA FLOW -->
+<section class="module" id="mod-0b" aria-labelledby="m0b-title">
+<div class="module-inner">
+  <div class="mod-num">Module 1</div>
+  <h2 class="mod-title" id="m0b-title">The Journey of One Brain Scan</h2>
+  <p class="mod-sub">Six steps from raw file to clinical report. Each step transforms the data into something more useful.</p>
+
+  <div class="flow">
+    <button class="flow-btn" onclick="animateFlow('main-flow')">▶ Animate step by step</button>
+    <div class="flow-steps" id="main-flow">
+      <div class="flow-step" data-step="0">
+        <div class="flow-num">1</div>
+        <div class="flow-body"><div class="flow-title">Upload → <span class="tt" data-tip="<strong>NIfTI</strong> = Neuroimaging Informatics Technology Initiative. The standard file format for brain scans. Like a ZIP file specifically designed for 3D (and 4D) brain images.">NIfTI</span> file received</div><div class="flow-desc">Clinician drags a <code>.nii.gz</code> file into the browser. The <span class="tt" data-tip="<strong>API</strong> = Application Programming Interface. The backend 'front door' — it receives requests from the browser and returns responses.">API</span> validates it's brain data, not a photo.</div></div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step" data-step="1">
+        <div class="flow-num">2</div>
+        <div class="flow-body"><div class="flow-title">Preprocess → Extract 116 brain region signals</div><div class="flow-desc">The scan is sliced into 116 anatomical brain regions using the <span class="tt" data-tip="<strong>AAL Atlas</strong> = Automated Anatomical Labeling. A 3D map of 116 named brain regions, like a postal code system for the brain.">AAL atlas</span>. Each region's activity over time becomes a <span class="tt" data-tip="<strong>Timeseries</strong> = A list of measurements over time. Like a heart rate monitor graph — but for each of 116 brain regions.">timeseries</span>.">
+        </div></div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step" data-step="2">
+        <div class="flow-num">3</div>
+        <div class="flow-body"><div class="flow-title">Feature extraction → 6,670-dim vector</div><div class="flow-desc">How in sync are each pair of brain regions? Compute <span class="tt" data-tip="<strong>Pearson Correlation</strong> = A number between -1 and +1 measuring how in sync two signals are. +1 means they move together perfectly; 0 means no relationship.">Pearson correlation</span> for every pair of 116 regions: 6,670 unique connections.</div></div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step" data-step="3">
+        <div class="flow-num">4</div>
+        <div class="flow-body"><div class="flow-title">Feature selection → 15 connections</div><div class="flow-desc">Keep only the 15 brain circuit pairs that neuroscience literature says are disrupted in schizophrenia. Discard the rest — less is more.</div></div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step" data-step="4">
+        <div class="flow-num">5</div>
+        <div class="flow-body"><div class="flow-title">Model prediction → probability score</div><div class="flow-desc">A <span class="tt" data-tip="<strong>Soft Ensemble</strong> = Multiple models vote, and their probabilities are averaged. Like asking 3 doctors for opinions and averaging their confidence levels.">soft ensemble</span> of 3 models (LR + SVM + LGBM) votes. Returns a probability: e.g., 78% schizophrenia.</div></div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step" data-step="5">
+        <div class="flow-num">6</div>
+        <div class="flow-body"><div class="flow-title">Explain → clinical report with brain circuit evidence</div><div class="flow-desc"><span class="tt" data-tip="<strong>SHAP</strong> = SHapley Additive exPlanations. A method that tells you how much each input feature contributed to a model's decision. Like a receipt itemizing why the model charged what it charged.">SHAP values</span> + literature pattern matching → "3 known dysconnectivity circuits detected: frontotemporal, thalamocortical, DMN."</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════ MODULE 2: MEET THE CAST ══════════════════ -->
+<section class="module" id="mod-1" aria-labelledby="m1-title">
+<div class="module-inner">
+  <div class="mod-num">Module 2</div>
+  <h2 class="mod-title" id="m1-title">Meet the Cast</h2>
+  <p class="mod-sub">Five main actors. Each has one job. Think of a hospital: receptionist, lab tech, radiologist, interpreter, report writer — each specialized.</p>
+
+  <div class="cards">
+    <div class="card"><div class="card-icon">🏥</div><div class="card-title">API Server <code style="font-size:11px">(app.py)</code></div><div class="card-desc">The receptionist. Receives uploads, creates job tickets, sends back results. Knows nothing about brains — just traffic control.</div></div>
+    <div class="card"><div class="card-icon">🔬</div><div class="card-title">AAL Preprocessor <code style="font-size:11px">(aal_preprocessor.py)</code></div><div class="card-desc">The lab tech. Takes the raw scan, chops it into 116 brain regions, filters noise, computes correlations. Returns 6,670 numbers.</div></div>
+    <div class="card"><div class="card-icon">🧠</div><div class="card-title">FC-MLP Model <code style="font-size:11px">(fc_mlp.py)</code></div><div class="card-desc">The radiologist. Looks at the 15 key brain connections and gives a probability score. Two backends: <span class="tt" data-tip="<strong>PyTorch</strong> = A library for building neural networks. Like LEGO for AI models.">PyTorch</span> neural net or <span class="tt" data-tip="<strong>sklearn</strong> = Scikit-learn. A library of classical ML algorithms: logistic regression, SVM, etc.">sklearn</span> classifier.</div></div>
+    <div class="card"><div class="card-icon">📚</div><div class="card-title">Explainer <code style="font-size:11px">(schizophrenia_explainer.py)</code></div><div class="card-desc">The interpreter. Matches model output against known brain circuit patterns from published research. "Your model used these circuits — they're in the literature."</div></div>
+    <div class="card"><div class="card-icon">🗂️</div><div class="card-title">Task Registry <code style="font-size:11px">(task_registry.py)</code></div><div class="card-desc">The hospital directory. Knows which combination of preprocessor + model + explainer to use for each disease. Add a new disease by adding one entry.</div></div>
+  </div>
+
+  <div class="callout callout-aha">
+    <div class="callout-title">💡 Aha! The "plug-and-play" architecture</div>
+    <p>Want to add Parkinson's? Create a new explainer, train a new model, and add one line to the task registry. The API server doesn't change. This is called <span class="tt" data-tip="<strong>Open/Closed Principle</strong> = Software should be open to extension (add new things) but closed to modification (don't change existing code). Like adding a new train line without rebuilding the whole station.">open/closed principle</span>.</p>
+  </div>
+
+  <div class="translation">
+    <div class="trans-code">
+      <pre><span class="hl-cm"># Lazy-load any task's components</span>
+<span class="hl-kw">def</span> <span class="hl-fn">get_task_components</span>(task_name: str):
+    <span class="hl-kw">if</span> task_name <span class="hl-kw">in</span> _task_components:
+        <span class="hl-kw">return</span> _task_components[task_name]
+
+    config = get_task_config(task_name)
+    module = importlib.import_module(
+        config[<span class="hl-str">'preprocessor_module'</span>]
+    )
+    Class = getattr(module,
+        config[<span class="hl-str">'preprocessor_class'</span>]
+    )
+    components[<span class="hl-str">'preprocessor'</span>] = Class()
+    _task_components[task_name] = components
+    <span class="hl-kw">return</span> components</pre>
+    </div>
+    <div class="trans-english">
+      <div class="trans-english-title">Plain English</div>
+      <div class="trans-line"><div class="trans-num">1</div><div class="trans-explain"><strong>Check the cache first</strong> — if we've loaded this task before, return instantly. No re-loading models every request.</div></div>
+      <div class="trans-line"><div class="trans-num">2</div><div class="trans-explain"><strong>Look up the config</strong> — which preprocessor, model, explainer does "schizophrenia_fmri" need?</div></div>
+      <div class="trans-line"><div class="trans-num">3</div><div class="trans-explain"><strong>Dynamically import</strong> — instead of hardcoding imports, load the right class by name. Lets us add new tasks without touching this function.</div></div>
+      <div class="trans-line"><div class="trans-num">4</div><div class="trans-explain"><strong>Instantiate and cache</strong> — create the preprocessor object and save it for next time.</div></div>
+    </div>
+  </div>
+
+  <div class="quiz" id="q1">
+    <div class="quiz-label">Quick Check</div>
+    <div class="quiz-q">A user reports the Parkinson's model loads fine but gives wrong results after you updated the model file. Which actor would you look at first?</div>
+    <div class="quiz-opts">
+      <div class="quiz-opt" onclick="quiz(this,'q1',false)">The API Server — it's routing requests incorrectly</div>
+      <div class="quiz-opt" onclick="quiz(this,'q1',true)">The Task Registry — the config might still point to the old model path, or the cached components weren't cleared</div>
+      <div class="quiz-opt" onclick="quiz(this,'q1',false)">The Explainer — it's generating wrong patterns</div>
+      <div class="quiz-opt" onclick="quiz(this,'q1',false)">The Preprocessor — it's returning different features</div>
+    </div>
+    <div class="quiz-feedback" id="q1-fb">
+      ✓ Exactly right. The <code>/api/reload/{task}</code> endpoint exists precisely for this: it clears the cache and reloads the task's components. If a model file is updated but the server is still running, the cached old model will be used until you reload. The Task Registry config might also have a stale model path.
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════ MODULE 3: READING THE BRAIN ══════════════════ -->
+<section class="module" id="mod-2" aria-labelledby="m2-title">
+<div class="module-inner">
+  <div class="mod-num">Module 3</div>
+  <h2 class="mod-title" id="m2-title">Reading the Brain</h2>
+  <p class="mod-sub">How raw MRI data — essentially millions of magnetic measurements — becomes 15 meaningful brain connectivity numbers.</p>
+
+  <div class="callout callout-aha">
+    <div class="callout-title">💡 The Vinyl Record Metaphor</div>
+    <p>Imagine the brain is a city with 116 neighborhoods. Each neighborhood has a radio station (brain region) broadcasting a signal over time. We measure how in sync two stations are — do they play the same songs at the same time? That synchrony is <strong>functional connectivity</strong>. In schizophrenia, certain stations stop syncing.</p>
+  </div>
+
+  <div class="cards">
+    <div class="card"><div class="card-icon">📐</div><div class="card-title">Step 1: Resample</div><div class="card-desc">The scan is resampled to 4mm isotropic — a standard grid size that matches the atlas. Like resizing a photo to standard dimensions before cropping.</div></div>
+    <div class="card"><div class="card-icon">🗺️</div><div class="card-title">Step 2: Atlas Masking</div><div class="card-desc">Apply 116 brain region masks from the AAL atlas. Average all voxels inside each mask → 116 timeseries signals, one per brain region.</div></div>
+    <div class="card"><div class="card-icon">🎛️</div><div class="card-title">Step 3: Filter Noise</div><div class="card-desc">Bandpass filter: keep only 0.01–0.1 Hz. Removes slow scanner drift (below 0.01 Hz) and fast heartbeat/breathing artifacts (above 0.1 Hz).</div></div>
+    <div class="card"><div class="card-icon">📊</div><div class="card-title">Step 4: Correlate</div><div class="card-desc">Compute Pearson correlation for every pair: 116×115÷2 = 6,670 unique pairs. This is the functional connectivity matrix.</div></div>
+  </div>
+
+  <div class="translation">
+    <div class="trans-code">
+      <pre><span class="hl-kw">def</span> <span class="hl-fn">compute_fc_matrix</span>(roi_timeseries):
+    n_rois = roi_timeseries.shape[<span class="hl-num">1</span>]  <span class="hl-cm"># 116</span>
+    fc = np.zeros((n_rois, n_rois))
+
+    <span class="hl-kw">for</span> i <span class="hl-kw">in</span> range(n_rois):
+      <span class="hl-kw">for</span> j <span class="hl-kw">in</span> range(i, n_rois):
+        <span class="hl-kw">if</span> i == j:
+          fc[i, j] = <span class="hl-num">1.0</span>
+        <span class="hl-kw">else</span>:
+          corr, _ = pearsonr(
+            roi_timeseries[:, i],
+            roi_timeseries[:, j])
+          fc[i, j] = corr
+          fc[j, i] = corr
+
+    triu = np.triu_indices(n_rois, k=<span class="hl-num">1</span>)
+    <span class="hl-kw">return</span> fc[triu]  <span class="hl-cm"># shape: (6670,)</span></pre>
+    </div>
+    <div class="trans-english">
+      <div class="trans-english-title">Plain English</div>
+      <div class="trans-line"><div class="trans-num">1</div><div class="trans-explain"><strong>For each pair of brain regions</strong> — 116×116 is the full grid, but we only need the upper triangle (pairs, not duplicates).</div></div>
+      <div class="trans-line"><div class="trans-num">2</div><div class="trans-explain"><strong>A region perfectly correlates with itself</strong> — diagonal is always 1.0. We skip it.</div></div>
+      <div class="trans-line"><div class="trans-num">3</div><div class="trans-explain"><strong>Pearson correlation</strong> — measures synchrony between two region timeseries. Output: -1 (opposite) to +1 (perfectly in sync).</div></div>
+      <div class="trans-line"><div class="trans-num">4</div><div class="trans-explain"><strong>Mirror to lower triangle</strong> — correlation(A,B) = correlation(B,A), so fill both sides.</div></div>
+      <div class="trans-line"><div class="trans-num">5</div><div class="trans-explain"><strong>Extract upper triangle only</strong> — flattens the 116×116 matrix to 6,670 unique values. This is the feature vector.</div></div>
+    </div>
+  </div>
+
+  <div class="callout callout-warn">
+    <div class="callout-title">🚨 The Preprocessing Rejection Guard</div>
+    <p>The code checks if uploaded data is <em>already preprocessed</em> (2mm voxels → MNI space, mean-centered, z-scored) and <strong>rejects it</strong>. Why? Because the model was trained on raw data that went through this exact pipeline. Double-preprocessing would corrupt all the correlation values.</p>
+  </div>
+
+  <div class="quiz" id="q2">
+    <div class="quiz-label">Scenario</div>
+    <div class="quiz-q">A researcher tells you they already ran FSL preprocessing on their scans (motion correction, smoothing, MNI registration). They want to upload directly. What do you tell them?</div>
+    <div class="quiz-opts">
+      <div class="quiz-opt" onclick="quiz(this,'q2',false)">Sure, it'll be faster since preprocessing is already done</div>
+      <div class="quiz-opt" onclick="quiz(this,'q2',true)">Don't — the system will reject it, and even if it didn't, the FC features would be meaningless because they weren't computed through this pipeline's specific settings</div>
+      <div class="quiz-opt" onclick="quiz(this,'q2',false)">Only reject if they used FSL; SPM-preprocessed data is fine</div>
+      <div class="quiz-opt" onclick="quiz(this,'q2',false)">It depends on whether they used bandpass filtering</div>
+    </div>
+    <div class="quiz-feedback" id="q2-fb">
+      ✓ Correct! The system's <code>PreprocessingDetector</code> checks for MNI-space indicators and rejects them. Beyond the technical rejection: the model learned patterns from FC computed using <em>this specific pipeline</em> (4mm resampling, 0.01–0.1 Hz filter, AAL masker). Different preprocessing = different FC values = model comparisons are invalid.
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════ MODULE 4: TEACHING THE MACHINE ══════════════════ -->
+<section class="module" id="mod-3" aria-labelledby="m3-title">
+<div class="module-inner">
+  <div class="mod-num">Module 4</div>
+  <h2 class="mod-title" id="m3-title">Teaching the Machine</h2>
+  <p class="mod-sub">The full model development story — from a broken baseline to the 0.718 AUC ensemble. Every wrong turn included.</p>
+
+  <h3 style="font-size:20px;margin-bottom:16px;">The AUC Journey</h3>
+  <div class="auc-timeline" id="aucTimeline">
+    <div class="auc-row"><div class="auc-version">v2.0</div><div class="auc-bar-wrap"><div class="auc-bar" style="width:0%;background:#B0B0B0" data-w="40%">0.571</div></div><div class="auc-val">0.571</div></div>
+    <div class="auc-row"><div class="auc-version">v2.1 SVM</div><div class="auc-bar-wrap"><div class="auc-bar" style="width:0%;background:#D94F3D" data-w="28%">0.471</div></div><div class="auc-val">0.471 ↓</div></div>
+    <div class="auc-row"><div class="auc-version">v2.2 Lit.</div><div class="auc-bar-wrap"><div class="auc-bar" style="width:0%;background:#F5A623" data-w="57%">0.614</div></div><div class="auc-val">0.614 ↑</div></div>
+    <div class="auc-row"><div class="auc-version">v5-mixed</div><div class="auc-bar-wrap"><div class="auc-bar" style="width:0%;background:#D94F3D" data-w="36%">0.524</div></div><div class="auc-val">0.524 ↓</div></div>
+    <div class="auc-row"><div class="auc-version">v5-REST</div><div class="auc-bar-wrap"><div class="auc-bar" style="width:0%;background:#4B9BE8" data-w="72%">0.693</div></div><div class="auc-val">0.693 ↑</div></div>
+    <div class="auc-row"><div class="auc-version">v6 GNN</div><div class="auc-bar-wrap"><div class="auc-bar" style="width:0%;background:#6C7086" data-w="62%">0.655</div></div><div class="auc-val">0.655</div></div>
+    <div class="auc-row"><div class="auc-version">Ensemble ✓</div><div class="auc-bar-wrap"><div class="auc-bar" style="width:0%;background:#34C786" data-w="88%">0.718</div></div><div class="auc-val">0.718 ✓</div></div>
+  </div>
+  <button class="flow-btn" onclick="animateAUC()" style="margin-top:8px">▶ Animate journey</button>
+
+  <div class="callout callout-warn">
+    <div class="callout-title">🚨 The Bug That Caused v2.1 to Fail</div>
+    <p>Switching from Logistic Regression to SVM <em>decreased</em> AUC from 0.571 to 0.471. Why? With only 71 subjects and 2,110 features, SVM's <span class="tt" data-tip="<strong>RBF kernel</strong> = Radial Basis Function. A way SVMs measure similarity between data points in high-dimensional space. Powerful but needs lots of data to tune correctly.">RBF kernel</span> overfit badly. The lesson: more powerful model ≠ better results when data is scarce.</p>
+  </div>
+
+  <div class="callout callout-aha">
+    <div class="callout-title">💡 The Key Insight: Literature Beats Data</div>
+    <p>Going from 2,110 <span class="tt" data-tip="<strong>LASSO</strong> = Least Absolute Shrinkage and Selection Operator. A statistical method that automatically selects important features by shrinking less useful ones to zero.">LASSO</span>-selected features to 15 literature-curated pairs improved AUC from 0.571 → 0.614. With only 71 subjects, the model couldn't reliably learn which of 2,110 features mattered. Neuroscience literature already knew which 15 circuits to look at.</p>
+  </div>
+
+  <div class="translation">
+    <div class="trans-code">
+      <pre><span class="hl-cm"># FCMLPInference.predict() — handles both backends</span>
+<span class="hl-kw">if</span> self.feature_mask <span class="hl-kw">is not None</span>:
+    fc = fc[:, self.feature_mask]    <span class="hl-cm"># 6670→15</span>
+
+<span class="hl-kw">if</span> self.model_backend == <span class="hl-str">'sklearn'</span>:
+    <span class="hl-kw">if</span> self.scaler <span class="hl-kw">is not None</span>:
+        fc = self.scaler.transform(fc)
+    probs = self.sklearn_model\
+        .predict_proba(fc)[<span class="hl-num">0</span>]
+<span class="hl-kw">else</span>:  <span class="hl-cm"># pytorch</span>
+    tensor = torch.FloatTensor(fc)
+    <span class="hl-kw">with</span> torch.no_grad():
+        logits = self.model(tensor)
+        probs = F.softmax(logits)[<span class="hl-num">0</span>]
+
+pred = int(np.argmax(probs))
+<span class="hl-kw">return</span> {
+    <span class="hl-str">'predicted_label'</span>: names[pred],
+    <span class="hl-str">'confidence'</span>: float(probs[pred])
+}</pre>
+    </div>
+    <div class="trans-english">
+      <div class="trans-english-title">Plain English</div>
+      <div class="trans-line"><div class="trans-num">1</div><div class="trans-explain"><strong>Apply the feature mask</strong> — discard 6,655 irrelevant brain connections, keep the 15 literature-selected ones.</div></div>
+      <div class="trans-line"><div class="trans-num">2</div><div class="trans-explain"><strong>Two paths, same output</strong> — the code checks which model type was saved (sklearn or PyTorch) and runs the right inference path.</div></div>
+      <div class="trans-line"><div class="trans-num">3</div><div class="trans-explain"><strong>StandardScaler</strong> — normalizes the 15 features so their different ranges don't confuse the model.</div></div>
+      <div class="trans-line"><div class="trans-num">4</div><div class="trans-explain"><strong>predict_proba</strong> — returns a probability for each class (e.g., [0.22 healthy, 0.78 schizophrenia]).</div></div>
+      <div class="trans-line"><div class="trans-num">5</div><div class="trans-explain"><strong>Same output format</strong> — both backends return identical dict structure. The API doesn't know or care which backend ran.</div></div>
+    </div>
+  </div>
+
+  <div class="quiz" id="q3">
+    <div class="quiz-label">Scenario</div>
+    <div class="quiz-q">You want to add a new model trained on 1,200 subjects using a deep transformer architecture. The current system uses 15 literature features. Your new model learned its own features. How do you integrate it without breaking existing tasks?</div>
+    <div class="quiz-opts">
+      <div class="quiz-opt" onclick="quiz(this,'q3',false)">Replace the FCMLP class with your transformer class</div>
+      <div class="quiz-opt" onclick="quiz(this,'q3',true)">Save your transformer as a new checkpoint with <code>model_backend: 'pytorch'</code> and no feature_mask (your model handles its own features), then register it as a new task</div>
+      <div class="quiz-opt" onclick="quiz(this,'q3',false)">You can't — the system only supports 15-feature models</div>
+      <div class="quiz-opt" onclick="quiz(this,'q3',false)">Update the feature_mask to include all 6,670 features</div>
+    </div>
+    <div class="quiz-feedback" id="q3-fb">
+      ✓ Right approach! The checkpoint format is flexible — if <code>feature_mask</code> is None, no filtering happens, and the model receives the full 6,670 features. Register it as a separate task (e.g., <code>schizophrenia_transformer</code>). The existing tasks continue working unchanged. That's the plug-and-play architecture in action.
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════ MODULE 5: THE TRUST PROBLEM ══════════════════ -->
+<section class="module" id="mod-4" aria-labelledby="m4-title">
+<div class="module-inner">
+  <div class="mod-num">Module 5</div>
+  <h2 class="mod-title" id="m4-title">The Trust Problem</h2>
+  <p class="mod-sub">Two bugs that were caught before deployment — and the statistical technique that stops scanners from cheating the model.</p>
+
+  <h3 style="font-size:20px;margin-bottom:16px;">Bug 1: The Paradigm Mismatch</h3>
+  <div class="callout callout-warn">
+    <div class="callout-title">🚨 What happened</div>
+    <p>Version v5-mixed pooled healthy controls from a task-fMRI dataset (people performing a speech task) with schizophrenia patients from resting-state scans. AUC dropped from 0.614 → 0.524. The model learned to distinguish "brain during speech" from "brain at rest" — not healthy from schizophrenic.</p>
+  </div>
+
+  <div class="cards" style="grid-template-columns:1fr 1fr;gap:16px;">
+    <div class="card" style="border-top:3px solid var(--accent)">
+      <div class="card-icon">🏃</div>
+      <div class="card-title">Task fMRI</div>
+      <div class="card-desc">Brain doing something — speech, memory, movement. FC patterns reflect the task, not the person's baseline state.</div>
+    </div>
+    <div class="card" style="border-top:3px solid #34C786">
+      <div class="card-icon">😌</div>
+      <div class="card-title">Resting-state fMRI</div>
+      <div class="card-desc">Brain at rest — no task. FC patterns reflect intrinsic brain organization. Required for psychiatric biomarkers.</div>
+    </div>
+  </div>
+
+  <h3 style="font-size:20px;margin:28px 0 16px;">Bug 2: Site Confound (Data Leakage)</h3>
+  <div class="callout callout-warn">
+    <div class="callout-title">🚨 What happened</div>
+    <p>Parkinson's controls came from one hospital (ds004302), patients from a different hospital (ds004392). Different MRI scanners have different "fingerprints" — the model learned to detect scanner make, not disease. This is called a <span class="tt" data-tip="<strong>Confound</strong> = A hidden variable that correlates with both the input and the label, making the model learn the wrong thing. Classic example: predicting wealth from shoe shine frequency — both correlate with income, neither causes the other.">confound</span> or site effect.</p>
+  </div>
+
+  <h3 style="font-size:20px;margin:28px 0 16px;">The Fix: ComBat Harmonization</h3>
+  <p style="color:var(--text-muted);font-size:15px;margin-bottom:20px;line-height:1.65;">ComBat removes scanner-specific effects. Think of it like color-correcting photos taken on different cameras so they look like they came from the same source.</p>
+
+  <div class="translation">
+    <div class="trans-code">
+      <pre><span class="hl-cm"># ComBat: fit on train, apply to both</span>
+<span class="hl-kw">for</span> fold, (tr, val) <span class="hl-kw">in</span> enumerate(cv.split(X, stratum)):
+    X_tr, X_val = X[tr], X[val]
+    s_tr, s_val = sites[tr], sites[val]
+
+    <span class="hl-cm"># CRITICAL: fit on training only</span>
+    gamma, delta = fit_combat(X_tr, s_tr)
+
+    X_tr  = apply_combat(X_tr, s_tr,
+                         gamma, delta)
+    X_val = apply_combat(X_val, s_val,
+                         gamma, delta)
+
+    model.fit(X_tr, y[tr])
+    auc = roc_auc_score(y[val],
+        model.predict_proba(X_val)[:,<span class="hl-num">1</span>])</pre>
+    </div>
+    <div class="trans-english">
+      <div class="trans-english-title">Plain English</div>
+      <div class="trans-line"><div class="trans-num">1</div><div class="trans-explain"><strong>5-fold cross-validation</strong> — split data into 5 chunks; train on 4, test on 1, rotate 5 times for an unbiased average AUC.</div></div>
+      <div class="trans-line"><div class="trans-num">2</div><div class="trans-explain"><strong>CRITICAL: fit ComBat only on training data</strong> — if you fit it on all data including the test fold, the test set influences how you transform training data = data leakage.</div></div>
+      <div class="trans-line"><div class="trans-num">3</div><div class="trans-explain"><strong>Apply to validation using train-derived params</strong> — remove scanner effects using only the statistics learned from training. No peeking at test data.</div></div>
+      <div class="trans-line"><div class="trans-num">4</div><div class="trans-explain"><strong>Train and evaluate</strong> — now the model sees scanner-removed features. AUC measures real disease detection, not scanner ID.</div></div>
+    </div>
+  </div>
+
+  <div class="callout callout-aha">
+    <div class="callout-title">💡 The Compound Stratum Trick</div>
+    <p>Standard <span class="tt" data-tip="<strong>StratifiedKFold</strong> = A cross-validation method that ensures each fold has the same class balance as the full dataset. Like shuffling a deck while keeping red and black cards evenly distributed.">StratifiedKFold</span> only balances disease labels across folds. With 2 sites, you also need site balance. The fix: create a compound label <code>stratum = label × n_sites + site_index</code>. Now each fold has subjects from both sites AND both classes.</p>
+  </div>
+
+  <div class="quiz" id="q4">
+    <div class="quiz-label">Scenario</div>
+    <div class="quiz-q">You fit ComBat normalization parameters on the entire dataset (all 326 subjects) before splitting into train/val folds. A colleague says this is fine because ComBat is "just normalization." Are they right?</div>
+    <div class="quiz-opts">
+      <div class="quiz-opt" onclick="quiz(this,'q4',false)">Yes — normalization doesn't affect model training, only scaling</div>
+      <div class="quiz-opt" onclick="quiz(this,'q4',true)">No — fitting on all data lets the validation subjects influence how training data is transformed, inflating your AUC estimate</div>
+      <div class="quiz-opt" onclick="quiz(this,'q4',false)">It depends on the number of sites</div>
+      <div class="quiz-opt" onclick="quiz(this,'q4',false)">Only a problem if sites are imbalanced</div>
+    </div>
+    <div class="quiz-feedback" id="q4-fb">
+      ✓ Correct — this is "preprocessing leakage," one of the most common subtle bugs in ML pipelines. When ComBat fits on all data, the validation set's site statistics leak into the training transformation. The resulting AUC overestimates real-world performance because the model implicitly saw test data distribution during training.
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════ MODULE 6: THE EXPLAINABILITY ══════════════════ -->
+<section class="module" id="mod-5" aria-labelledby="m5-title">
+<div class="module-inner">
+  <div class="mod-num">Module 6</div>
+  <h2 class="mod-title" id="m5-title">Why Should You Trust It?</h2>
+  <p class="mod-sub">A prediction without explanation is useless in medicine. Two complementary strategies for earning clinical trust.</p>
+
+  <div class="cards">
+    <div class="card" style="border-top:3px solid #F5A623">
+      <div class="card-icon">📖</div>
+      <div class="card-title">Literature Patterns</div>
+      <div class="card-desc">Rules encoded from published neuroscience: "frontotemporal connectivity should be high — if it's low (z-score > 2), flag it." Interpretable by any neurologist.</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--accent2)">
+      <div class="card-icon">🔍</div>
+      <div class="card-title">SHAP / Gradient Importance</div>
+      <div class="card-desc">What did <em>this model</em> actually use to make <em>this decision</em>? SHAP assigns credit to each brain connection. Independent of the literature.</div>
+    </div>
+  </div>
+
+  <div class="callout callout-aha">
+    <div class="callout-title">💡 The Detective Metaphor</div>
+    <p>Literature patterns = the checklist a detective uses based on known crime patterns. SHAP = the actual fingerprints at this specific crime scene. When they match, confidence goes up. When they diverge, you might have found a new pattern nobody knew about.</p>
+  </div>
+
+  <!-- GROUP CHAT ANIMATION -->
+  <div class="chat">
+    <div class="chat-title">🗨️ Internal conversation when analyzing a scan</div>
+    <button class="chat-play" onclick="playChat('chat1')">▶ Play conversation</button>
+    <div id="chat1">
+      <div class="chat-msg" data-delay="0">
+        <div class="chat-avatar" style="background:#F5E6E3;color:var(--accent)">🔬</div>
+        <div><div class="chat-sender">Preprocessor</div><div class="chat-bubble"><div class="chat-text">Done. 6,670 FC features extracted. Filtering out the 6,655 non-literature features... 15 connections forwarded to model.</div></div></div>
+      </div>
+      <div class="chat-msg" data-delay="600">
+        <div class="chat-avatar" style="background:#F0F4FF;color:var(--accent2)">🧠</div>
+        <div><div class="chat-sender">FC Model (Ensemble)</div><div class="chat-bubble"><div class="chat-text">Ran all 3 models. LR says 74% schizophrenia. SVM says 81%. LGBM says 71%. Averaged: 75% confidence. Prediction: schizophrenia.</div></div></div>
+      </div>
+      <div class="chat-msg" data-delay="1200">
+        <div class="chat-avatar" style="background:#F0FFF7;color:#1E9E5E">📚</div>
+        <div><div class="chat-sender">Literature Explainer</div><div class="chat-bubble"><div class="chat-text">Checking 10 known patterns... 3 flagged: frontotemporal (z=-2.8), thalamocortical (z=-2.1), ACC-DLPFC (z=-3.1). These all have "decreased" expected direction in SZ — matches.</div></div></div>
+      </div>
+      <div class="chat-msg chat-row-right" data-delay="1800">
+        <div class="chat-avatar" style="background:#FFF9F0;color:#B8770D">⚡</div>
+        <div><div class="chat-sender">SHAP Engine</div><div class="chat-bubble right"><div class="chat-text">Top 3 SHAP features: DLPFC-STG_L (0.18), Thalamus-PFC_L (0.15), ACC-DLPFC (0.12). All align with literature flags. Strong overlap = high clinical confidence.</div></div></div>
+      </div>
+      <div class="chat-msg" data-delay="2400">
+        <div class="chat-avatar" style="background:#F5E6E3;color:var(--accent)">🏥</div>
+        <div><div class="chat-sender">API Server</div><div class="chat-bubble"><div class="chat-text">Compiling report. Prediction: schizophrenia (75% confidence). Evidence: 3 literature circuits flagged, 3/3 SHAP-confirmed. Returning to frontend.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="translation">
+    <div class="trans-code">
+      <pre><span class="hl-kw">@dataclass</span>
+<span class="hl-kw">class</span> <span class="hl-cls">FCPattern</span>:
+    name: str
+    roi_pair: Tuple[str, str]
+    roi_indices: Tuple[int, int]
+    expected_change: str  <span class="hl-cm"># 'decreased'</span>
+    reference: str        <span class="hl-cm"># citation</span>
+    threshold_zscore: float = <span class="hl-num">2.0</span>
+
+<span class="hl-cm"># Example pattern check:</span>
+z = (patient_fc - pop_mean) / pop_std
+flagged = abs(z) > pattern.threshold_zscore
+direction_match = (
+    z < <span class="hl-num">0</span> <span class="hl-kw">and</span>
+    pattern.expected_change == <span class="hl-str">'decreased'</span>
+)</pre>
+    </div>
+    <div class="trans-english">
+      <div class="trans-english-title">Plain English</div>
+      <div class="trans-line"><div class="trans-num">1</div><div class="trans-explain"><strong>FCPattern is a rule card</strong> — one known brain circuit disruption from published neuroscience. Encoded as structured data, not free text.</div></div>
+      <div class="trans-line"><div class="trans-num">2</div><div class="trans-explain"><strong>roi_indices</strong> — the actual numbers in the 116-ROI AAL atlas, so the code knows exactly which correlation to look up.</div></div>
+      <div class="trans-line"><div class="trans-num">3</div><div class="trans-explain"><strong>threshold_zscore: 2.0</strong> — if this patient's brain connection is more than 2 standard deviations from the healthy average, flag it.</div></div>
+      <div class="trans-line"><div class="trans-num">4</div><div class="trans-explain"><strong>direction_match</strong> — not just anomalous, but anomalous in the <em>right direction</em>. A connection that's unusually strong when literature says it should be weak → not a match.</div></div>
+    </div>
+  </div>
+
+  <div class="quiz" id="q5">
+    <div class="quiz-label">Scenario</div>
+    <div class="quiz-q">For a patient scan, SHAP highlights the putamen-cerebellum connection as the #1 driver. But no literature pattern matches this circuit. The model predicts Parkinson's at 82% confidence. What's the most useful interpretation?</div>
+    <div class="quiz-opts">
+      <div class="quiz-opt" onclick="quiz(this,'q5',false)">Discard the prediction — if literature doesn't confirm it, it's wrong</div>
+      <div class="quiz-opt" onclick="quiz(this,'q5',false)">The model has overfit to noise</div>
+      <div class="quiz-opt" onclick="quiz(this,'q5',true)">Interesting signal — either the model found a novel biomarker the literature hasn't yet documented, or it found a scanner artifact. Worth investigating with more cases before acting on it.</div>
+      <div class="quiz-opt" onclick="quiz(this,'q5',false)">Add it to the literature patterns immediately</div>
+    </div>
+    <div class="quiz-feedback" id="q5-fb">
+      ✓ Exactly right. Divergence between SHAP and literature patterns is the most clinically interesting case — not a bug, but a research hypothesis. The dual-explanation design is specifically meant to surface these cases. A single case can't validate a new biomarker, but it can trigger a prospective study.
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════ MODULE 7: SHIPPING IT ══════════════════ -->
+<section class="module" id="mod-6" aria-labelledby="m6-title">
+<div class="module-inner">
+  <div class="mod-num">Module 7</div>
+  <h2 class="mod-title" id="m6-title">Shipping to the Real World</h2>
+  <p class="mod-sub">From a Python script on a laptop to a production system anyone can run. The infrastructure that wraps the AI.</p>
+
+  <h3 style="font-size:20px;margin-bottom:16px;">The Three-Container Architecture</h3>
+  <div class="arch">
+    <div class="arch-box blue">🌐 Browser (clinician's computer)</div>
+    <div class="arch-arrow">↕ HTTP</div>
+    <div class="arch-box accent">🔀 Nginx (port 80)<br/><span style="font-size:12px;color:var(--text-muted)">Routes: /api/* → backend | /* → frontend</span></div>
+    <div class="arch-row">
+      <div class="arch-box">⚛️ React Frontend<br/><span style="font-size:12px;color:var(--text-muted)">port 3000</span></div>
+      <div class="arch-box">⚡ FastAPI Backend<br/><span style="font-size:12px;color:var(--text-muted)">port 8000</span></div>
+    </div>
+  </div>
+
+  <div class="callout callout-aha">
+    <div class="callout-title">💡 The Airport Metaphor</div>
+    <p><span class="tt" data-tip="<strong>Nginx</strong> = A web server that acts as a reverse proxy — it receives all incoming traffic and forwards it to the right internal server. Like an airport terminal directing passengers to different gates.">Nginx</span> is the airport terminal. It doesn't process anything — it just reads the destination (/api/* → backend gate, everything else → frontend gate) and routes traffic. The backend and frontend never talk to each other directly.</p>
+  </div>
+
+  <h3 style="font-size:20px;margin:28px 0 16px;">The Async Job Pattern</h3>
+  <p style="color:var(--text-muted);font-size:15px;margin-bottom:16px;line-height:1.65;">fMRI preprocessing takes 30–120 seconds. If the API blocked waiting, your browser would time out. The solution: return a job ticket immediately, process in the background, and let the client poll for results.</p>
+
+  <div class="translation">
+    <div class="trans-code">
+      <pre><span class="hl-kw">@app</span>.post(<span class="hl-str">"/api/upload"</span>)
+<span class="hl-kw">async def</span> <span class="hl-fn">upload_fmri</span>(
+    background_tasks: BackgroundTasks,
+    file: UploadFile,
+    task: str = <span class="hl-str">"schizophrenia_fmri"</span>
+):
+    job_id = str(uuid.uuid4())
+    <span class="hl-cm"># Save file, return job_id immediately</span>
+    background_tasks.add_task(
+        process_fmri, job_id, path, task
+    )
+    <span class="hl-kw">return</span> {<span class="hl-str">"job_id"</span>: job_id,
+            <span class="hl-str">"status"</span>: <span class="hl-str">"queued"</span>}
+
+<span class="hl-cm"># Client polls every 2 seconds:</span>
+<span class="hl-kw">@app</span>.get(<span class="hl-str">"/api/status/{job_id}"</span>)
+<span class="hl-kw">async def</span> <span class="hl-fn">get_status</span>(job_id: str):
+    <span class="hl-kw">return</span> job_status[job_id]
+    <span class="hl-cm"># {status, progress: 0.0→1.0, message}</span></pre>
+    </div>
+    <div class="trans-english">
+      <div class="trans-english-title">Plain English</div>
+      <div class="trans-line"><div class="trans-num">1</div><div class="trans-explain"><strong>Generate a unique job ID</strong> — like a baggage claim ticket. The client uses this to ask "is my bag ready yet?"</div></div>
+      <div class="trans-line"><div class="trans-num">2</div><div class="trans-explain"><strong>Add to background queue</strong> — kick off the heavy processing without blocking. The function returns in milliseconds.</div></div>
+      <div class="trans-line"><div class="trans-num">3</div><div class="trans-explain"><strong>Return immediately</strong> — the response says "queued" with a job ID. The browser shows a loading spinner and starts polling.</div></div>
+      <div class="trans-line"><div class="trans-num">4</div><div class="trans-explain"><strong>Status endpoint</strong> — the client polls this every 2 seconds. Returns progress (0.0 to 1.0) and a human-readable message like "Extracting ROI timeseries..."</div></div>
+    </div>
+  </div>
+
+  <h3 style="font-size:20px;margin:28px 0 16px;">API Endpoints at a Glance</h3>
+  <table>
+    <tr><th>Endpoint</th><th>What it does</th></tr>
+    <tr><td><code>GET /health</code></td><td>Are all models loaded? Which tasks are ready?</td></tr>
+    <tr><td><code>GET /tasks</code></td><td>List available tasks (schizophrenia, parkinson, ...)</td></tr>
+    <tr><td><code>POST /api/upload</code></td><td>Submit a scan, get back a job_id immediately</td></tr>
+    <tr><td><code>GET /api/status/{id}</code></td><td>Poll job progress (0–100%)</td></tr>
+    <tr><td><code>GET /api/results/{id}</code></td><td>Get full results when complete</td></tr>
+    <tr><td><code>POST /api/reload/{task}</code></td><td>Hot-swap a model without restarting the server</td></tr>
+    <tr><td><code>DELETE /api/jobs/{id}</code></td><td>Clean up upload + results files</td></tr>
+  </table>
+
+  <div class="callout callout-win">
+    <div class="callout-title">✓ Model Files in Git (Intentional)</div>
+    <p>The trained models (13.3 MB total) are committed to git — unusual, but deliberate. Cloning the repo gives you a working system immediately. If models grow beyond 50 MB, switch to Git LFS. Never <code>.gitignore</code> model files unless you have an alternative storage strategy.</p>
+  </div>
+
+  <div class="quiz" id="q6">
+    <div class="quiz-label">Scenario</div>
+    <div class="quiz-q">You just trained a new schizophrenia model with better AUC. The production server is running with the old model cached. Without restarting the entire Docker service, how do you deploy the update?</div>
+    <div class="quiz-opts">
+      <div class="quiz-opt" onclick="quiz(this,'q6',false)">Restart docker-compose — there's no other way</div>
+      <div class="quiz-opt" onclick="quiz(this,'q6',true)">Copy the new .pth file to the models directory, then call <code>POST /api/reload/schizophrenia_fmri</code> — it clears the cache and reloads just that task's components</div>
+      <div class="quiz-opt" onclick="quiz(this,'q6',false)">The server auto-detects file changes</div>
+      <div class="quiz-opt" onclick="quiz(this,'q6',false)">Deploy through the /api/upload endpoint with the model file</div>
+    </div>
+    <div class="quiz-feedback" id="q6-fb">
+      ✓ Correct! The <code>/api/reload/{task_name}</code> endpoint exists specifically for this hot-reload scenario. It: (1) clears <code>_task_components[task_name]</code> from the in-memory cache, (2) calls <code>get_task_components()</code> which re-imports and re-instantiates everything fresh. Zero downtime, no restart needed.
+    </div>
+  </div>
+
+  <!-- COMPLETION -->
+  <div class="divider"></div>
+  <div class="complete-wrap">
+    <div class="complete-icon">🧠</div>
+    <div class="complete-title">You've got the full picture.</div>
+    <p class="complete-sub">From raw brain scans to clinical predictions — you now understand every decision in this system: why 15 features beat 2,110, why paradigm mismatch killed AUC, how ComBat prevents scanner cheating, and how the production API stays alive.</p>
+    <br/><br/>
+    <span class="badge badge-green">fMRI Fundamentals</span>
+    <span class="badge badge-blue">Feature Engineering</span>
+    <span class="badge badge-red">Multi-Site ML</span>
+    <span class="badge badge-green">Explainability</span>
+    <span class="badge badge-blue">Production API</span>
+  </div>
+</div>
+</section>
+
+<script>
+(function(){
+  'use strict';
+
+  // ── NAV DOTS ─────────────────────────────────────────────────────
+  const mods = ['mod-0','mod-0b','mod-1','mod-2','mod-3','mod-4','mod-5','mod-6'];
+  const labels = ['Intro','Journey','Cast','Reading Brain','Training','Trust','Explain','Deploy'];
+  const dots = document.getElementById('navDots');
+  mods.forEach(function(id,i){
+    const d = document.createElement('div');
+    d.className='nav-dot';
+    d.title=labels[i];
+    d.setAttribute('aria-label','Module '+(i+1)+': '+labels[i]);
+    d.setAttribute('role','button');
+    d.setAttribute('tabindex','0');
+    d.onclick=function(){document.getElementById(id).scrollIntoView({behavior:'smooth'});};
+    d.onkeydown=function(e){if(e.key==='Enter'||e.key===' ')d.click();};
+    dots.appendChild(d);
+  });
+
+  // ── SCROLL PROGRESS & ACTIVE DOT ────────────────────────────────
+  const progress = document.getElementById('scroll-progress');
+  const navLabel = document.getElementById('navLabel');
+  let rafId=null;
+  window.addEventListener('scroll',function(){
+    if(rafId)return;
+    rafId=requestAnimationFrame(function(){
+      rafId=null;
+      const st=window.scrollY;
+      const dh=document.documentElement.scrollHeight-window.innerHeight;
+      const pct=dh>0?st/dh*100:0;
+      progress.style.width=pct+'%';
+
+      const allDots=dots.querySelectorAll('.nav-dot');
+      mods.forEach(function(id,i){
+        const el=document.getElementById(id);
+        if(!el)return;
+        const rect=el.getBoundingClientRect();
+        if(rect.top<=80&&rect.bottom>0){
+          allDots.forEach(function(d,j){
+            d.classList.toggle('active',j===i);
+          });
+          navLabel.textContent='Module '+(i+1)+' of '+mods.length;
+        }
+      });
+
+      // AUC timeline trigger
+      const aucEl=document.getElementById('aucTimeline');
+      if(aucEl){
+        const r=aucEl.getBoundingClientRect();
+        if(r.top<window.innerHeight-100)animateAUC();
+      }
+    });
+  },{passive:true});
+
+  // ── DATA FLOW ANIMATION ──────────────────────────────────────────
+  let flowRunning={};
+  window.animateFlow=function(id){
+    if(flowRunning[id])return;
+    flowRunning[id]=true;
+    const steps=document.querySelectorAll('#'+id+' .flow-step');
+    steps.forEach(function(s){s.classList.remove('lit');});
+    steps.forEach(function(s,i){
+      setTimeout(function(){
+        s.classList.add('lit');
+        if(i===steps.length-1)flowRunning[id]=false;
+      },i*650);
+    });
+  };
+  window.startFlow=function(id){
+    document.getElementById('mod-0b').scrollIntoView({behavior:'smooth'});
+    setTimeout(function(){animateFlow(id);},600);
+  };
+
+  // ── AUC ANIMATION ────────────────────────────────────────────────
+  let aucDone=false;
+  window.animateAUC=function(){
+    if(aucDone)return;
+    aucDone=true;
+    const bars=document.querySelectorAll('#aucTimeline .auc-bar');
+    bars.forEach(function(b,i){
+      setTimeout(function(){
+        b.style.width=b.dataset.w;
+      },i*200);
+    });
+  };
+
+  // ── QUIZ ─────────────────────────────────────────────────────────
+  window.quiz=function(el,id,correct){
+    const wrap=el.closest('.quiz');
+    if(wrap.dataset.answered)return;
+    wrap.dataset.answered='1';
+    const opts=wrap.querySelectorAll('.quiz-opt');
+    opts.forEach(function(o){o.style.pointerEvents='none';});
+    el.classList.add(correct?'correct':'wrong');
+    if(!correct)opts.forEach(function(o){if(o!==el)o.style.opacity='.45';});
+    const fb=document.getElementById(id+'-fb');
+    if(fb){fb.classList.add('show','correct');fb.classList.toggle('wrong',!correct);}
+    const dot=document.querySelector('.nav-dot.active');
+    if(dot&&correct&&!dot.classList.contains('done'))dot.classList.add('done');
+  };
+
+  // ── GROUP CHAT ────────────────────────────────────────────────────
+  window.playChat=function(id){
+    const msgs=document.querySelectorAll('#'+id+' .chat-msg');
+    msgs.forEach(function(m){
+      m.classList.remove('show');
+      const delay=parseInt(m.dataset.delay||'0');
+      setTimeout(function(){m.classList.add('show');},delay);
+    });
+  };
+
+  // ── TOOLTIPS ──────────────────────────────────────────────────────
+  const tooltipEl=document.getElementById('tooltip-el');
+  let ttVisible=false;
+  function showTT(e){
+    const tip=this.dataset.tip;
+    if(!tip)return;
+    tooltipEl.innerHTML=tip;
+    tooltipEl.classList.add('show');
+    ttVisible=true;
+    moveTT(e);
+  }
+  function hideTT(){
+    tooltipEl.classList.remove('show');
+    ttVisible=false;
+  }
+  function moveTT(e){
+    if(!ttVisible)return;
+    const x=e.clientX,y=e.clientY;
+    const w=tooltipEl.offsetWidth||280;
+    const h=tooltipEl.offsetHeight||80;
+    const vw=window.innerWidth,vh=window.innerHeight;
+    let tx=x+14,ty=y-h-10;
+    if(tx+w>vw-8)tx=vw-w-8;
+    if(ty<8)ty=y+20;
+    tooltipEl.style.left=tx+'px';
+    tooltipEl.style.top=ty+'px';
+  }
+  document.querySelectorAll('.tt').forEach(function(el){
+    el.addEventListener('mouseenter',showTT);
+    el.addEventListener('mouseleave',hideTT);
+    el.addEventListener('mousemove',moveTT);
+    el.setAttribute('tabindex','0');
+    el.setAttribute('role','button');
+    el.setAttribute('aria-describedby','tooltip-el');
+    el.addEventListener('focus',function(e){showTT.call(this,e);});
+    el.addEventListener('blur',hideTT);
+  });
+
+  // ── KEYBOARD NAV ──────────────────────────────────────────────────
+  document.addEventListener('keydown',function(e){
+    if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
+    const allMods=mods.map(function(id){return document.getElementById(id);}).filter(Boolean);
+    if(e.key==='ArrowDown'||e.key==='ArrowRight'){
+      e.preventDefault();
+      for(let i=0;i<allMods.length-1;i++){
+        const r=allMods[i].getBoundingClientRect();
+        if(r.top<=50&&r.bottom>50){allMods[i+1].scrollIntoView({behavior:'smooth'});break;}
+      }
+    }
+    if(e.key==='ArrowUp'||e.key==='ArrowLeft'){
+      e.preventDefault();
+      for(let i=1;i<allMods.length;i++){
+        const r=allMods[i].getBoundingClientRect();
+        if(r.top<=50&&r.bottom>50){allMods[i-1].scrollIntoView({behavior:'smooth'});break;}
+      }
+    }
+  });
+
+  // ── TOUCH SWIPE ───────────────────────────────────────────────────
+  let touchY=0;
+  document.addEventListener('touchstart',function(e){touchY=e.touches[0].clientY;},{passive:true});
+  document.addEventListener('touchend',function(e){
+    const dy=touchY-e.changedTouches[0].clientY;
+    if(Math.abs(dy)<50)return;
+    const ev=new KeyboardEvent('keydown',{key:dy>0?'ArrowDown':'ArrowUp'});
+    document.dispatchEvent(ev);
+  },{passive:true});
+
+})();
+</script>
+</body>
+</html>

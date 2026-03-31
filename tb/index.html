@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TB Drug Resistance Prediction — Yatin Azad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#FAFAF9;--surface:#fff;--border:#E5E2DC;
+  --accent:#1D4ED8;--text:#111827;--text-muted:#6B7280;--text-light:#9CA3AF;
+  --badge-bg:#EFF6FF;--badge-text:#1D4ED8;
+}
+html{font-size:16px}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+.container{max-width:800px;margin:0 auto;padding:0 24px}
+
+/* BACK NAV */
+.back-nav{padding:24px 0 0}
+.back-link{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:0.875rem;font-weight:500;color:var(--text-muted);
+  text-decoration:none;transition:color 0.15s;
+}
+.back-link:hover{color:var(--accent)}
+
+/* HEADER */
+header{padding:40px 0 32px;border-bottom:1px solid var(--border)}
+h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-0.02em;line-height:1.2;margin-bottom:10px}
+.subtitle{font-size:0.95rem;color:var(--text-muted);line-height:1.65;max-width:580px;margin-bottom:16px}
+.badge{
+  display:inline-block;background:var(--badge-bg);color:var(--badge-text);
+  font-size:0.75rem;font-weight:600;padding:4px 10px;border-radius:20px;
+  font-family:'JetBrains Mono',monospace;margin-right:8px;
+}
+.repo-link{
+  display:inline-flex;align-items:center;gap:5px;margin-top:16px;
+  font-size:0.875rem;font-weight:500;color:var(--accent);text-decoration:none;
+}
+.repo-link:hover{text-decoration:underline}
+
+/* SECTION LABEL */
+.section-label{
+  font-size:0.7rem;font-weight:600;letter-spacing:0.1em;
+  text-transform:uppercase;color:var(--text-light);
+  margin:44px 0 20px;
+}
+
+/* FIGURE BLOCKS */
+.figure-block{margin-bottom:36px}
+.figure-caption{
+  font-size:0.85rem;color:var(--text-muted);
+  line-height:1.6;margin-bottom:10px;
+}
+.figure-caption strong{color:var(--text);font-weight:600}
+.figure-img{
+  width:100%;border-radius:10px;border:1px solid var(--border);
+  display:block;
+}
+.figure-link{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:0.84rem;font-weight:500;
+  padding:8px 18px;border-radius:6px;text-decoration:none;
+  background:var(--accent);color:#fff;border:1px solid var(--accent);
+  transition:background 0.15s;margin-top:16px;
+}
+.figure-link:hover{background:#1E40AF}
+.divider{border:none;border-top:1px solid var(--border);margin:8px 0 36px}
+
+/* INTERACTIVE COURSE */
+.course-wrapper{
+  border:1px solid var(--border);border-radius:12px;
+  overflow:hidden;margin-top:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.06);
+}
+iframe{
+  width:100%;height:700px;border:none;display:block;
+}
+@media(max-width:600px){iframe{height:500px}}
+
+footer{padding:48px 0 64px;text-align:center}
+.footer-back{
+  font-size:0.875rem;color:var(--text-muted);text-decoration:none;
+}
+.footer-back:hover{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="back-nav">
+    <a class="back-link" href="/">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5m7-7-7 7 7 7"/></svg>
+      Back to portfolio
+    </a>
+  </div>
+
+  <header>
+    <h1>TB Drug Resistance Prediction</h1>
+    <p class="subtitle">Ensemble ML predicting antibiotic resistance across 3,393 <em>M. tuberculosis</em> isolates and 11 drugs from whole-genome sequencing data. Trained and evaluated at IIT Kanpur.</p>
+    <span class="badge">AUROC &gt;0.99</span>
+    <span class="badge">11 drugs</span>
+    <span class="badge">XGBoost · RandomForest · SVM · LogReg</span>
+    <br>
+    <a class="repo-link" href="https://github.com/yatinaz/tb-drug-resistance" target="_blank" rel="noopener">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+      View source on GitHub →
+    </a>
+  </header>
+
+  <p class="section-label">Figures</p>
+
+  <div class="figure-block">
+    <p class="figure-caption"><strong>Fig 1. Class imbalance.</strong> Distribution of resistant vs. susceptible labels across all 11 drugs. Notice the severe imbalance for some drugs — this drives the SMOTE resampling strategy.</p>
+    <img class="figure-img" src="figures/01_class_imbalance.png" alt="Class imbalance across 11 TB drugs" loading="lazy">
+  </div>
+  <hr class="divider">
+
+  <div class="figure-block">
+    <p class="figure-caption"><strong>Fig 2. AUROC heatmap.</strong> Per-drug, per-model AUROC across the 4 classifiers × 11 drugs matrix. XGBoost dominates, with near-perfect discrimination for Rifampicin and Isoniazid.</p>
+    <img class="figure-img" src="figures/02_auroc_heatmap.png" alt="AUROC heatmap across models and drugs" loading="lazy">
+  </div>
+  <hr class="divider">
+
+  <div class="figure-block">
+    <p class="figure-caption"><strong>Fig 3. ROC curves.</strong> Receiver operating characteristic curves for all models. Look for the tightest curves near the top-left — those are the drugs where genetic signal is strongest.</p>
+    <img class="figure-img" src="figures/03_roc_curves_yatin.png" alt="ROC curves for all TB drug models" loading="lazy">
+  </div>
+  <hr class="divider">
+
+  <div class="figure-block">
+    <p class="figure-caption"><strong>Fig 4. Sensitivity &amp; specificity.</strong> Clinical tradeoff: for MDR-TB screening you want high sensitivity even at some specificity cost. These plots show where each model sits on that frontier.</p>
+    <img class="figure-img" src="figures/04_sensitivity_specificity.png" alt="Sensitivity and specificity per drug" loading="lazy">
+  </div>
+  <hr class="divider">
+
+  <div class="figure-block">
+    <p class="figure-caption"><strong>Fig 5. Feature importance.</strong> Top genomic variants driving predictions. Known resistance-conferring mutations (e.g. <em>rpoB</em> for Rifampicin, <em>katG</em> for Isoniazid) appear prominently.</p>
+    <img class="figure-img" src="figures/05_feature_importance.png" alt="Feature importance across TB models" loading="lazy">
+  </div>
+  <hr class="divider">
+
+  <div class="figure-block">
+    <p class="figure-caption"><strong>Fig 6. Model comparison.</strong> Head-to-head comparison across all four classifiers. XGBoost leads overall, but Random Forest is surprisingly competitive on drugs with sparser resistance mutations.</p>
+    <img class="figure-img" src="figures/06_model_comparison.png" alt="Model comparison across TB drugs" loading="lazy">
+  </div>
+  <hr class="divider">
+
+  <div class="figure-block">
+    <p class="figure-caption"><strong>Fig 7. Confusion matrices.</strong> Per-drug confusion matrices normalised by true class. High off-diagonal values in the false-negative cell would flag drugs needing better sensitivity.</p>
+    <img class="figure-img" src="figures/07_confusion_matrices.png" alt="Confusion matrices for TB drug models" loading="lazy">
+  </div>
+  <hr class="divider">
+
+  <div class="figure-block">
+    <p class="figure-caption"><strong>Fig 8. Threshold tradeoff.</strong> How precision and recall shift as the decision threshold moves. Useful for deciding operational cut-offs in a clinical deployment.</p>
+    <img class="figure-img" src="figures/08_threshold_tradeoff.png" alt="Threshold tradeoff curves" loading="lazy">
+  </div>
+  <hr class="divider">
+
+  <div class="figure-block">
+    <p class="figure-caption"><strong>Fig 9. Drug-class analysis.</strong> Performance grouped by drug class (first-line vs. second-line). Second-line drugs generally show lower AUROC, reflecting rarer resistance mutations in the training set.</p>
+    <img class="figure-img" src="figures/09_drug_class_analysis.png" alt="Drug class performance analysis" loading="lazy">
+  </div>
+
+  <p class="section-label">Interactive course</p>
+  <p style="font-size:0.88rem;color:var(--text-muted);margin-bottom:12px">A guided walkthrough of the entire pipeline — from raw WGS CSV to trained models — with inline code explanations.</p>
+  <div class="course-wrapper">
+    <iframe src="course.html" title="How This TB AI Works — Interactive Course" loading="lazy"></iframe>
+  </div>
+
+  <footer>
+    <a class="footer-back" href="/">← Back to portfolio</a>
+  </footer>
+
+</div>
+</body>
+</html>

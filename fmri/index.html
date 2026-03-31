@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multi-Disease fMRI Biomarker Detection — Yatin Azad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#FAFAF9;--surface:#fff;--border:#E5E2DC;
+  --accent:#1D4ED8;--text:#111827;--text-muted:#6B7280;--text-light:#9CA3AF;
+  --badge-bg:#EFF6FF;--badge-text:#1D4ED8;
+}
+html{font-size:16px}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+.container{max-width:800px;margin:0 auto;padding:0 24px}
+.back-nav{padding:24px 0 0}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:0.875rem;font-weight:500;color:var(--text-muted);text-decoration:none;transition:color 0.15s}
+.back-link:hover{color:var(--accent)}
+header{padding:40px 0 32px;border-bottom:1px solid var(--border)}
+h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-0.02em;line-height:1.2;margin-bottom:10px}
+.subtitle{font-size:0.95rem;color:var(--text-muted);line-height:1.65;max-width:580px;margin-bottom:16px}
+.badge{display:inline-block;background:var(--badge-bg);color:var(--badge-text);font-size:0.75rem;font-weight:600;padding:4px 10px;border-radius:20px;font-family:'JetBrains Mono',monospace;margin-right:8px}
+.repo-link{display:inline-flex;align-items:center;gap:5px;margin-top:16px;font-size:0.875rem;font-weight:500;color:var(--accent);text-decoration:none}
+.repo-link:hover{text-decoration:underline}
+.section-label{font-size:0.7rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-light);margin:44px 0 20px}
+.disease-label{font-size:0.8rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-muted);margin:32px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.figure-block{margin-bottom:36px}
+.figure-caption{font-size:0.85rem;color:var(--text-muted);line-height:1.6;margin-bottom:10px}
+.figure-caption strong{color:var(--text);font-weight:600}
+.figure-img{width:100%;border-radius:10px;border:1px solid var(--border);display:block}
+.figure-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:36px}
+@media(max-width:560px){.figure-grid{grid-template-columns:1fr}}
+.figure-grid-item p{font-size:0.8rem;color:var(--text-muted);margin-top:8px;line-height:1.5}
+.divider{border:none;border-top:1px solid var(--border);margin:8px 0 36px}
+.course-wrapper{border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+iframe{width:100%;height:700px;border:none;display:block}
+@media(max-width:600px){iframe{height:500px}}
+footer{padding:48px 0 64px;text-align:center}
+.footer-back{font-size:0.875rem;color:var(--text-muted);text-decoration:none}
+.footer-back:hover{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="back-nav">
+    <a class="back-link" href="/">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5m7-7-7 7 7 7"/></svg>
+      Back to portfolio
+    </a>
+  </div>
+
+  <header>
+    <h1>Multi-Disease fMRI Biomarker Detection</h1>
+    <p class="subtitle">Deep learning framework for schizophrenia and Parkinson's disease detection from resting-state fMRI functional connectivity matrices. Deployed as a FastAPI service in Docker. University of Western Australia thesis project.</p>
+    <span class="badge">Schizophrenia AUC 0.718</span>
+    <span class="badge">542 subjects</span>
+    <span class="badge">FastAPI · Docker · nilearn</span>
+    <br>
+    <a class="repo-link" href="https://github.com/yatinaz/schizo-detect-biomarkerv2" target="_blank" rel="noopener">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+      View source on GitHub →
+    </a>
+  </header>
+
+  <p class="section-label">Schizophrenia — Figures</p>
+
+  <div class="figure-block">
+    <p class="figure-caption"><strong>Schizophrenia ROC curves.</strong> AUC 0.718 on 542 subjects across multiple sites. The multi-site nature makes this harder than single-site benchmarks — site effects add confounding variance.</p>
+    <img class="figure-img" src="figures/schizophrenia/roc_curves.png" alt="ROC curves for schizophrenia detection" loading="lazy">
+  </div>
+  <hr class="divider">
+
+  <div class="figure-block">
+    <p class="figure-caption"><strong>Functional connectivity heatmap.</strong> Average FC matrix across schizophrenia vs. control subjects. Look for the visual difference in connectivity between the default mode network and frontal regions.</p>
+    <img class="figure-img" src="figures/schizophrenia/fc_heatmap.png" alt="Functional connectivity heatmap" loading="lazy">
+  </div>
+  <hr class="divider">
+
+  <div class="figure-block">
+    <p class="figure-caption"><strong>Glass brain projection.</strong> nilearn glass brain showing the strongest discriminative connectivity edges. Connections involving the prefrontal cortex and cingulate are most predictive.</p>
+    <img class="figure-img" src="figures/schizophrenia/glass_brain.png" alt="Glass brain showing discriminative fMRI connections" loading="lazy">
+  </div>
+  <hr class="divider">
+
+  <div class="figure-grid">
+    <div class="figure-grid-item">
+      <img class="figure-img" src="figures/schizophrenia/feature_importance.png" alt="Feature importance for schizophrenia" loading="lazy">
+      <p><strong>Feature importance.</strong> Top FC edges ranked by model contribution.</p>
+    </div>
+    <div class="figure-grid-item">
+      <img class="figure-img" src="figures/schizophrenia/confusion_matrix.png" alt="Confusion matrix for schizophrenia model" loading="lazy">
+      <p><strong>Confusion matrix.</strong> True positive rate vs. false alarm rate on held-out subjects.</p>
+    </div>
+  </div>
+  <hr class="divider">
+
+  <div class="figure-block">
+    <p class="figure-caption"><strong>SHAP summary.</strong> SHAP values showing which FC connections push predictions toward schizophrenia (red) vs. control (blue). Each dot is one subject.</p>
+    <img class="figure-img" src="figures/schizophrenia/shap_summary.png" alt="SHAP summary for schizophrenia model" loading="lazy">
+  </div>
+  <hr class="divider">
+
+  <div class="figure-block">
+    <p class="figure-caption"><strong>Per-site comparison.</strong> Performance broken down by scanner site. Site-to-site variation is the main barrier to clinical deployment — harmonisation is critical.</p>
+    <img class="figure-img" src="figures/schizophrenia/per_site_comparison.png" alt="Per-site performance comparison" loading="lazy">
+  </div>
+  <hr class="divider">
+
+  <div class="figure-block">
+    <p class="figure-caption"><strong>Development history.</strong> Iterative model improvement from baseline logistic regression through the final multi-modal pipeline.</p>
+    <img class="figure-img" src="figures/schizophrenia/development_history.png" alt="Model development history" loading="lazy">
+  </div>
+
+  <p class="section-label">Parkinson's Disease — Figures</p>
+
+  <div class="figure-block">
+    <p class="figure-caption"><strong>fMRI-only model (v1).</strong> Baseline using only resting-state fMRI functional connectivity. Establishes the floor for multi-modal improvement.</p>
+    <div class="figure-grid" style="margin-bottom:0">
+      <div class="figure-grid-item">
+        <img class="figure-img" src="figures/parkinson/v1_fmri_roc.png" alt="Parkinson fMRI v1 ROC" loading="lazy">
+        <p>ROC curve — fMRI only.</p>
+      </div>
+      <div class="figure-grid-item">
+        <img class="figure-img" src="figures/parkinson/v1_fmri_confusion.png" alt="Parkinson fMRI v1 confusion matrix" loading="lazy">
+        <p>Confusion matrix — fMRI only.</p>
+      </div>
+    </div>
+  </div>
+  <hr class="divider">
+
+  <div class="figure-block">
+    <p class="figure-caption"><strong>T1w structural model (v2).</strong> Adding T1-weighted structural MRI features. Structural atrophy in the substantia nigra region lifts performance.</p>
+    <div class="figure-grid" style="margin-bottom:0">
+      <div class="figure-grid-item">
+        <img class="figure-img" src="figures/parkinson/v2_t1w_roc.png" alt="Parkinson T1w v2 ROC" loading="lazy">
+        <p>ROC curve — T1w structural.</p>
+      </div>
+      <div class="figure-grid-item">
+        <img class="figure-img" src="figures/parkinson/v2_t1w_confusion.png" alt="Parkinson T1w v2 confusion matrix" loading="lazy">
+        <p>Confusion matrix — T1w structural.</p>
+      </div>
+    </div>
+  </div>
+  <hr class="divider">
+
+  <div class="figure-block">
+    <p class="figure-caption"><strong>Multi-modal model (v3).</strong> Final model combining fMRI + T1w + clinical features. Modal contribution plot shows how much each modality contributes to the final prediction.</p>
+    <div class="figure-grid" style="margin-bottom:16px">
+      <div class="figure-grid-item">
+        <img class="figure-img" src="figures/parkinson/v3_multimodal_roc.png" alt="Parkinson multimodal v3 ROC" loading="lazy">
+        <p>ROC curve — multi-modal.</p>
+      </div>
+      <div class="figure-grid-item">
+        <img class="figure-img" src="figures/parkinson/v3_multimodal_confusion.png" alt="Parkinson multimodal v3 confusion matrix" loading="lazy">
+        <p>Confusion matrix — multi-modal.</p>
+      </div>
+    </div>
+    <img class="figure-img" src="figures/parkinson/v3_multimodal_modality_contribution.png" alt="Modality contribution in multi-modal Parkinson model" loading="lazy" style="margin-bottom:8px">
+    <p style="font-size:0.8rem;color:var(--text-muted)">Modality contribution — fMRI vs. T1w vs. clinical.</p>
+  </div>
+  <hr class="divider">
+
+  <div class="figure-block">
+    <p class="figure-caption"><strong>Parkinson's model comparison.</strong> Side-by-side of all three model versions across key metrics. The multi-modal model leads on AUC and sensitivity.</p>
+    <img class="figure-img" src="figures/parkinson/model_comparison.png" alt="Parkinson model comparison" loading="lazy">
+  </div>
+
+  <p class="section-label">Interactive course</p>
+  <p style="font-size:0.88rem;color:var(--text-muted);margin-bottom:12px">A guided walkthrough of the full pipeline — from fMRI preprocessing to model deployment — with inline explanations of every design decision.</p>
+  <div class="course-wrapper">
+    <iframe src="course.html" title="fMRI Biomarker Detection — Interactive Course" loading="lazy"></iframe>
+  </div>
+
+  <footer>
+    <a class="footer-back" href="/">← Back to portfolio</a>
+  </footer>
+
+</div>
+</body>
+</html>

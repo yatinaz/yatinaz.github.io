@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RT Activity Prediction for Prime Editing — Yatin Azad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#FAFAF9;--surface:#fff;--border:#E5E2DC;
+  --accent:#1D4ED8;--text:#111827;--text-muted:#6B7280;--text-light:#9CA3AF;
+  --badge-bg:#EFF6FF;--badge-text:#1D4ED8;
+}
+html{font-size:16px}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+.container{max-width:800px;margin:0 auto;padding:0 24px}
+.back-nav{padding:24px 0 0}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:0.875rem;font-weight:500;color:var(--text-muted);text-decoration:none;transition:color 0.15s}
+.back-link:hover{color:var(--accent)}
+header{padding:40px 0 32px;border-bottom:1px solid var(--border)}
+h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-0.02em;line-height:1.2;margin-bottom:10px}
+.subtitle{font-size:0.95rem;color:var(--text-muted);line-height:1.65;max-width:580px;margin-bottom:16px}
+.badge{display:inline-block;background:var(--badge-bg);color:var(--badge-text);font-size:0.75rem;font-weight:600;padding:4px 10px;border-radius:20px;font-family:'JetBrains Mono',monospace;margin-right:8px}
+.repo-link{display:inline-flex;align-items:center;gap:5px;margin-top:16px;font-size:0.875rem;font-weight:500;color:var(--accent);text-decoration:none}
+.repo-link:hover{text-decoration:underline}
+.section-label{font-size:0.7rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-light);margin:44px 0 20px}
+.figure-block{margin-bottom:36px}
+.figure-caption{font-size:0.85rem;color:var(--text-muted);line-height:1.6;margin-bottom:10px}
+.figure-caption strong{color:var(--text);font-weight:600}
+.figure-img{width:100%;border-radius:10px;border:1px solid var(--border);display:block}
+.divider{border:none;border-top:1px solid var(--border);margin:8px 0 36px}
+.course-wrapper{border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+iframe{width:100%;height:700px;border:none;display:block}
+@media(max-width:600px){iframe{height:500px}}
+footer{padding:48px 0 64px;text-align:center}
+.footer-back{font-size:0.875rem;color:var(--text-muted);text-decoration:none}
+.footer-back:hover{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="back-nav">
+    <a class="back-link" href="/">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5m7-7-7 7 7 7"/></svg>
+      Back to portfolio
+    </a>
+  </div>
+
+  <header>
+    <h1>RT Activity Prediction for Prime Editing</h1>
+    <p class="subtitle">Predicting which reverse transcriptases work for prime editing using protein language models (ESM-2) and structural features extracted from AlphaFold structures. Built at Mandrake Bioworks.</p>
+    <span class="badge">CLS 0.803</span>
+    <span class="badge">10/12 Retroviral TPs recovered</span>
+    <span class="badge">ESM-2 · XGBoost · LightGBM</span>
+    <br>
+    <a class="repo-link" href="https://github.com/yatinaz/mandrake-rt-prediction" target="_blank" rel="noopener">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+      View source on GitHub →
+    </a>
+  </header>
+
+  <p class="section-label">Figures</p>
+
+  <div class="figure-block">
+    <p class="figure-caption"><strong>Fig 1. RT family overview.</strong> The landscape of retroviral and non-LTR RT families in the training dataset. Colour bands show evolutionary clade membership — a proxy for shared structural features.</p>
+    <img class="figure-img" src="figures/family_overview.png" alt="Retroviral RT family overview" loading="lazy">
+  </div>
+  <hr class="divider">
+
+  <div class="figure-block">
+    <p class="figure-caption"><strong>Fig 2. Era 1 training progression.</strong> Model performance across early training epochs using only sequence-derived ESM-2 embeddings. Plateau here motivates adding structural features in Era 2.</p>
+    <img class="figure-img" src="figures/01_era1_progression.png" alt="Era 1 training progression" loading="lazy">
+  </div>
+  <hr class="divider">
+
+  <div class="figure-block">
+    <p class="figure-caption"><strong>Fig 3. Era 2 training progression.</strong> Performance after incorporating AlphaFold structural descriptors. The CLS score lifts noticeably — confirming that 3D shape captures activity-relevant information beyond sequence alone.</p>
+    <img class="figure-img" src="figures/02_era2_progression.png" alt="Era 2 training progression with structural features" loading="lazy">
+  </div>
+  <hr class="divider">
+
+  <div class="figure-block">
+    <p class="figure-caption"><strong>Fig 4. CLS score progression.</strong> The combined CLS (classification score) across all training eras. The final ensemble recovers 10 of 12 known retroviral true positives from the held-out set.</p>
+    <img class="figure-img" src="figures/cls_progression.png" alt="CLS score progression across eras" loading="lazy">
+  </div>
+  <hr class="divider">
+
+  <div class="figure-block">
+    <p class="figure-caption"><strong>Fig 5. Feature distributions.</strong> Distribution of the top engineered features split by active/inactive RTs. Features with clearly separated distributions are the ones carrying the most discriminative signal.</p>
+    <img class="figure-img" src="figures/feature_distributions.png" alt="Feature distributions for active vs inactive RTs" loading="lazy">
+  </div>
+  <hr class="divider">
+
+  <div class="figure-block">
+    <p class="figure-caption"><strong>Fig 6. Feature importance.</strong> SHAP-derived feature importance from the final XGBoost ensemble. ESM-2 embedding dimensions dominate, but several structural descriptors (e.g. thumb subdomain RMSD) rank in the top 20.</p>
+    <img class="figure-img" src="figures/feature_importance.png" alt="Feature importance for RT activity prediction" loading="lazy">
+  </div>
+  <hr class="divider">
+
+  <div class="figure-block">
+    <p class="figure-caption"><strong>Fig 7. Leave-one-family-out performance.</strong> LOFO cross-validation: each RT family is held out in turn. Performance drops for families with few representatives — a signal about where more data would help most.</p>
+    <img class="figure-img" src="figures/lofo_performance.png" alt="Leave-one-family-out performance" loading="lazy">
+  </div>
+  <hr class="divider">
+
+  <div class="figure-block">
+    <p class="figure-caption"><strong>Fig 8. Rank-ensemble predictions.</strong> Final rank-aggregated predictions across all ensemble members. Candidates ranked in the top decile are the priority leads for experimental validation.</p>
+    <img class="figure-img" src="figures/rank_ensemble.png" alt="Rank ensemble predictions" loading="lazy">
+  </div>
+
+  <p class="section-label">Interactive course</p>
+  <p style="font-size:0.88rem;color:var(--text-muted);margin-bottom:12px">A guided walkthrough of the full ML pipeline — from protein embeddings to ensemble predictions — with interactive code explanations.</p>
+  <div class="course-wrapper">
+    <iframe src="course.html" title="The Retroviral Wall — An Interactive ML Course" loading="lazy"></iframe>
+  </div>
+
+  <footer>
+    <a class="footer-back" href="/">← Back to portfolio</a>
+  </footer>
+
+</div>
+</body>
+</html>
