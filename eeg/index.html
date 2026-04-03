@@ -395,7 +395,7 @@ footer{
       <span class="hbadge">ICA Artefact Removal</span>
       <span class="hbadge">10 subjects</span>
       <span class="hbadge">Motor Imagery</span>
-      <span class="hbadge">LDA · SVM</span>
+      <span class="hbadge">CSP · LDA · SVM</span>
     </div>
 
     <div class="hero-meta">
@@ -523,22 +523,25 @@ footer{
   <!-- CLASSIFICATION ───────────────────────────────────────────────── -->
   <p class="section-label">Classification</p>
   <p class="prose">
-    Features are the mean alpha + beta band power across all 64 channels
-    (128 features per epoch).  Two classifiers are evaluated with
-    <strong>stratified 5-fold cross-validation</strong>:
-    Linear Discriminant Analysis (LDA) and a radial basis function SVM
-    with standard scaling.  Results are pooled across all 10 subjects.
+    <strong>Common Spatial Patterns (CSP)</strong> first learns 6 spatial filters from the
+    8–30 Hz band-filtered epochs that maximally separate the covariance structure
+    of left vs right conditions.  The log-variance of the 6 filtered signals forms
+    a compact 6-feature vector — far more discriminative than raw band power.
+    Two classifiers follow CSP in a joint pipeline with
+    <strong>stratified 5-fold cross-validation</strong> (CSP fitted on training folds only,
+    preventing data leakage): Linear Discriminant Analysis and an RBF-SVM.
+    Results are pooled across all 10 subjects.
   </p>
 
   <!-- Summary cards filled by JS after JSON loads -->
   <div class="results-grid" id="summary-cards">
     <div class="result-card">
-      <div class="result-label">LDA accuracy</div>
+      <div class="result-label">CSP + LDA accuracy</div>
       <div class="result-value" id="lda-acc">—</div>
       <div class="result-sub" id="lda-auc">AUC —</div>
     </div>
     <div class="result-card">
-      <div class="result-label">SVM accuracy</div>
+      <div class="result-label">CSP + SVM accuracy</div>
       <div class="result-value" id="svm-acc">—</div>
       <div class="result-sub" id="svm-auc">AUC —</div>
     </div>
@@ -645,8 +648,8 @@ footer{
 
     <div class="fig-controls" style="border-radius:10px 10px 0 0;border-bottom:1px solid var(--border)">
       <label>Classifier</label>
-      <button class="ctrl-btn active" id="clf-lda" onclick="switchClf('lda')">LDA</button>
-      <button class="ctrl-btn"        id="clf-svm" onclick="switchClf('svm')">SVM</button>
+      <button class="ctrl-btn active" id="clf-lda" onclick="switchClf('lda')">CSP + LDA</button>
+      <button class="ctrl-btn"        id="clf-svm" onclick="switchClf('svm')">CSP + SVM</button>
     </div>
 
     <div style="display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:0;
@@ -1081,12 +1084,12 @@ function drawFig5() {
     // LDA ROC (always shown)
     {x:clfData.lda.roc.fpr, y:clfData.lda.roc.tpr,
      mode:'lines', line:{color:LEFT,width:2},
-     name:`LDA  AUC=${clfData.lda.auc.toFixed(3)}`,
+     name:`CSP+LDA  AUC=${clfData.lda.auc.toFixed(3)}`,
      hovertemplate:'FPR: %{x:.3f}<br>TPR: %{y:.3f}<extra>LDA</extra>'},
     // SVM ROC (always shown)
     {x:clfData.svm.roc.fpr, y:clfData.svm.roc.tpr,
      mode:'lines', line:{color:RIGHT,width:2},
-     name:`SVM  AUC=${clfData.svm.auc.toFixed(3)}`,
+     name:`CSP+SVM  AUC=${clfData.svm.auc.toFixed(3)}`,
      hovertemplate:'FPR: %{x:.3f}<br>TPR: %{y:.3f}<extra>SVM</extra>'},
   ], {
     font:FONT, paper_bgcolor:BG.paper_bgcolor, plot_bgcolor:'#fff',
@@ -1120,7 +1123,7 @@ function drawFig5() {
 
   /* Per-fold accuracy */
   Plotly.react('fig5-acc', [{
-    x:d.fold_accs.map((_,i)=>`F${i+1}`),
+    x:d.fold_accs.map((_,i)=>`S${i+1}`),
     y:d.fold_accs.map(v=>+(v*100).toFixed(2)),
     type:'bar',
     marker:{color:col, opacity:0.85,
@@ -1129,7 +1132,7 @@ function drawFig5() {
   }], {
     font:FONT, paper_bgcolor:BG.paper_bgcolor, plot_bgcolor:'#fff',
     margin:{t:36,r:12,b:48,l:44},
-    xaxis:{title:{text:'Fold',font:{size:11}}, tickfont:{size:10}},
+    xaxis:{title:{text:'Subject',font:{size:11}}, tickfont:{size:10}},
     yaxis:{title:{text:'Accuracy (%)',font:{size:11}}, tickfont:{size:10},
            range:[40,100]},
     title:{text:'Per-fold Accuracy',font:{size:12,color:'#374151'},x:0.5},
