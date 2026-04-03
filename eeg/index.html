@@ -395,7 +395,7 @@ footer{
       <span class="hbadge">ICA Artefact Removal</span>
       <span class="hbadge">10 subjects</span>
       <span class="hbadge">Motor Imagery</span>
-      <span class="hbadge">CSP · LDA · SVM</span>
+      <span class="hbadge">CSP · LDA · SVM · Riemannian</span>
     </div>
 
     <div class="hero-meta">
@@ -534,7 +534,7 @@ footer{
   </p>
 
   <!-- Summary cards filled by JS after JSON loads -->
-  <div class="results-grid" id="summary-cards">
+  <div class="results-grid" id="summary-cards" style="grid-template-columns:1fr 1fr 1fr">
     <div class="result-card">
       <div class="result-label">CSP + LDA accuracy</div>
       <div class="result-value" id="lda-acc">—</div>
@@ -544,6 +544,11 @@ footer{
       <div class="result-label">CSP + SVM accuracy</div>
       <div class="result-value" id="svm-acc">—</div>
       <div class="result-sub" id="svm-auc">AUC —</div>
+    </div>
+    <div class="result-card">
+      <div class="result-label">MDM (Riemannian) accuracy</div>
+      <div class="result-value" id="riemann-acc">—</div>
+      <div class="result-sub" id="riemann-auc">AUC —</div>
     </div>
   </div>
 
@@ -640,16 +645,16 @@ footer{
   <div class="figure-block">
     <p class="figure-caption">
       <strong>Figure 5 — Classification results.</strong>
-      ROC curves for LDA and SVM (left) — hover for the exact TPR/FPR at
-      each threshold.  Confusion matrix (centre) for the selected classifier.
-      Per-fold accuracy bar chart (right) shows consistency across the
-      5-fold CV splits.
+      ROC curves for all three classifiers (left) — hover for exact TPR/FPR.
+      Confusion matrix (centre) and per-subject accuracy bar chart (right)
+      update when you switch classifier above.
     </p>
 
     <div class="fig-controls" style="border-radius:10px 10px 0 0;border-bottom:1px solid var(--border)">
       <label>Classifier</label>
-      <button class="ctrl-btn active" id="clf-lda" onclick="switchClf('lda')">CSP + LDA</button>
-      <button class="ctrl-btn"        id="clf-svm" onclick="switchClf('svm')">CSP + SVM</button>
+      <button class="ctrl-btn active" id="clf-lda"     onclick="switchClf('lda')">CSP + LDA</button>
+      <button class="ctrl-btn"        id="clf-svm"     onclick="switchClf('svm')">CSP + SVM</button>
+      <button class="ctrl-btn"        id="clf-riemann" onclick="switchClf('riemann')">MDM (Riemann)</button>
     </div>
 
     <div style="display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:0;
@@ -678,10 +683,12 @@ footer{
 const FONT  = {family:"Inter, sans-serif", color:"#374151"};
 const GRID  = {color:"#E5E2DC", gridcolor:"#E5E2DC"};
 const BG    = {paper_bgcolor:"rgba(0,0,0,0)", plot_bgcolor:"#ffffff"};
-const ACC   = "#1D4ED8";
-const LEFT  = "#1D4ED8";
-const RIGHT = "#DC2626";
-const MUTED = "#9CA3AF";
+const ACC     = "#1D4ED8";
+const LEFT    = "#1D4ED8";
+const RIGHT   = "#DC2626";
+const RIEMANN = "#7C3AED";
+const MUTED   = "#9CA3AF";
+const CLF_COLORS = {lda: LEFT, svm: RIGHT, riemann: RIEMANN};
 const MARGIN_DEFAULT = {t:32, r:20, b:52, l:56, pad:4};
 
 function baseLayout(extra={}) {
@@ -1053,7 +1060,8 @@ async function initFig5() {
   }
 
   // Populate summary cards
-  for (const name of ['lda','svm']) {
+  for (const name of ['lda','svm','riemann']) {
+    if (!clfData[name]) continue;
     const d = clfData[name];
     document.getElementById(`${name}-acc`).textContent =
       `${(d.mean_acc*100).toFixed(1)}%`;
@@ -1066,15 +1074,17 @@ async function initFig5() {
 
 function switchClf(mode) {
   clfMode = mode;
-  document.getElementById('clf-lda').classList.toggle('active', mode==='lda');
-  document.getElementById('clf-svm').classList.toggle('active', mode==='svm');
+  ['lda','svm','riemann'].forEach(n => {
+    const b = document.getElementById(`clf-${n}`);
+    if (b) b.classList.toggle('active', n===mode);
+  });
   drawFig5();
 }
 
 function drawFig5() {
   if (!clfData) return;
   const d   = clfData[clfMode];
-  const col = clfMode === 'lda' ? LEFT : RIGHT;
+  const col = CLF_COLORS[clfMode] || LEFT;
 
   /* ROC curve */
   Plotly.react('fig5-roc', [
@@ -1086,11 +1096,16 @@ function drawFig5() {
      mode:'lines', line:{color:LEFT,width:2},
      name:`CSP+LDA  AUC=${clfData.lda.auc.toFixed(3)}`,
      hovertemplate:'FPR: %{x:.3f}<br>TPR: %{y:.3f}<extra>LDA</extra>'},
-    // SVM ROC (always shown)
+    // SVM ROC
     {x:clfData.svm.roc.fpr, y:clfData.svm.roc.tpr,
      mode:'lines', line:{color:RIGHT,width:2},
      name:`CSP+SVM  AUC=${clfData.svm.auc.toFixed(3)}`,
      hovertemplate:'FPR: %{x:.3f}<br>TPR: %{y:.3f}<extra>SVM</extra>'},
+    // Riemannian MDM ROC
+    ...(clfData.riemann ? [{x:clfData.riemann.roc.fpr, y:clfData.riemann.roc.tpr,
+     mode:'lines', line:{color:RIEMANN,width:2},
+     name:`MDM  AUC=${clfData.riemann.auc.toFixed(3)}`,
+     hovertemplate:'FPR: %{x:.3f}<br>TPR: %{y:.3f}<extra>MDM</extra>'}] : []),
   ], {
     font:FONT, paper_bgcolor:BG.paper_bgcolor, plot_bgcolor:'#fff',
     margin:{t:36,r:12,b:48,l:48},
