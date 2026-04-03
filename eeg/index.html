@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EEG Motor Imagery Classification — Yatin Azad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── RESET ──────────────────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ── DESIGN TOKENS ──────────────────────────────────────────────────────── */
+:root{
+  /* Content section — matches fMRI page palette */
+  --bg:#FAFAF9;
+  --surface:#fff;
+  --border:#E5E2DC;
+  --accent:#1D4ED8;
+  --text:#111827;
+  --text-muted:#6B7280;
+  --text-light:#9CA3AF;
+
+  /* Hero — dark navy */
+  --hero-bg:#0d1b2a;
+  --hero-gradient:linear-gradient(160deg,#0d1b2a 0%,#0f2744 55%,#0a1f38 100%);
+  --hero-text:#ffffff;
+  --hero-sub:rgba(255,255,255,0.72);
+  --hero-badge-bg:rgba(255,255,255,0.10);
+  --hero-badge-border:rgba(255,255,255,0.22);
+  --hero-badge-text:rgba(255,255,255,0.92);
+
+  /* Content badges */
+  --badge-bg:#EFF6FF;
+  --badge-text:#1D4ED8;
+
+  /* Figure palette */
+  --left-color:#1D4ED8;
+  --right-color:#DC2626;
+}
+
+/* ── BASE ───────────────────────────────────────────────────────────────── */
+html{font-size:16px;scroll-behavior:smooth}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* ── HERO ───────────────────────────────────────────────────────────────── */
+.hero{
+  background:var(--hero-gradient);
+  padding:48px 0 52px;
+  position:relative;
+  overflow:hidden;
+}
+/* Subtle glow behind the heading */
+.hero::before{
+  content:'';
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 60% at 50% 30%,
+    rgba(29,78,216,0.14) 0%,transparent 70%);
+  pointer-events:none;
+}
+.hero-inner{
+  max-width:800px;
+  margin:0 auto;
+  padding:0 24px;
+  position:relative;z-index:1;
+}
+.back-link{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:0.8rem;
+  font-weight:500;
+  color:var(--hero-sub);
+  margin-bottom:28px;
+  transition:color .15s;
+}
+.back-link:hover{color:#fff;text-decoration:none}
+.hero h1{
+  font-size:clamp(1.6rem,4vw,2.25rem);
+  font-weight:700;
+  letter-spacing:-0.025em;
+  line-height:1.18;
+  color:var(--hero-text);
+  margin-bottom:12px;
+}
+.hero-sub{
+  font-size:0.95rem;
+  line-height:1.7;
+  color:var(--hero-sub);
+  max-width:560px;
+  margin-bottom:20px;
+}
+.hero-badges{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:24px;
+}
+.hbadge{
+  display:inline-block;
+  background:var(--hero-badge-bg);
+  border:1px solid var(--hero-badge-border);
+  color:var(--hero-badge-text);
+  font-size:0.72rem;
+  font-weight:600;
+  padding:4px 11px;
+  border-radius:20px;
+  font-family:'JetBrains Mono',monospace;
+  letter-spacing:0.02em;
+}
+.hero-meta{
+  font-size:0.8rem;
+  color:var(--hero-sub);
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+}
+.hero-meta span{display:flex;align-items:center;gap:5px}
+
+/* ── CONTENT LAYOUT ─────────────────────────────────────────────────────── */
+.content{background:var(--bg);padding-bottom:0}
+.container{max-width:800px;margin:0 auto;padding:0 24px}
+
+/* ── SECTION LABELS ─────────────────────────────────────────────────────── */
+.section-label{
+  font-size:0.68rem;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-light);
+  margin:52px 0 18px;
+}
+
+/* ── PROSE ──────────────────────────────────────────────────────────────── */
+.prose{
+  font-size:0.925rem;
+  line-height:1.75;
+  color:var(--text-muted);
+  margin-bottom:16px;
+  max-width:660px;
+}
+.prose strong{color:var(--text)}
+
+/* ── PIPELINE STEPS ─────────────────────────────────────────────────────── */
+.steps{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin:16px 0 4px;
+}
+.step{
+  display:flex;
+  align-items:flex-start;
+  gap:14px;
+  font-size:0.88rem;
+  line-height:1.55;
+  color:var(--text-muted);
+}
+.step-num{
+  flex-shrink:0;
+  width:22px;height:22px;
+  border-radius:50%;
+  background:var(--badge-bg);
+  color:var(--accent);
+  font-size:0.72rem;
+  font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  margin-top:1px;
+}
+.step strong{color:var(--text);font-weight:600}
+
+/* ── BAND TABLE ─────────────────────────────────────────────────────────── */
+.band-table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:0.84rem;
+  margin:16px 0;
+}
+.band-table th{
+  text-align:left;
+  font-size:0.68rem;
+  font-weight:600;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:var(--text-light);
+  padding:6px 12px 6px 0;
+  border-bottom:1px solid var(--border);
+}
+.band-table td{
+  padding:8px 12px 8px 0;
+  border-bottom:1px solid var(--border);
+  color:var(--text-muted);
+}
+.band-table td:first-child{
+  font-family:'JetBrains Mono',monospace;
+  font-size:0.8rem;
+  color:var(--text);
+}
+.band-pill{
+  display:inline-block;
+  padding:2px 8px;
+  border-radius:4px;
+  font-size:0.72rem;
+  font-weight:600;
+  font-family:'JetBrains Mono',monospace;
+}
+.band-alpha{background:#dbeafe;color:#1e40af}
+.band-beta{background:#fce7f3;color:#9d174d}
+.badge-sm{
+  display:inline-block;
+  background:var(--badge-bg);
+  color:var(--badge-text);
+  font-size:0.72rem;
+  font-weight:600;
+  padding:3px 9px;
+  border-radius:20px;
+  font-family:'JetBrains Mono',monospace;
+  margin-right:6px;
+}
+
+/* ── FIGURE BLOCKS ──────────────────────────────────────────────────────── */
+.figure-block{margin-bottom:40px}
+.figure-caption{
+  font-size:0.85rem;
+  color:var(--text-muted);
+  line-height:1.65;
+  margin-bottom:12px;
+}
+.figure-caption strong{color:var(--text);font-weight:600}
+.divider{border:none;border-top:1px solid var(--border);margin:4px 0 40px}
+
+/* Interactive figure container */
+.fig-wrap{
+  border-radius:10px;
+  border:1px solid var(--border);
+  overflow:hidden;
+  background:var(--surface);
+  box-shadow:0 1px 4px rgba(0,0,0,0.05);
+}
+.plotly-fig{width:100%;height:380px}
+.plotly-fig-tall{width:100%;height:440px}
+.plotly-fig-sm{width:100%;height:320px}
+
+/* Controls above figures */
+.fig-controls{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  padding:12px 16px;
+  border-bottom:1px solid var(--border);
+  background:#fdfcfa;
+}
+.fig-controls label{
+  font-size:0.75rem;
+  font-weight:600;
+  color:var(--text-muted);
+  letter-spacing:0.05em;
+  text-transform:uppercase;
+  margin-right:4px;
+}
+.ctrl-btn{
+  padding:5px 13px;
+  border-radius:6px;
+  border:1px solid var(--border);
+  background:#fff;
+  font-size:0.78rem;
+  font-weight:600;
+  color:var(--text-muted);
+  cursor:pointer;
+  font-family:'Inter',sans-serif;
+  transition:all .15s;
+}
+.ctrl-btn:hover{border-color:var(--accent);color:var(--accent)}
+.ctrl-btn.active{
+  background:var(--accent);
+  border-color:var(--accent);
+  color:#fff;
+}
+.ctrl-select{
+  padding:5px 10px;
+  border-radius:6px;
+  border:1px solid var(--border);
+  background:#fff;
+  font-size:0.78rem;
+  font-weight:500;
+  color:var(--text);
+  cursor:pointer;
+  font-family:'Inter',sans-serif;
+}
+.ctrl-select:focus{outline:none;border-color:var(--accent)}
+
+/* Placeholder shown before JSON is available */
+.fig-placeholder{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  height:380px;
+  gap:10px;
+  color:var(--text-light);
+  font-size:0.85rem;
+  background:#fdfcfa;
+}
+.fig-placeholder svg{opacity:.35}
+.fig-placeholder code{
+  font-family:'JetBrains Mono',monospace;
+  font-size:0.78rem;
+  background:#f3f4f6;
+  padding:2px 8px;
+  border-radius:4px;
+  color:var(--text-muted);
+}
+
+/* ── RESULTS GRID ───────────────────────────────────────────────────────── */
+.results-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  margin-bottom:16px;
+}
+@media(max-width:560px){.results-grid{grid-template-columns:1fr}}
+.result-card{
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:16px 18px;
+  background:#fff;
+}
+.result-label{
+  font-size:0.68rem;
+  font-weight:600;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-light);
+  margin-bottom:4px;
+}
+.result-value{
+  font-size:1.5rem;
+  font-weight:700;
+  color:var(--text);
+  font-family:'JetBrains Mono',monospace;
+  letter-spacing:-0.02em;
+}
+.result-sub{font-size:0.78rem;color:var(--text-muted);margin-top:2px}
+
+/* ── FOOTER ─────────────────────────────────────────────────────────────── */
+footer{
+  padding:56px 0 72px;
+  text-align:center;
+  border-top:1px solid var(--border);
+  margin-top:56px;
+}
+.footer-back{font-size:0.875rem;color:var(--text-muted)}
+.footer-back:hover{color:var(--accent)}
+
+@media(max-width:600px){
+  .plotly-fig,.plotly-fig-sm{height:300px}
+  .plotly-fig-tall{height:360px}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════ HERO ═══════════════════════════════ -->
+<section class="hero">
+  <div class="hero-inner">
+    <a class="back-link" href="https://yatinaz.github.io">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5m7-7-7 7 7 7"/>
+      </svg>
+      Back to portfolio
+    </a>
+
+    <h1>EEG Motor Imagery Classification</h1>
+    <p class="hero-sub">
+      End-to-end signal processing and classification pipeline on the
+      PhysioNet EEGBCI dataset. Left-hand vs right-hand motor imagery
+      decoded from alpha and beta band power using LDA and SVM, with
+      five interactive figures exploring the signal at every stage.
+    </p>
+
+    <div class="hero-badges">
+      <span class="hbadge">Alpha ERD</span>
+      <span class="hbadge">Beta Desync</span>
+      <span class="hbadge">MNE-Python</span>
+      <span class="hbadge">ICA Artefact Removal</span>
+      <span class="hbadge">10 subjects</span>
+      <span class="hbadge">Motor Imagery</span>
+      <span class="hbadge">LDA · SVM</span>
+    </div>
+
+    <div class="hero-meta">
+      <span>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2">
+          <rect x="2" y="3" width="20" height="14" rx="2"/>
+          <path d="M8 21h8M12 17v4"/>
+        </svg>
+        PhysioNet EEGBCI
+      </span>
+      <span>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 6v6l4 2"/>
+        </svg>
+        64 EEG channels · 160 Hz
+      </span>
+      <span>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+        Runs 6, 10, 14 — imagery only
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ CONTENT ════════════════════════════════ -->
+<div class="content">
+<div class="container">
+
+  <!-- OVERVIEW ─────────────────────────────────────────────────────── -->
+  <p class="section-label">Overview</p>
+  <p class="prose">
+    During motor imagery — imagining moving a limb without actually moving it — the brain
+    produces a characteristic suppression of alpha (8–13 Hz) and beta (13–30 Hz) oscillations
+    over the contralateral motor cortex.  This <strong>event-related desynchronisation (ERD)</strong>
+    is strong enough to decode left vs right hand intention from scalp EEG alone, forming the
+    basis of non-invasive brain-computer interfaces (BCIs).
+  </p>
+  <p class="prose">
+    This project applies a full signal processing and classification pipeline to the publicly
+    available <strong>PhysioNet EEGBCI dataset</strong> (subjects 1-10, motor imagination runs),
+    exported as interactive figures so every processing decision can be explored visually.
+  </p>
+
+  <!-- PREPROCESSING ────────────────────────────────────────────────── -->
+  <p class="section-label">Preprocessing pipeline</p>
+  <div class="steps">
+    <div class="step">
+      <span class="step-num">1</span>
+      <span><strong>Load &amp; concatenate.</strong>
+        Three motor-imagery runs (6, 10, 14) loaded via
+        <code style="font-family:'JetBrains Mono',monospace;font-size:0.82em">mne.datasets.eegbci</code>
+        and concatenated per subject.</span>
+    </div>
+    <div class="step">
+      <span class="step-num">2</span>
+      <span><strong>Bandpass filter 1–40 Hz</strong> (FIR, Hamming window).
+        Low-cut removes slow drift; high-cut excludes EMG and power-line noise
+        above our frequency bands of interest.</span>
+    </div>
+    <div class="step">
+      <span class="step-num">3</span>
+      <span><strong>Average re-reference.</strong>
+        Subtracts the instantaneous mean across all 64 electrodes,
+        removing the influence of the physical reference electrode choice.</span>
+    </div>
+    <div class="step">
+      <span class="step-num">4</span>
+      <span><strong>ICA artefact removal</strong> (FastICA, 20 components).
+        Ocular components identified by correlation with frontal electrodes
+        Fp1/Fp2 (surrogate EOG) and excluded if correlation exceeds 0.25.</span>
+    </div>
+    <div class="step">
+      <span class="step-num">5</span>
+      <span><strong>Epoching −1 … +4 s</strong> around each T1/T2 event,
+        with baseline correction (−1 … 0 s) to remove pre-trial drift.</span>
+    </div>
+  </div>
+
+  <!-- SIGNAL ANALYSIS ──────────────────────────────────────────────── -->
+  <p class="section-label">Signal analysis</p>
+  <p class="prose">
+    Five frequency bands are computed per epoch per channel using Welch's PSD
+    (2-second FFT window, 50% overlap).  Alpha and beta are used as classification
+    features; theta and gamma serve as controls.
+  </p>
+
+  <table class="band-table">
+    <thead>
+      <tr>
+        <th>Band</th><th>Range</th><th>Role in motor imagery</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Delta</td><td>1–4 Hz</td>
+        <td>Baseline control; not directly modulated by imagery</td>
+      </tr>
+      <tr>
+        <td>Theta</td><td>4–8 Hz</td>
+        <td>Working memory and cognitive load; mild modulation</td>
+      </tr>
+      <tr>
+        <td><span class="band-pill band-alpha">Alpha</span> &nbsp;C3/C4</td>
+        <td>8–13 Hz</td>
+        <td>Primary ERD band — <strong>suppressed contralateral</strong> to the imagined movement</td>
+      </tr>
+      <tr>
+        <td><span class="band-pill band-beta">Beta</span> &nbsp;C3/C4</td>
+        <td>13–30 Hz</td>
+        <td>Secondary ERD; post-movement beta rebound after imagery ends</td>
+      </tr>
+      <tr>
+        <td>Gamma</td><td>30–40 Hz</td>
+        <td>High-frequency activity; partially overlaps with residual EMG</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- CLASSIFICATION ───────────────────────────────────────────────── -->
+  <p class="section-label">Classification</p>
+  <p class="prose">
+    Features are the mean alpha + beta band power across all 64 channels
+    (128 features per epoch).  Two classifiers are evaluated with
+    <strong>stratified 5-fold cross-validation</strong>:
+    Linear Discriminant Analysis (LDA) and a radial basis function SVM
+    with standard scaling.  Results are pooled across all 10 subjects.
+  </p>
+
+  <!-- Summary cards filled by JS after JSON loads -->
+  <div class="results-grid" id="summary-cards">
+    <div class="result-card">
+      <div class="result-label">LDA accuracy</div>
+      <div class="result-value" id="lda-acc">—</div>
+      <div class="result-sub" id="lda-auc">AUC —</div>
+    </div>
+    <div class="result-card">
+      <div class="result-label">SVM accuracy</div>
+      <div class="result-value" id="svm-acc">—</div>
+      <div class="result-sub" id="svm-auc">AUC —</div>
+    </div>
+  </div>
+
+  <!-- INTERACTIVE FIGURES ──────────────────────────────────────────── -->
+  <p class="section-label">Interactive figures</p>
+
+  <!-- ── Figure 1: Raw vs Cleaned ────────────────────────────────── -->
+  <div class="figure-block">
+    <p class="figure-caption">
+      <strong>Figure 1 — Raw vs ICA-cleaned EEG signal.</strong>
+      Toggle between the unprocessed and ICA-cleaned signal for a 4-second
+      window from subject 1.  ICA removal reduces the large slow eye-blink
+      artefact visible in frontal channels (Fp1, Fp2) without distorting the
+      motor cortex signal at C3/C4.
+    </p>
+    <div class="fig-wrap">
+      <div class="fig-controls">
+        <label>Signal</label>
+        <button class="ctrl-btn active" id="btn-raw" onclick="switchSignal('raw')">Raw EEG</button>
+        <button class="ctrl-btn" id="btn-clean" onclick="switchSignal('cleaned')">ICA Cleaned</button>
+        <label style="margin-left:12px">Channel</label>
+        <select class="ctrl-select" id="ch-select-1" onchange="updateFig1()"></select>
+      </div>
+      <div id="fig1" class="plotly-fig"></div>
+    </div>
+  </div>
+  <hr class="divider">
+
+  <!-- ── Figure 2: Power Spectral Density ────────────────────────── -->
+  <div class="figure-block">
+    <p class="figure-caption">
+      <strong>Figure 2 — Power spectral density: left vs right hand imagery.</strong>
+      Welch PSD computed across all epochs in each condition (subject 1).
+      The shaded region marks the alpha band (8–13 Hz).  Look for the dip in
+      power at C4 during right-hand imagery — alpha suppression contralateral
+      to the imagined movement.
+    </p>
+    <div class="fig-wrap">
+      <div class="fig-controls">
+        <label>Channel</label>
+        <select class="ctrl-select" id="ch-select-2" onchange="updateFig2()"></select>
+      </div>
+      <div id="fig2" class="plotly-fig"></div>
+    </div>
+  </div>
+  <hr class="divider">
+
+  <!-- ── Figure 3: Alpha Topomap ──────────────────────────────────── -->
+  <div class="figure-block">
+    <p class="figure-caption">
+      <strong>Figure 3 — Alpha band scalp map.</strong>
+      Average alpha power per electrode pooled across all 10 subjects.
+      Switch views to compare absolute power in each condition or the
+      ERD% (right minus left, normalised by left).  Hover over any
+      electrode to see its name and value.  Contralateral alpha
+      suppression appears as a blue patch over C4 during right-hand imagery.
+    </p>
+    <div class="fig-wrap">
+      <div class="fig-controls">
+        <label>View</label>
+        <button class="ctrl-btn active" id="topo-left"  onclick="switchTopo('left')">Left Hand α</button>
+        <button class="ctrl-btn"        id="topo-right" onclick="switchTopo('right')">Right Hand α</button>
+        <button class="ctrl-btn"        id="topo-erd"   onclick="switchTopo('erd')">ERD %</button>
+      </div>
+      <div id="fig3" class="plotly-fig-tall"></div>
+    </div>
+  </div>
+  <hr class="divider">
+
+  <!-- ── Figure 4: Time-Frequency ─────────────────────────────────── -->
+  <div class="figure-block">
+    <p class="figure-caption">
+      <strong>Figure 4 — Event-related desynchronisation (ERD/ERS) spectrogram.</strong>
+      Morlet wavelet power in decibels relative to pre-cue baseline (−1…0 s),
+      for subject 1.  Blue regions (negative dB) indicate ERD — oscillatory
+      suppression.  Switch channels and conditions to see how alpha-beta
+      suppression shifts contralaterally with the imagined hand.
+    </p>
+    <div class="fig-wrap">
+      <div class="fig-controls">
+        <label>Channel</label>
+        <button class="ctrl-btn active" id="tfr-C3" onclick="switchTFR('C3')">C3 (right motor)</button>
+        <button class="ctrl-btn"        id="tfr-C4" onclick="switchTFR('C4')">C4 (left motor)</button>
+        <label style="margin-left:12px">Condition</label>
+        <button class="ctrl-btn active" id="tfr-left"  onclick="switchTFRCond('left')">Left Hand</button>
+        <button class="ctrl-btn"        id="tfr-right" onclick="switchTFRCond('right')">Right Hand</button>
+      </div>
+      <div id="fig4" class="plotly-fig-tall"></div>
+    </div>
+  </div>
+  <hr class="divider">
+
+  <!-- ── Figure 5: Classification Results ────────────────────────── -->
+  <div class="figure-block">
+    <p class="figure-caption">
+      <strong>Figure 5 — Classification results.</strong>
+      ROC curves for LDA and SVM (left) — hover for the exact TPR/FPR at
+      each threshold.  Confusion matrix (centre) for the selected classifier.
+      Per-fold accuracy bar chart (right) shows consistency across the
+      5-fold CV splits.
+    </p>
+
+    <div class="fig-controls" style="border-radius:10px 10px 0 0;border-bottom:1px solid var(--border)">
+      <label>Classifier</label>
+      <button class="ctrl-btn active" id="clf-lda" onclick="switchClf('lda')">LDA</button>
+      <button class="ctrl-btn"        id="clf-svm" onclick="switchClf('svm')">SVM</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:0;
+                border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;
+                overflow:hidden;background:#fff">
+      <div id="fig5-roc"  style="height:320px;border-right:1px solid var(--border)"></div>
+      <div id="fig5-cm"   style="height:320px;border-right:1px solid var(--border)"></div>
+      <div id="fig5-acc"  style="height:320px"></div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+</div><!-- /content -->
+
+<footer>
+  <div class="container">
+    <a class="footer-back" href="https://yatinaz.github.io">← Back to portfolio</a>
+  </div>
+</footer>
+
+<!-- ══════════════════════ PLOTLY ════════════════════════════════════ -->
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+
+<script>
+/* ── Shared Plotly layout defaults ────────────────────────────────── */
+const FONT  = {family:"Inter, sans-serif", color:"#374151"};
+const GRID  = {color:"#E5E2DC", gridcolor:"#E5E2DC"};
+const BG    = {paper_bgcolor:"rgba(0,0,0,0)", plot_bgcolor:"#ffffff"};
+const ACC   = "#1D4ED8";
+const LEFT  = "#1D4ED8";
+const RIGHT = "#DC2626";
+const MUTED = "#9CA3AF";
+const MARGIN_DEFAULT = {t:32, r:20, b:52, l:56, pad:4};
+
+function baseLayout(extra={}) {
+  return Object.assign({
+    font: FONT,
+    paper_bgcolor: BG.paper_bgcolor,
+    plot_bgcolor:  BG.plot_bgcolor,
+    margin: MARGIN_DEFAULT,
+    xaxis: {gridcolor:GRID.color, linecolor:"#E5E2DC", zerolinecolor:"#E5E2DC"},
+    yaxis: {gridcolor:GRID.color, linecolor:"#E5E2DC", zerolinecolor:"#E5E2DC"},
+    legend: {bgcolor:"rgba(255,255,255,0.8)", bordercolor:"#E5E2DC", borderwidth:1},
+    hovermode: "closest",
+  }, extra);
+}
+
+/* ── Placeholder helper ────────────────────────────────────────────── */
+function showPlaceholder(divId, msg="Run <code>python eeg_pipeline.py</code> to generate data") {
+  const el = document.getElementById(divId);
+  if (!el) return;
+  el.innerHTML = `
+    <div class="fig-placeholder">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="1.5">
+        <path d="M3 3l18 18M9 9v6m6-6v6M3 12h3m15 0h-3M12 3v3m0 15v-3"/>
+      </svg>
+      <span>No data yet</span>
+      <span>Run <code>python eeg_pipeline.py</code> first</span>
+    </div>`;
+}
+
+async function loadJSON(path) {
+  try {
+    const r = await fetch(path);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return await r.json();
+  } catch(e) { return null; }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   FIGURE 1 — Raw vs Cleaned time series
+   ══════════════════════════════════════════════════════════════════ */
+let tsData = null;
+let tsMode = 'raw';
+
+async function initFig1() {
+  tsData = await loadJSON('outputs/eeg_timeseries.json');
+  if (!tsData) { showPlaceholder('fig1'); return; }
+
+  const sel = document.getElementById('ch-select-1');
+  tsData.channels.forEach(ch => {
+    const opt = document.createElement('option'); opt.value=ch; opt.text=ch;
+    sel.appendChild(opt);
+  });
+  updateFig1();
+}
+
+function switchSignal(mode) {
+  tsMode = mode;
+  document.getElementById('btn-raw').classList.toggle('active', mode==='raw');
+  document.getElementById('btn-clean').classList.toggle('active', mode==='cleaned');
+  updateFig1();
+}
+
+function updateFig1() {
+  if (!tsData) return;
+  const ch     = document.getElementById('ch-select-1').value;
+  const signal = tsData[tsMode][ch];
+  const colour = tsMode === 'raw' ? '#6B7280' : ACC;
+  const label  = tsMode === 'raw' ? 'Raw EEG' : 'ICA Cleaned';
+
+  Plotly.react('fig1', [{
+    x: tsData.time, y: signal,
+    type:'scatter', mode:'lines',
+    line:{color:colour, width:1.4},
+    name: label,
+    hovertemplate: '%{y:.1f} µV<extra></extra>',
+  }], Object.assign(baseLayout(), {
+    xaxis: Object.assign({}, GRID, {title:{text:'Time (s)',font:{size:12}},
+      tickfont:{size:11}}),
+    yaxis: Object.assign({}, GRID, {title:{text:'Amplitude (µV)',font:{size:12}},
+      tickfont:{size:11}}),
+    showlegend: false,
+    title: {text: `${label}  —  ${ch}`, font:{size:13, color:"#374151"}, x:0.5},
+    margin: {t:44, r:20, b:52, l:60},
+  }), {displayModeBar:false, responsive:true});
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   FIGURE 2 — PSD
+   ══════════════════════════════════════════════════════════════════ */
+let psdData = null;
+
+async function initFig2() {
+  psdData = await loadJSON('outputs/psd_data.json');
+  if (!psdData) { showPlaceholder('fig2'); return; }
+
+  const sel = document.getElementById('ch-select-2');
+  psdData.channels.forEach(ch => {
+    const opt = document.createElement('option'); opt.value=ch; opt.text=ch;
+    sel.appendChild(opt);
+  });
+  // Default to C4 to highlight the contralateral effect
+  sel.value = psdData.channels.includes('C4') ? 'C4' : psdData.channels[0];
+  updateFig2();
+}
+
+function updateFig2() {
+  if (!psdData) return;
+  const ch = document.getElementById('ch-select-2').value;
+  const freqs = psdData.freqs;
+  const [a0, a1] = [psdData.alpha_band[0], psdData.alpha_band[1]];
+
+  // Shaded alpha band (use a filled area trace)
+  const alphaIdxs = freqs.map((f,i)=>i).filter(i=>freqs[i]>=a0 && freqs[i]<=a1);
+  const alphaFreqs = alphaIdxs.map(i=>freqs[i]);
+  const maxPow = Math.max(
+    ...psdData.left_hand[ch].mean, ...psdData.right_hand[ch].mean) * 1.15;
+  const minPow = 0;
+
+  const traces = [
+    // Alpha band shading
+    {
+      x: [...alphaFreqs, ...alphaFreqs.slice().reverse()],
+      y: [...alphaFreqs.map(()=>maxPow), ...alphaFreqs.map(()=>minPow)],
+      fill:'toself', fillcolor:'rgba(29,78,216,0.06)',
+      line:{color:'rgba(29,78,216,0.15)', width:1},
+      hoverinfo:'skip', showlegend:false, type:'scatter', mode:'lines',
+    },
+    // Left hand
+    {
+      x: freqs, y: psdData.left_hand[ch].mean,
+      type:'scatter', mode:'lines',
+      line:{color:LEFT, width:2},
+      name:'Left hand',
+      hovertemplate: `%{x:.1f} Hz: %{y:.4f} µV²/Hz<extra>Left hand</extra>`,
+    },
+    // Right hand
+    {
+      x: freqs, y: psdData.right_hand[ch].mean,
+      type:'scatter', mode:'lines',
+      line:{color:RIGHT, width:2},
+      name:'Right hand',
+      hovertemplate: `%{x:.1f} Hz: %{y:.4f} µV²/Hz<extra>Right hand</extra>`,
+    },
+    // Alpha band label annotation drawn as a trace label
+  ];
+
+  Plotly.react('fig2', traces, Object.assign(baseLayout(), {
+    xaxis: Object.assign({}, GRID, {
+      title:{text:'Frequency (Hz)',font:{size:12}},
+      tickfont:{size:11}, range:[1,40],
+    }),
+    yaxis: Object.assign({}, GRID, {
+      title:{text:'Power (µV²/Hz)',font:{size:12}},
+      tickfont:{size:11}, rangemode:'tozero',
+    }),
+    annotations:[{
+      x:(a0+a1)/2, y:maxPow*0.95,
+      xref:'x', yref:'y',
+      text:'α band', showarrow:false,
+      font:{size:10, color:'#1D4ED8'}, opacity:0.6,
+    }],
+    title:{text:`PSD — ${ch}`,font:{size:13,color:"#374151"},x:0.5},
+    margin:{t:44,r:20,b:52,l:64},
+    legend:{x:0.72, y:0.98},
+  }), {displayModeBar:false, responsive:true});
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   FIGURE 3 — Alpha topomap
+   ══════════════════════════════════════════════════════════════════ */
+let topoData = null;
+let topoView = 'left';
+
+async function initFig3() {
+  topoData = await loadJSON('outputs/topomap_data.json');
+  if (!topoData) { showPlaceholder('fig3'); return; }
+  drawTopo();
+}
+
+function switchTopo(view) {
+  topoView = view;
+  ['left','right','erd'].forEach(v=>{
+    document.getElementById(`topo-${v}`).classList.toggle('active', v===view);
+  });
+  drawTopo();
+}
+
+function drawTopo() {
+  if (!topoData) return;
+
+  let values, cscale, ctitle, vmin, vmax;
+  if (topoView === 'left') {
+    values = topoData.left_hand_alpha;
+    cscale = 'Viridis'; ctitle = 'α power (µV²/Hz)';
+    vmin = Math.min(...values); vmax = Math.max(...values);
+  } else if (topoView === 'right') {
+    values = topoData.right_hand_alpha;
+    cscale = 'Viridis'; ctitle = 'α power (µV²/Hz)';
+    vmin = Math.min(...topoData.left_hand_alpha, ...topoData.right_hand_alpha);
+    vmax = Math.max(...topoData.left_hand_alpha, ...topoData.right_hand_alpha);
+  } else {
+    values = topoData.erd_percent;
+    cscale = [[0,'#2563EB'],[0.5,'#f9fafb'],[1,'#DC2626']];
+    ctitle = 'ERD (%)';
+    const absmax = Math.max(...values.map(Math.abs));
+    vmin = -absmax; vmax = absmax;
+  }
+
+  const hoverText = topoData.channels.map((ch,i)=>
+    `<b>${ch}</b><br>${ctitle}: ${values[i].toFixed(3)}`);
+
+  // Head outline
+  const N = 200;
+  const theta = Array.from({length:N+1},(_,i)=>i*2*Math.PI/N);
+  const R = 1.0;
+  const headX = theta.map(t=>R*Math.cos(t));
+  const headY = theta.map(t=>R*Math.sin(t));
+
+  // Nose triangle (at top = +y in azimuthal projection)
+  const noseX = [-0.08, 0, 0.08];
+  const noseY = [R*0.97, R*1.12, R*0.97];
+
+  // Ear markers
+  const earX = [-R*1.06, R*1.06];
+  const earY = [0, 0];
+
+  const traces = [
+    // Head circle
+    {x:headX, y:headY, mode:'lines', type:'scatter',
+     line:{color:'#9CA3AF', width:1.5}, hoverinfo:'skip', showlegend:false},
+    // Nose
+    {x:noseX, y:noseY, mode:'lines', type:'scatter',
+     line:{color:'#9CA3AF', width:1.5}, hoverinfo:'skip', showlegend:false},
+    // Ear marks
+    {x:earX, y:earY, mode:'markers', type:'scatter',
+     marker:{color:'#9CA3AF', size:6, symbol:'circle'}, hoverinfo:'skip', showlegend:false},
+    // Electrodes
+    {
+      x: topoData.pos_x,
+      y: topoData.pos_y,
+      mode: 'markers+text',
+      type: 'scatter',
+      marker: {
+        color: values,
+        colorscale: cscale,
+        cmin: vmin, cmax: vmax,
+        size: 12,
+        line:{color:'rgba(255,255,255,0.6)', width:1},
+        colorbar:{
+          title:{text:ctitle, side:'right', font:{size:11}},
+          thickness:14, len:0.65,
+          tickfont:{size:10},
+        },
+      },
+      text: topoData.channels,
+      textposition: 'top center',
+      textfont: {size:8, color:'rgba(55,65,81,0.7)'},
+      hovertext: hoverText,
+      hovertemplate: '%{hovertext}<extra></extra>',
+      name: '',
+      showlegend: false,
+    },
+  ];
+
+  const titleMap = {
+    left:'Left-hand alpha power', right:'Right-hand alpha power', erd:'Alpha ERD (right − left)'};
+
+  Plotly.react('fig3', traces, {
+    font: FONT,
+    paper_bgcolor: BG.paper_bgcolor,
+    plot_bgcolor:  '#fff',
+    title: {text:titleMap[topoView], font:{size:13,color:"#374151"}, x:0.5},
+    xaxis: {range:[-1.3,1.3], scaleanchor:'y', showgrid:false,
+            zeroline:false, showticklabels:false, visible:false},
+    yaxis: {range:[-1.3,1.4], showgrid:false,
+            zeroline:false, showticklabels:false, visible:false},
+    margin: {t:44, r:80, b:20, l:20},
+    hovermode:'closest',
+    height:440,
+  }, {displayModeBar:false, responsive:true});
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   FIGURE 4 — Time-frequency (ERD/ERS) spectrogram
+   ══════════════════════════════════════════════════════════════════ */
+let tfrData = null;
+let tfrCh   = 'C3';
+let tfrCond = 'left';
+
+async function initFig4() {
+  tfrData = await loadJSON('outputs/tfr_data.json');
+  if (!tfrData) { showPlaceholder('fig4'); return; }
+
+  // Use first available channel if C3 not present
+  const avChs = tfrData.channels || [];
+  tfrCh = avChs.includes('C3') ? 'C3' : avChs[0];
+  ['C3','C4'].forEach(ch=>{
+    const btn = document.getElementById(`tfr-${ch}`);
+    if (btn) btn.classList.toggle('active', ch===tfrCh);
+  });
+  drawTFR();
+}
+
+function switchTFR(ch) {
+  tfrCh = ch;
+  ['C3','C4'].forEach(c=>{
+    const b=document.getElementById(`tfr-${c}`); if(b) b.classList.toggle('active',c===ch);
+  });
+  drawTFR();
+}
+
+function switchTFRCond(cond) {
+  tfrCond = cond;
+  ['left','right'].forEach(c=>{
+    const b=document.getElementById(`tfr-${c}`); if(b) b.classList.toggle('active',c===cond);
+  });
+  drawTFR();
+}
+
+function drawTFR() {
+  if (!tfrData) return;
+  const key = `${tfrCh}_${tfrCond}`;
+  const z = tfrData[key];
+  if (!z) { showPlaceholder('fig4'); return; }
+
+  const times = tfrData.times;
+  const freqs = tfrData.freqs;
+
+  // Symmetric colour range centred on 0
+  const allVals = z.flat();
+  const absMax  = Math.min(Math.max(...allVals.map(Math.abs)), 8);
+
+  Plotly.react('fig4', [{
+    x: times, y: freqs, z: z,
+    type:'heatmap',
+    colorscale:'RdBu',
+    zmin:-absMax, zmax:absMax,
+    reversescale:true,   // blue=ERD (negative dB), red=ERS
+    colorbar:{
+      title:{text:'dB re baseline', side:'right', font:{size:11}},
+      thickness:14, len:0.75, tickfont:{size:10},
+    },
+    hovertemplate: 'Time: %{x:.2f}s<br>Freq: %{y} Hz<br>Power: %{z:.2f} dB<extra></extra>',
+  }], Object.assign(baseLayout(), {
+    xaxis: {title:{text:'Time (s)',font:{size:12}}, tickfont:{size:11},
+            gridcolor:'rgba(0,0,0,0)', zeroline:true, zerolinecolor:'rgba(0,0,0,0.25)',
+            zerolinewidth:1.5},
+    yaxis: {title:{text:'Frequency (Hz)',font:{size:12}}, tickfont:{size:11},
+            gridcolor:'rgba(0,0,0,0)'},
+    title:{text:`ERD/ERS — ${tfrCh}  (${tfrCond==='left'?'Left':'Right'} hand)`,
+           font:{size:13,color:"#374151"}, x:0.5},
+    margin:{t:44, r:80, b:52, l:60},
+    height:440,
+  }), {displayModeBar:false, responsive:true});
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   FIGURE 5 — Classification results
+   ══════════════════════════════════════════════════════════════════ */
+let clfData = null;
+let clfMode = 'lda';
+
+async function initFig5() {
+  clfData = await loadJSON('outputs/classification_results.json');
+  if (!clfData) {
+    ['fig5-roc','fig5-cm','fig5-acc'].forEach(id=>showPlaceholder(id));
+    return;
+  }
+
+  // Populate summary cards
+  for (const name of ['lda','svm']) {
+    const d = clfData[name];
+    document.getElementById(`${name}-acc`).textContent =
+      `${(d.mean_acc*100).toFixed(1)}%`;
+    document.getElementById(`${name}-auc`).textContent =
+      `AUC ${d.auc.toFixed(3)}  ±${(d.std_acc*100).toFixed(1)}%`;
+  }
+
+  drawFig5();
+}
+
+function switchClf(mode) {
+  clfMode = mode;
+  document.getElementById('clf-lda').classList.toggle('active', mode==='lda');
+  document.getElementById('clf-svm').classList.toggle('active', mode==='svm');
+  drawFig5();
+}
+
+function drawFig5() {
+  if (!clfData) return;
+  const d   = clfData[clfMode];
+  const col = clfMode === 'lda' ? LEFT : RIGHT;
+
+  /* ROC curve */
+  Plotly.react('fig5-roc', [
+    // Chance line
+    {x:[0,1],y:[0,1], mode:'lines', line:{color:'#D1D5DB',dash:'dash',width:1.2},
+     name:'Chance', hoverinfo:'skip'},
+    // LDA ROC (always shown)
+    {x:clfData.lda.roc.fpr, y:clfData.lda.roc.tpr,
+     mode:'lines', line:{color:LEFT,width:2},
+     name:`LDA  AUC=${clfData.lda.auc.toFixed(3)}`,
+     hovertemplate:'FPR: %{x:.3f}<br>TPR: %{y:.3f}<extra>LDA</extra>'},
+    // SVM ROC (always shown)
+    {x:clfData.svm.roc.fpr, y:clfData.svm.roc.tpr,
+     mode:'lines', line:{color:RIGHT,width:2},
+     name:`SVM  AUC=${clfData.svm.auc.toFixed(3)}`,
+     hovertemplate:'FPR: %{x:.3f}<br>TPR: %{y:.3f}<extra>SVM</extra>'},
+  ], {
+    font:FONT, paper_bgcolor:BG.paper_bgcolor, plot_bgcolor:'#fff',
+    margin:{t:36,r:12,b:48,l:48},
+    xaxis:{title:{text:'FPR',font:{size:11}},range:[0,1],gridcolor:GRID.color,tickfont:{size:10}},
+    yaxis:{title:{text:'TPR',font:{size:11}},range:[0,1],gridcolor:GRID.color,tickfont:{size:10}},
+    title:{text:'ROC Curves',font:{size:12,color:'#374151'},x:0.5},
+    legend:{font:{size:10},x:0.55,y:0.08},
+    hovermode:'closest',
+  }, {displayModeBar:false, responsive:true});
+
+  /* Confusion matrix */
+  const cm = d.confusion_matrix;   // [[TN,FP],[FN,TP]]
+  Plotly.react('fig5-cm', [{
+    z: cm,
+    x:['Pred Left','Pred Right'], y:['True Left','True Right'],
+    type:'heatmap',
+    colorscale:[[0,'#EFF6FF'],[1,col]],
+    showscale:false,
+    text: cm.map(row=>row.map(v=>`${v}`)),
+    texttemplate:'%{text}',
+    textfont:{size:16, color:'#111827'},
+    hovertemplate:'%{y} → %{x}: %{z}<extra></extra>',
+  }], {
+    font:FONT, paper_bgcolor:BG.paper_bgcolor, plot_bgcolor:'#fff',
+    margin:{t:36,r:12,b:60,l:72},
+    xaxis:{tickfont:{size:10}},
+    yaxis:{tickfont:{size:10}},
+    title:{text:`${clfMode.toUpperCase()} Confusion`,font:{size:12,color:'#374151'},x:0.5},
+  }, {displayModeBar:false, responsive:true});
+
+  /* Per-fold accuracy */
+  Plotly.react('fig5-acc', [{
+    x:d.fold_accs.map((_,i)=>`F${i+1}`),
+    y:d.fold_accs.map(v=>+(v*100).toFixed(2)),
+    type:'bar',
+    marker:{color:col, opacity:0.85,
+            line:{color:'rgba(255,255,255,0.4)',width:1}},
+    hovertemplate:'Fold %{x}: %{y:.1f}%<extra></extra>',
+  }], {
+    font:FONT, paper_bgcolor:BG.paper_bgcolor, plot_bgcolor:'#fff',
+    margin:{t:36,r:12,b:48,l:44},
+    xaxis:{title:{text:'Fold',font:{size:11}}, tickfont:{size:10}},
+    yaxis:{title:{text:'Accuracy (%)',font:{size:11}}, tickfont:{size:10},
+           range:[40,100]},
+    title:{text:'Per-fold Accuracy',font:{size:12,color:'#374151'},x:0.5},
+    shapes:[{
+      type:'line', x0:-0.5, x1:4.5,
+      y0:d.mean_acc*100, y1:d.mean_acc*100,
+      line:{color:'rgba(0,0,0,0.25)',dash:'dot',width:1.5},
+    }],
+  }, {displayModeBar:false, responsive:true});
+}
+
+/* ── Boot ─────────────────────────────────────────────────────────── */
+window.addEventListener('DOMContentLoaded', () => {
+  initFig1();
+  initFig2();
+  initFig3();
+  initFig4();
+  initFig5();
+});
+</script>
+
+</body>
+</html>
