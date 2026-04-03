@@ -552,6 +552,32 @@ footer{
     </div>
   </div>
 
+  <!-- Results comparison table -->
+  <table class="band-table" style="margin-top:8px;margin-bottom:32px">
+    <thead>
+      <tr>
+        <th>Classifier</th><th>Accuracy</th><th>±&nbsp;std</th><th>AUC</th><th>Note</th>
+      </tr>
+    </thead>
+    <tbody id="results-table-body">
+      <tr>
+        <td><span class="band-pill band-alpha">CSP + LDA</span></td>
+        <td id="rt-lda-acc">—</td><td id="rt-lda-std">—</td><td id="rt-lda-auc">—</td>
+        <td style="color:var(--text-muted);font-size:0.8rem">Compact 6-component features, linear boundary</td>
+      </tr>
+      <tr>
+        <td><span class="band-pill band-beta">CSP + SVM</span></td>
+        <td id="rt-svm-acc">—</td><td id="rt-svm-std">—</td><td id="rt-svm-auc">—</td>
+        <td style="color:var(--text-muted);font-size:0.8rem">RBF kernel, non-linear boundary</td>
+      </tr>
+      <tr>
+        <td><span class="band-pill" style="background:#ede9fe;color:#5b21b6">MDM (Riemann)</span></td>
+        <td id="rt-riemann-acc">—</td><td id="rt-riemann-std">—</td><td id="rt-riemann-auc">—</td>
+        <td style="color:var(--text-muted);font-size:0.8rem">Geodesic distance on SPD manifold, no spatial filter</td>
+      </tr>
+    </tbody>
+  </table>
+
   <!-- INTERACTIVE FIGURES ──────────────────────────────────────────── -->
   <p class="section-label">Interactive figures</p>
 
@@ -1059,14 +1085,25 @@ async function initFig5() {
     return;
   }
 
-  // Populate summary cards
+  // Populate summary cards + results table
   for (const name of ['lda','svm','riemann']) {
     if (!clfData[name]) continue;
     const d = clfData[name];
-    document.getElementById(`${name}-acc`).textContent =
-      `${(d.mean_acc*100).toFixed(1)}%`;
-    document.getElementById(`${name}-auc`).textContent =
-      `AUC ${d.auc.toFixed(3)}  ±${(d.std_acc*100).toFixed(1)}%`;
+    const accStr = `${(d.mean_acc*100).toFixed(1)}%`;
+    const stdStr = `±${(d.std_acc*100).toFixed(1)}%`;
+    const aucStr = `${d.auc.toFixed(3)}`;
+    // cards
+    const cardAcc = document.getElementById(`${name}-acc`);
+    const cardAuc = document.getElementById(`${name}-auc`);
+    if (cardAcc) cardAcc.textContent = accStr;
+    if (cardAuc) cardAuc.textContent = `AUC ${aucStr}  ${stdStr}`;
+    // table
+    const tAcc = document.getElementById(`rt-${name}-acc`);
+    const tStd = document.getElementById(`rt-${name}-std`);
+    const tAuc = document.getElementById(`rt-${name}-auc`);
+    if (tAcc) tAcc.textContent = accStr;
+    if (tStd) tStd.textContent = stdStr;
+    if (tAuc) tAuc.textContent = aucStr;
   }
 
   drawFig5();
@@ -1084,79 +1121,77 @@ function switchClf(mode) {
 function drawFig5() {
   if (!clfData) return;
   const d   = clfData[clfMode];
+  if (!d) return;
   const col = CLF_COLORS[clfMode] || LEFT;
+  const H   = 320;  // explicit pixel height passed into every layout
 
-  /* ROC curve */
+  /* ROC curve — always shows all three classifiers */
   Plotly.react('fig5-roc', [
-    // Chance line
     {x:[0,1],y:[0,1], mode:'lines', line:{color:'#D1D5DB',dash:'dash',width:1.2},
      name:'Chance', hoverinfo:'skip'},
-    // LDA ROC (always shown)
     {x:clfData.lda.roc.fpr, y:clfData.lda.roc.tpr,
      mode:'lines', line:{color:LEFT,width:2},
      name:`CSP+LDA  AUC=${clfData.lda.auc.toFixed(3)}`,
      hovertemplate:'FPR: %{x:.3f}<br>TPR: %{y:.3f}<extra>LDA</extra>'},
-    // SVM ROC
     {x:clfData.svm.roc.fpr, y:clfData.svm.roc.tpr,
      mode:'lines', line:{color:RIGHT,width:2},
      name:`CSP+SVM  AUC=${clfData.svm.auc.toFixed(3)}`,
      hovertemplate:'FPR: %{x:.3f}<br>TPR: %{y:.3f}<extra>SVM</extra>'},
-    // Riemannian MDM ROC
     ...(clfData.riemann ? [{x:clfData.riemann.roc.fpr, y:clfData.riemann.roc.tpr,
      mode:'lines', line:{color:RIEMANN,width:2},
      name:`MDM  AUC=${clfData.riemann.auc.toFixed(3)}`,
      hovertemplate:'FPR: %{x:.3f}<br>TPR: %{y:.3f}<extra>MDM</extra>'}] : []),
   ], {
-    font:FONT, paper_bgcolor:BG.paper_bgcolor, plot_bgcolor:'#fff',
+    height:H, font:FONT, paper_bgcolor:BG.paper_bgcolor, plot_bgcolor:'#fff',
     margin:{t:36,r:12,b:48,l:48},
     xaxis:{title:{text:'FPR',font:{size:11}},range:[0,1],gridcolor:GRID.color,tickfont:{size:10}},
     yaxis:{title:{text:'TPR',font:{size:11}},range:[0,1],gridcolor:GRID.color,tickfont:{size:10}},
     title:{text:'ROC Curves',font:{size:12,color:'#374151'},x:0.5},
-    legend:{font:{size:10},x:0.55,y:0.08},
+    legend:{font:{size:10},x:0.42,y:0.08},
     hovermode:'closest',
-  }, {displayModeBar:false, responsive:true});
+  }, {displayModeBar:false, responsive:false});
 
   /* Confusion matrix */
-  const cm = d.confusion_matrix;   // [[TN,FP],[FN,TP]]
+  const cm = d.confusion_matrix;
+  const clfLabel = {lda:'CSP+LDA', svm:'CSP+SVM', riemann:'MDM'}[clfMode] || clfMode;
   Plotly.react('fig5-cm', [{
-    z: cm,
+    z:cm,
     x:['Pred Left','Pred Right'], y:['True Left','True Right'],
     type:'heatmap',
     colorscale:[[0,'#EFF6FF'],[1,col]],
     showscale:false,
-    text: cm.map(row=>row.map(v=>`${v}`)),
+    text:cm.map(row=>row.map(v=>`${v}`)),
     texttemplate:'%{text}',
     textfont:{size:16, color:'#111827'},
     hovertemplate:'%{y} → %{x}: %{z}<extra></extra>',
   }], {
-    font:FONT, paper_bgcolor:BG.paper_bgcolor, plot_bgcolor:'#fff',
+    height:H, font:FONT, paper_bgcolor:BG.paper_bgcolor, plot_bgcolor:'#fff',
     margin:{t:36,r:12,b:60,l:72},
     xaxis:{tickfont:{size:10}},
     yaxis:{tickfont:{size:10}},
-    title:{text:`${clfMode.toUpperCase()} Confusion`,font:{size:12,color:'#374151'},x:0.5},
-  }, {displayModeBar:false, responsive:true});
+    title:{text:`${clfLabel} Confusion`,font:{size:12,color:'#374151'},x:0.5},
+  }, {displayModeBar:false, responsive:false});
 
-  /* Per-fold accuracy */
+  /* Per-subject accuracy bar chart */
+  const n = d.fold_accs.length;
   Plotly.react('fig5-acc', [{
     x:d.fold_accs.map((_,i)=>`S${i+1}`),
     y:d.fold_accs.map(v=>+(v*100).toFixed(2)),
     type:'bar',
-    marker:{color:col, opacity:0.85,
-            line:{color:'rgba(255,255,255,0.4)',width:1}},
-    hovertemplate:'Fold %{x}: %{y:.1f}%<extra></extra>',
+    marker:{color:col, opacity:0.85, line:{color:'rgba(255,255,255,0.4)',width:1}},
+    hovertemplate:'Subject %{x}: %{y:.1f}%<extra></extra>',
   }], {
-    font:FONT, paper_bgcolor:BG.paper_bgcolor, plot_bgcolor:'#fff',
+    height:H, font:FONT, paper_bgcolor:BG.paper_bgcolor, plot_bgcolor:'#fff',
     margin:{t:36,r:12,b:48,l:44},
     xaxis:{title:{text:'Subject',font:{size:11}}, tickfont:{size:10}},
-    yaxis:{title:{text:'Accuracy (%)',font:{size:11}}, tickfont:{size:10},
-           range:[40,100]},
-    title:{text:'Per-fold Accuracy',font:{size:12,color:'#374151'},x:0.5},
+    yaxis:{title:{text:'Accuracy (%)',font:{size:11}}, tickfont:{size:10}, range:[20,100]},
+    title:{text:'Per-subject Accuracy',font:{size:12,color:'#374151'},x:0.5},
     shapes:[{
-      type:'line', x0:-0.5, x1:4.5,
+      type:'line', x0:-0.5, x1:n-0.5,
       y0:d.mean_acc*100, y1:d.mean_acc*100,
       line:{color:'rgba(0,0,0,0.25)',dash:'dot',width:1.5},
     }],
-  }, {displayModeBar:false, responsive:true});
+  }, {displayModeBar:false, responsive:false});
 }
 
 /* ── Boot ─────────────────────────────────────────────────────────── */
