@@ -1,0 +1,51 @@
+{
+  "versions": [
+    {
+      "version": "v2.0",
+      "auc_mean": 0.62,
+      "auc_std": 0.035,
+      "note": "Baseline feature selection"
+    },
+    {
+      "version": "v2.1",
+      "auc_mean": 0.61,
+      "auc_std": 0.04,
+      "note": "SVM/LR comparison"
+    },
+    {
+      "version": "v2.2",
+      "auc_mean": 0.614,
+      "auc_std": 0.038,
+      "note": "Feature reduction to 15 pairs"
+    },
+    {
+      "version": "v5-mixed",
+      "auc_mean": 0.67,
+      "auc_std": 0.055,
+      "note": "Multi-site integration"
+    },
+    {
+      "version": "v5-REST",
+      "auc_mean": 0.693,
+      "auc_std": 0.068,
+      "note": "Paradigm fix (REST only)"
+    },
+    {
+      "version": "v6-GNN",
+      "auc_mean": 0.655,
+      "auc_std": 0.107,
+      "note": "GNN experiment"
+    },
+    {
+      "version": "Ensemble",
+      "auc_mean": 0.718,
+      "auc_std": 0.061,
+      "note": "Ensemble (LR + SVM + LGBM)"
+    }
+  ],
+  "annotations": {
+    "v2.2": "feature reduction",
+    "v5-REST": "paradigm fix",
+    "Ensemble": "ensemble"
+  }
+}

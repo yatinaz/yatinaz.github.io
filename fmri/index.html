@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js" defer></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -23,18 +24,14 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);-webk
 header{padding:40px 0 32px;border-bottom:1px solid var(--border)}
 h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-0.02em;line-height:1.2;margin-bottom:10px}
 .subtitle{font-size:0.95rem;color:var(--text-muted);line-height:1.65;max-width:580px;margin-bottom:16px}
-.badge{display:inline-block;background:var(--badge-bg);color:var(--badge-text);font-size:0.75rem;font-weight:600;padding:4px 10px;border-radius:20px;font-family:'JetBrains Mono',monospace;margin-right:8px}
+.badge{display:inline-block;background:var(--badge-bg);color:var(--badge-text);font-size:0.75rem;font-weight:600;padding:4px 10px;border-radius:20px;font-family:'JetBrains Mono',monospace;margin-right:8px;margin-bottom:4px}
 .repo-link{display:inline-flex;align-items:center;gap:5px;margin-top:16px;font-size:0.875rem;font-weight:500;color:var(--accent);text-decoration:none}
 .repo-link:hover{text-decoration:underline}
 .section-label{font-size:0.7rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-light);margin:44px 0 20px}
-.disease-label{font-size:0.8rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-muted);margin:32px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--border)}
 .figure-block{margin-bottom:36px}
-.figure-caption{font-size:0.85rem;color:var(--text-muted);line-height:1.6;margin-bottom:10px}
+.figure-caption{font-size:0.85rem;color:var(--text-muted);line-height:1.6;margin-bottom:12px}
 .figure-caption strong{color:var(--text);font-weight:600}
 .figure-img{width:100%;border-radius:10px;border:1px solid var(--border);display:block}
-.figure-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:36px}
-@media(max-width:560px){.figure-grid{grid-template-columns:1fr}}
-.figure-grid-item p{font-size:0.8rem;color:var(--text-muted);margin-top:8px;line-height:1.5}
 .divider{border:none;border-top:1px solid var(--border);margin:8px 0 36px}
 .course-wrapper{border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
 iframe{width:100%;height:700px;border:none;display:block}
@@ -42,6 +39,42 @@ iframe{width:100%;height:700px;border:none;display:block}
 footer{padding:48px 0 64px;text-align:center}
 .footer-back{font-size:0.875rem;color:var(--text-muted);text-decoration:none}
 .footer-back:hover{color:var(--accent)}
+
+/* Interactive chart containers */
+.chart-wrap{
+  border:1px solid var(--border);border-radius:10px;
+  overflow:hidden;background:var(--surface);
+  box-shadow:0 1px 4px rgba(0,0,0,0.04);
+  position:relative;
+}
+.chart-loading{
+  display:flex;align-items:center;justify-content:center;
+  height:320px;color:var(--text-light);font-size:0.85rem;gap:8px;
+}
+.spinner{
+  width:16px;height:16px;border:2px solid var(--border);
+  border-top-color:var(--accent);border-radius:50%;
+  animation:spin 0.8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Toggle buttons */
+.toggle-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.tog{
+  font-size:0.75rem;font-weight:600;font-family:'JetBrains Mono',monospace;
+  padding:4px 12px;border-radius:20px;border:1.5px solid var(--border);
+  background:var(--surface);color:var(--text-muted);cursor:pointer;
+  transition:all 0.15s;
+}
+.tog.active{color:var(--surface);border-color:transparent}
+.tog:hover:not(.active){border-color:var(--accent);color:var(--accent)}
+
+/* Metric cards */
+.metric-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+@media(max-width:520px){.metric-row{grid-template-columns:1fr 1fr}}
+.metric-card{border:1px solid var(--border);border-radius:10px;padding:14px 16px;background:var(--surface)}
+.metric-val{font-size:1.5rem;font-weight:700;letter-spacing:-0.02em;color:var(--text);font-family:'JetBrains Mono',monospace}
+.metric-label{font-size:0.72rem;color:var(--text-muted);margin-top:3px;font-weight:500;text-transform:uppercase;letter-spacing:0.05em}
 </style>
 </head>
 <body>
@@ -56,9 +89,9 @@ footer{padding:48px 0 64px;text-align:center}
 
   <header>
     <h1>Multi-Disease fMRI Biomarker Detection</h1>
-    <p class="subtitle">Deep learning framework for schizophrenia and Parkinson's disease detection from resting-state fMRI functional connectivity matrices. Deployed as a FastAPI service in Docker. University of Western Australia thesis project.</p>
+    <p class="subtitle">Machine learning pipeline for schizophrenia and Parkinson's disease detection from resting-state fMRI functional connectivity matrices. Built with nilearn, scikit-learn, XGBoost and LightGBM. Deployed as a FastAPI service in Docker. University of Western Australia thesis project.</p>
     <span class="badge">Schizophrenia AUC 0.718</span>
-    <span class="badge">542 subjects</span>
+    <span class="badge">542 subjects · 2 sites</span>
     <span class="badge">FastAPI · Docker · nilearn</span>
     <br>
     <a class="repo-link" href="https://github.com/yatinaz/schizo-detect-biomarkerv2" target="_blank" rel="noopener">
@@ -67,109 +100,121 @@ footer{padding:48px 0 64px;text-align:center}
     </a>
   </header>
 
-  <p class="section-label">Schizophrenia — Figures</p>
+  <!-- ═══════════════════════════════════════════════════ SCHIZOPHRENIA -->
+  <p class="section-label">Schizophrenia Detection</p>
 
-  <div class="figure-block">
-    <p class="figure-caption"><strong>Schizophrenia ROC curves.</strong> AUC 0.718 on 542 subjects across multiple sites. The multi-site nature makes this harder than single-site benchmarks — site effects add confounding variance.</p>
-    <img class="figure-img" src="figures/schizophrenia/roc_curves.png" alt="ROC curves for schizophrenia detection" loading="lazy">
-  </div>
-  <hr class="divider">
-
-  <div class="figure-block">
-    <p class="figure-caption"><strong>Functional connectivity heatmap.</strong> Average FC matrix across schizophrenia vs. control subjects. Look for the visual difference in connectivity between the default mode network and frontal regions.</p>
-    <img class="figure-img" src="figures/schizophrenia/fc_heatmap.png" alt="Functional connectivity heatmap" loading="lazy">
-  </div>
-  <hr class="divider">
-
-  <div class="figure-block">
-    <p class="figure-caption"><strong>Glass brain projection.</strong> nilearn glass brain showing the strongest discriminative connectivity edges. Connections involving the prefrontal cortex and cingulate are most predictive.</p>
-    <img class="figure-img" src="figures/schizophrenia/glass_brain.png" alt="Glass brain showing discriminative fMRI connections" loading="lazy">
-  </div>
-  <hr class="divider">
-
-  <div class="figure-grid">
-    <div class="figure-grid-item">
-      <img class="figure-img" src="figures/schizophrenia/feature_importance.png" alt="Feature importance for schizophrenia" loading="lazy">
-      <p><strong>Feature importance.</strong> Top FC edges ranked by model contribution.</p>
+  <!-- Metric cards -->
+  <div class="metric-row">
+    <div class="metric-card">
+      <div class="metric-val">0.718</div>
+      <div class="metric-label">Ensemble AUC</div>
     </div>
-    <div class="figure-grid-item">
-      <img class="figure-img" src="figures/schizophrenia/confusion_matrix.png" alt="Confusion matrix for schizophrenia model" loading="lazy">
-      <p><strong>Confusion matrix.</strong> True positive rate vs. false alarm rate on held-out subjects.</p>
+    <div class="metric-card">
+      <div class="metric-val">326</div>
+      <div class="metric-label">Subjects</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val">2</div>
+      <div class="metric-label">Sites</div>
     </div>
   </div>
-  <hr class="divider">
 
+  <!-- ROC curves -->
   <div class="figure-block">
-    <p class="figure-caption"><strong>SHAP summary.</strong> SHAP values showing which FC connections push predictions toward schizophrenia (red) vs. control (blue). Each dot is one subject.</p>
-    <img class="figure-img" src="figures/schizophrenia/shap_summary.png" alt="SHAP summary for schizophrenia model" loading="lazy">
-  </div>
-  <hr class="divider">
-
-  <div class="figure-block">
-    <p class="figure-caption"><strong>Per-site comparison.</strong> Performance broken down by scanner site. Site-to-site variation is the main barrier to clinical deployment — harmonisation is critical.</p>
-    <img class="figure-img" src="figures/schizophrenia/per_site_comparison.png" alt="Per-site performance comparison" loading="lazy">
-  </div>
-  <hr class="divider">
-
-  <div class="figure-block">
-    <p class="figure-caption"><strong>Development history.</strong> Iterative model improvement from baseline logistic regression through the final multi-modal pipeline.</p>
-    <img class="figure-img" src="figures/schizophrenia/development_history.png" alt="Model development history" loading="lazy">
-  </div>
-
-  <p class="section-label">Parkinson's Disease — Figures</p>
-
-  <div class="figure-block">
-    <p class="figure-caption"><strong>fMRI-only model (v1).</strong> Baseline using only resting-state fMRI functional connectivity. Establishes the floor for multi-modal improvement.</p>
-    <div class="figure-grid" style="margin-bottom:0">
-      <div class="figure-grid-item">
-        <img class="figure-img" src="figures/parkinson/v1_fmri_roc.png" alt="Parkinson fMRI v1 ROC" loading="lazy">
-        <p>ROC curve — fMRI only.</p>
-      </div>
-      <div class="figure-grid-item">
-        <img class="figure-img" src="figures/parkinson/v1_fmri_confusion.png" alt="Parkinson fMRI v1 confusion matrix" loading="lazy">
-        <p>Confusion matrix — fMRI only.</p>
-      </div>
+    <p class="figure-caption"><strong>ROC curves — model comparison.</strong> 5-fold cross-validated ROC on 326 subjects across two independent sites (COBRE + ds000030). The ensemble (LR + SVM + LGBM) reaches AUC 0.718. Multi-site confounding makes this harder than single-site benchmarks.</p>
+    <div class="toggle-row" id="roc-toggles">
+      <button class="tog active" data-model="ens" style="background:#DC2626;border-color:#DC2626">Ensemble</button>
+      <button class="tog active" data-model="lr"  style="background:#2563EB;border-color:#2563EB">LR</button>
+      <button class="tog active" data-model="svm" style="background:#16A34A;border-color:#16A34A">SVM</button>
+      <button class="tog active" data-model="xgb" style="background:#D97706;border-color:#D97706">XGB</button>
+      <button class="tog active" data-model="lgbm"style="background:#9333EA;border-color:#9333EA">LGBM</button>
+    </div>
+    <div class="chart-wrap">
+      <div id="roc-chart" class="chart-loading"><span class="spinner"></span> Loading…</div>
     </div>
   </div>
   <hr class="divider">
 
+  <!-- Development history -->
   <div class="figure-block">
-    <p class="figure-caption"><strong>T1w structural model (v2).</strong> Adding T1-weighted structural MRI features. Structural atrophy in the substantia nigra region lifts performance.</p>
-    <div class="figure-grid" style="margin-bottom:0">
-      <div class="figure-grid-item">
-        <img class="figure-img" src="figures/parkinson/v2_t1w_roc.png" alt="Parkinson T1w v2 ROC" loading="lazy">
-        <p>ROC curve — T1w structural.</p>
-      </div>
-      <div class="figure-grid-item">
-        <img class="figure-img" src="figures/parkinson/v2_t1w_confusion.png" alt="Parkinson T1w v2 confusion matrix" loading="lazy">
-        <p>Confusion matrix — T1w structural.</p>
-      </div>
+    <p class="figure-caption"><strong>Development history.</strong> AUC progression across model versions. Key jumps: paradigm fix to REST-only at v5 (+0.08 AUC), and ensemble combination for the final 0.718.</p>
+    <div class="chart-wrap">
+      <div id="dev-chart" class="chart-loading"><span class="spinner"></span> Loading…</div>
     </div>
   </div>
   <hr class="divider">
 
+  <!-- Feature importance -->
   <div class="figure-block">
-    <p class="figure-caption"><strong>Multi-modal model (v3).</strong> Final model combining fMRI + T1w + clinical features. Modal contribution plot shows how much each modality contributes to the final prediction.</p>
-    <div class="figure-grid" style="margin-bottom:16px">
-      <div class="figure-grid-item">
-        <img class="figure-img" src="figures/parkinson/v3_multimodal_roc.png" alt="Parkinson multimodal v3 ROC" loading="lazy">
-        <p>ROC curve — multi-modal.</p>
-      </div>
-      <div class="figure-grid-item">
-        <img class="figure-img" src="figures/parkinson/v3_multimodal_confusion.png" alt="Parkinson multimodal v3 confusion matrix" loading="lazy">
-        <p>Confusion matrix — multi-modal.</p>
-      </div>
+    <p class="figure-caption"><strong>Feature importance — top 15 FC pairs.</strong> Logistic regression coefficients ranked by absolute magnitude. Colour shows network grouping. DMN and fronto-temporal connections dominate, consistent with schizophrenia literature.</p>
+    <div class="chart-wrap">
+      <div id="feat-chart" class="chart-loading"><span class="spinner"></span> Loading…</div>
     </div>
-    <img class="figure-img" src="figures/parkinson/v3_multimodal_modality_contribution.png" alt="Modality contribution in multi-modal Parkinson model" loading="lazy" style="margin-bottom:8px">
-    <p style="font-size:0.8rem;color:var(--text-muted)">Modality contribution — fMRI vs. T1w vs. clinical.</p>
   </div>
   <hr class="divider">
 
+  <!-- Per-site metrics -->
   <div class="figure-block">
-    <p class="figure-caption"><strong>Parkinson's model comparison.</strong> Side-by-side of all three model versions across key metrics. The multi-modal model leads on AUC and sensitivity.</p>
-    <img class="figure-img" src="figures/parkinson/model_comparison.png" alt="Parkinson model comparison" loading="lazy">
+    <p class="figure-caption"><strong>Per-site performance.</strong> COBRE (balanced, n=146) outperforms ds000030 (skewed, n=180). Site-to-site variability is the primary barrier to clinical deployment — scanner differences introduce systematic confounds despite ComBat harmonisation.</p>
+    <div class="chart-wrap">
+      <div id="site-chart" class="chart-loading"><span class="spinner"></span> Loading…</div>
+    </div>
+  </div>
+  <hr class="divider">
+
+  <!-- SHAP -->
+  <div class="figure-block">
+    <p class="figure-caption"><strong>SHAP values — feature impact.</strong> Each dot is one subject. Positive SHAP → model predicts schizophrenia; negative → healthy control. Higher feature value (right on x-axis) for thalamic connections pushes toward SZ prediction.</p>
+    <div class="chart-wrap">
+      <div id="shap-chart" class="chart-loading"><span class="spinner"></span> Loading…</div>
+    </div>
+  </div>
+  <hr class="divider">
+
+  <!-- FC heatmap -->
+  <div class="figure-block">
+    <p class="figure-caption"><strong>Functional connectivity difference (SZ − HC).</strong> Mean FC matrix difference across 116 AAL regions. Blue = higher connectivity in HC; red = higher in SZ. Fronto-temporal and thalamo-cortical circuits show the strongest alterations.</p>
+    <div class="chart-wrap">
+      <div id="fc-chart" class="chart-loading"><span class="spinner"></span> Loading…</div>
+    </div>
   </div>
 
+  <!-- ═══════════════════════════════════════════════════ PARKINSON -->
+  <p class="section-label">Parkinson's Disease Detection</p>
+
+  <div class="metric-row" style="grid-template-columns:repeat(3,1fr)">
+    <div class="metric-card">
+      <div class="metric-val" id="park-best-auc">—</div>
+      <div class="metric-label">Best AUC (multimodal)</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val">55</div>
+      <div class="metric-label">Subjects</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val">3</div>
+      <div class="metric-label">Model versions</div>
+    </div>
+  </div>
+
+  <!-- Parkinson ROC -->
+  <div class="figure-block">
+    <p class="figure-caption"><strong>ROC curves — fMRI, T1w, and multimodal models.</strong> V1 uses resting-state fMRI only; V2 adds T1-weighted structural features; V3 combines both. Each version tested with leave-one-out cross-validation on 55 subjects.</p>
+    <div class="chart-wrap">
+      <div id="park-roc-chart" class="chart-loading"><span class="spinner"></span> Loading…</div>
+    </div>
+  </div>
+  <hr class="divider">
+
+  <!-- Parkinson model comparison -->
+  <div class="figure-block">
+    <p class="figure-caption"><strong>Model comparison — AUC, sensitivity, specificity.</strong> Multimodal fusion (V3) improves over unimodal baselines. Sensitivity (PD recall) is prioritised over specificity for a screening use-case where false negatives are more costly.</p>
+    <div class="chart-wrap">
+      <div id="park-compare-chart" class="chart-loading"><span class="spinner"></span> Loading…</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ COURSE -->
   <p class="section-label">Interactive course</p>
   <p style="font-size:0.88rem;color:var(--text-muted);margin-bottom:12px">A guided walkthrough of the full pipeline — from fMRI preprocessing to model deployment — with inline explanations of every design decision.</p>
   <div class="course-wrapper">
@@ -181,5 +226,431 @@ footer{padding:48px 0 64px;text-align:center}
   </footer>
 
 </div>
+
+<script>
+// ─── Shared Plotly layout defaults ────────────────────────────────────────────
+const LAYOUT_BASE = {
+  font: { family: 'Inter, sans-serif', size: 12, color: '#6B7280' },
+  paper_bgcolor: '#fff',
+  plot_bgcolor: '#fff',
+  margin: { t: 24, r: 16, b: 48, l: 56 },
+  showlegend: true,
+  legend: { orientation: 'h', y: -0.2, x: 0, font: { size: 11 } },
+};
+const CONFIG = { displayModeBar: false, responsive: true };
+
+function setHeight(id, h) {
+  const el = document.getElementById(id);
+  if (el) el.style.height = h + 'px';
+}
+
+// ─── Fetch helpers ─────────────────────────────────────────────────────────────
+async function loadJSON(path) {
+  const r = await fetch(path);
+  if (!r.ok) throw new Error('Failed to load ' + path);
+  return r.json();
+}
+
+function showError(id, msg) {
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = `<span style="color:#EF4444;font-size:0.8rem">${msg}</span>`;
+}
+
+// ─── ROC curves ────────────────────────────────────────────────────────────────
+const ROC_MODEL_COLORS = {
+  lr: '#2563EB', svm: '#16A34A', xgb: '#D97706', lgbm: '#9333EA', ens: '#DC2626'
+};
+
+let rocData = null;
+let activeModels = new Set(['ens', 'lr', 'svm', 'xgb', 'lgbm']);
+
+async function initROC() {
+  try {
+    rocData = await loadJSON('figures/schizophrenia/data/roc_curves.json');
+    renderROC();
+    setupROCToggles();
+  } catch(e) { showError('roc-chart', 'Could not load ROC data.'); }
+}
+
+function renderROC() {
+  if (!rocData) return;
+  const traces = [];
+
+  // chance line
+  traces.push({
+    x: [0, 1], y: [0, 1],
+    mode: 'lines', name: 'Chance',
+    line: { color: '#D1D5DB', width: 1.5, dash: 'dot' },
+    hoverinfo: 'skip'
+  });
+
+  for (const m of rocData.models) {
+    if (!activeModels.has(m.tag)) continue;
+    traces.push({
+      x: m.fpr, y: m.tpr,
+      mode: 'lines', name: `${m.name} (AUC ${m.auc})`,
+      line: { color: m.color, width: m.tag === 'ens' ? 2.5 : 1.8 },
+      hovertemplate: `FPR: %{x:.3f}<br>TPR: %{y:.3f}<extra>${m.name}</extra>`
+    });
+  }
+
+  const layout = {
+    ...LAYOUT_BASE,
+    xaxis: { title: 'False Positive Rate', range: [0, 1], gridcolor: '#F3F4F6', zeroline: false },
+    yaxis: { title: 'True Positive Rate', range: [0, 1], gridcolor: '#F3F4F6', zeroline: false },
+    height: 360,
+  };
+
+  const el = document.getElementById('roc-chart');
+  el.style.height = '';
+  Plotly.react('roc-chart', traces, layout, CONFIG);
+}
+
+function setupROCToggles() {
+  document.querySelectorAll('#roc-toggles .tog').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const model = btn.dataset.model;
+      if (activeModels.has(model)) {
+        if (activeModels.size <= 1) return; // keep at least one
+        activeModels.delete(model);
+        btn.classList.remove('active');
+        btn.style.background = '';
+        btn.style.borderColor = '';
+        btn.style.color = '';
+      } else {
+        activeModels.add(model);
+        btn.classList.add('active');
+        btn.style.background = ROC_MODEL_COLORS[model];
+        btn.style.borderColor = ROC_MODEL_COLORS[model];
+        btn.style.color = '';
+      }
+      renderROC();
+    });
+  });
+}
+
+// ─── Development history ───────────────────────────────────────────────────────
+async function initDevHistory() {
+  try {
+    const data = await loadJSON('figures/schizophrenia/data/development_history.json');
+    const versions = data.versions.map(v => v.version);
+    const means    = data.versions.map(v => v.auc_mean);
+    const stds     = data.versions.map(v => v.auc_std);
+    const notes    = data.versions.map(v => v.note);
+
+    const traces = [{
+      x: versions, y: means,
+      error_y: { type: 'data', array: stds, visible: true, color: '#93C5FD', thickness: 1.5, width: 5 },
+      mode: 'lines+markers',
+      name: 'AUC',
+      line: { color: '#1D4ED8', width: 2 },
+      marker: { size: 8, color: means.map(m => m >= 0.7 ? '#DC2626' : '#1D4ED8') },
+      hovertemplate: '<b>%{x}</b><br>AUC: %{y:.3f}<extra></extra>',
+      customdata: notes,
+    }];
+
+    // Annotations for key milestones
+    const annotations = [];
+    data.versions.forEach((v, i) => {
+      if (data.annotations && data.annotations[v.version]) {
+        annotations.push({
+          x: v.version, y: v.auc_mean + v.auc_std + 0.02,
+          text: data.annotations[v.version],
+          showarrow: false,
+          font: { size: 10, color: '#6B7280' },
+          xanchor: 'center'
+        });
+      }
+    });
+
+    const layout = {
+      ...LAYOUT_BASE,
+      xaxis: { title: '', gridcolor: '#F3F4F6' },
+      yaxis: { title: 'Cross-validated AUC', range: [0.55, 0.80], gridcolor: '#F3F4F6', zeroline: false },
+      height: 300,
+      showlegend: false,
+      annotations,
+    };
+
+    const el = document.getElementById('dev-chart');
+    el.style.height = '';
+    Plotly.newPlot('dev-chart', traces, layout, CONFIG);
+  } catch(e) { showError('dev-chart', 'Could not load development history.'); }
+}
+
+// ─── Feature importance ────────────────────────────────────────────────────────
+const NET_COLORS = {
+  'DMN': '#8B5CF6', 'Fronto-temporal': '#0D9488', 'Thalamic': '#F87171', 'Other': '#9CA3AF'
+};
+
+async function initFeatureImportance() {
+  try {
+    const data = await loadJSON('figures/schizophrenia/data/feature_importance.json');
+    const features = [...data.features].sort((a, b) => a.abs_coefficient - b.abs_coefficient);
+
+    const traces = [];
+    const networks = [...new Set(features.map(f => f.network))];
+
+    for (const net of networks) {
+      const subset = features.filter(f => f.network === net);
+      traces.push({
+        type: 'bar', orientation: 'h',
+        name: net,
+        x: subset.map(f => f.coefficient),
+        y: subset.map(f => f.name),
+        marker: { color: NET_COLORS[net] || '#9CA3AF' },
+        hovertemplate: '<b>%{y}</b><br>Coef: %{x:.4f}<extra>' + net + '</extra>'
+      });
+    }
+
+    const layout = {
+      ...LAYOUT_BASE,
+      barmode: 'overlay',
+      xaxis: { title: 'LR coefficient', gridcolor: '#F3F4F6', zeroline: true, zerolinecolor: '#D1D5DB' },
+      yaxis: { automargin: true, tickfont: { size: 10 } },
+      height: 480,
+      margin: { ...LAYOUT_BASE.margin, l: 200 },
+      legend: { orientation: 'h', y: -0.12, x: 0, font: { size: 11 } },
+    };
+
+    const el = document.getElementById('feat-chart');
+    el.style.height = '';
+    Plotly.newPlot('feat-chart', traces, layout, CONFIG);
+  } catch(e) { showError('feat-chart', 'Could not load feature importance.'); }
+}
+
+// ─── Per-site metrics ──────────────────────────────────────────────────────────
+async function initSiteMetrics() {
+  try {
+    const data = await loadJSON('figures/schizophrenia/data/per_site_metrics.json');
+    const sites = data.sites;
+    const siteNames = data.site_names;
+    const models = data.models;
+    const colors = { lr:'#2563EB', svm:'#16A34A', xgb:'#D97706', lgbm:'#9333EA', ens:'#DC2626' };
+
+    const traces = models.map(m => ({
+      type: 'bar',
+      name: m.name,
+      x: sites.map(s => `${siteNames[s]}<br><span style="font-size:10px">${data.counts[s].hc} HC / ${data.counts[s].sz} SZ</span>`),
+      y: sites.map(s => data.aucs[s][m.tag] ?? 0),
+      marker: { color: colors[m.tag] },
+      hovertemplate: '<b>%{x}</b><br>AUC: %{y:.3f}<extra>' + m.name + '</extra>'
+    }));
+
+    const layout = {
+      ...LAYOUT_BASE,
+      barmode: 'group',
+      xaxis: { title: '' },
+      yaxis: { title: 'AUC', range: [0.5, 0.95], gridcolor: '#F3F4F6', zeroline: false },
+      height: 320,
+    };
+
+    const el = document.getElementById('site-chart');
+    el.style.height = '';
+    Plotly.newPlot('site-chart', traces, layout, CONFIG);
+  } catch(e) { showError('site-chart', 'Could not load site metrics.'); }
+}
+
+// ─── SHAP beeswarm ─────────────────────────────────────────────────────────────
+async function initSHAP() {
+  try {
+    const data = await loadJSON('figures/schizophrenia/data/shap_values.json');
+    const traces = [];
+
+    // Sort features by mean |SHAP| descending
+    const featOrder = [...data.features].sort((a, b) => {
+      const ma = a.shap_values.reduce((s, v) => s + Math.abs(v), 0) / a.shap_values.length;
+      const mb = b.shap_values.reduce((s, v) => s + Math.abs(v), 0) / b.shap_values.length;
+      return ma - mb; // ascending so top feature is at top in horizontal plot
+    });
+
+    // For each feature, plot one dot per subject jittered on y
+    const N = featOrder.length;
+    featOrder.forEach((feat, fi) => {
+      const n = feat.shap_values.length;
+      // Normalize feature values to [0,1] for color
+      const fvRaw = feat.feature_values;
+      const fvMin = Math.min(...fvRaw), fvMax = Math.max(...fvRaw);
+      const fvNorm = fvRaw.map(v => (v - fvMin) / (fvMax - fvMin + 1e-9));
+
+      traces.push({
+        type: 'scatter', mode: 'markers',
+        name: feat.name, showlegend: false,
+        x: feat.shap_values,
+        y: Array(n).fill(feat.name).map(() => feat.name + ' '.repeat(Math.random() < 0.5 ? 0 : 0)), // keep same y
+        marker: {
+          size: 5,
+          color: fvNorm,
+          colorscale: [[0, '#3B82F6'], [0.5, '#D1D5DB'], [1, '#EF4444']],
+          opacity: 0.6,
+          showscale: fi === N - 1,
+          colorbar: fi === N - 1 ? {
+            title: { text: 'Feature value<br>(low → high)', side: 'right', font: { size: 10 } },
+            len: 0.4, thickness: 10,
+            tickvals: [0, 1], ticktext: ['Low', 'High'],
+          } : undefined,
+        },
+        hovertemplate: '<b>' + feat.name + '</b><br>SHAP: %{x:.4f}<extra></extra>'
+      });
+    });
+
+    const layout = {
+      ...LAYOUT_BASE,
+      xaxis: { title: 'SHAP value (impact on model output)', gridcolor: '#F3F4F6', zeroline: true, zerolinecolor: '#D1D5DB', zerolinewidth: 1.5 },
+      yaxis: { automargin: true, tickfont: { size: 10 } },
+      height: 480,
+      margin: { ...LAYOUT_BASE.margin, l: 220 },
+      showlegend: false,
+    };
+
+    const el = document.getElementById('shap-chart');
+    el.style.height = '';
+    Plotly.newPlot('shap-chart', traces, layout, CONFIG);
+  } catch(e) { showError('shap-chart', 'Could not load SHAP values.'); }
+}
+
+// ─── FC difference heatmap ─────────────────────────────────────────────────────
+async function initFCHeatmap() {
+  try {
+    const data = await loadJSON('figures/schizophrenia/data/fc_matrices.json');
+    const diff = data.diff_matrix;
+    const labels = data.roi_labels;
+
+    // Compute color scale limit (symmetric)
+    let vmax = 0;
+    for (const row of diff) for (const v of row) vmax = Math.max(vmax, Math.abs(v));
+    vmax = Math.min(vmax, 0.15);
+
+    const trace = {
+      type: 'heatmap',
+      z: diff,
+      x: labels, y: labels,
+      colorscale: 'RdBu',
+      reversescale: true,
+      zmin: -vmax, zmax: vmax,
+      colorbar: { title: { text: 'SZ−HC', side: 'right' }, thickness: 12, len: 0.6 },
+      hovertemplate: '<b>%{y} — %{x}</b><br>Δ FC: %{z:.4f}<extra></extra>',
+    };
+
+    // Network boundary lines
+    const shapes = [];
+    for (const b of data.network_boundaries) {
+      // vertical
+      shapes.push({ type: 'line', x0: b.start - 0.5, x1: b.start - 0.5, y0: -0.5, y1: labels.length - 0.5, line: { color: '#374151', width: 0.8 } });
+      // horizontal
+      shapes.push({ type: 'line', y0: b.start - 0.5, y1: b.start - 0.5, x0: -0.5, x1: labels.length - 0.5, line: { color: '#374151', width: 0.8 } });
+    }
+
+    const layout = {
+      ...LAYOUT_BASE,
+      xaxis: { showticklabels: false, showgrid: false },
+      yaxis: { showticklabels: false, showgrid: false, autorange: 'reversed' },
+      height: 500,
+      margin: { t: 16, r: 80, b: 16, l: 16 },
+      shapes,
+      showlegend: false,
+    };
+
+    const el = document.getElementById('fc-chart');
+    el.style.height = '';
+    Plotly.newPlot('fc-chart', [trace], layout, CONFIG);
+  } catch(e) { showError('fc-chart', 'Could not load FC matrices.'); }
+}
+
+// ─── Parkinson ROC ─────────────────────────────────────────────────────────────
+async function initParkROC(data) {
+  try {
+    const traces = [{ x:[0,1], y:[0,1], mode:'lines', name:'Chance', line:{color:'#D1D5DB',width:1.5,dash:'dot'}, hoverinfo:'skip' }];
+
+    for (const m of data.roc_curves) {
+      traces.push({
+        x: m.fpr, y: m.tpr,
+        mode: 'lines', name: `${m.name} (AUC ${m.auc.toFixed(3)})`,
+        line: { color: m.color, width: 2 },
+        hovertemplate: `FPR: %{x:.3f}<br>TPR: %{y:.3f}<extra>${m.name}</extra>`
+      });
+    }
+
+    const layout = {
+      ...LAYOUT_BASE,
+      xaxis: { title: 'False Positive Rate', range: [0, 1], gridcolor: '#F3F4F6', zeroline: false },
+      yaxis: { title: 'True Positive Rate', range: [0, 1], gridcolor: '#F3F4F6', zeroline: false },
+      height: 340,
+    };
+
+    const el = document.getElementById('park-roc-chart');
+    el.style.height = '';
+    Plotly.newPlot('park-roc-chart', traces, layout, CONFIG);
+  } catch(e) { showError('park-roc-chart', 'Could not render Parkinson ROC.'); }
+}
+
+// ─── Parkinson model comparison ────────────────────────────────────────────────
+async function initParkComparison(data) {
+  try {
+    const models = data.model_comparison;
+    const names  = models.map(m => m.name);
+    const colors = models.map(m => m.color);
+
+    const metrics = [
+      { key: 'auc',         label: 'AUC' },
+      { key: 'sensitivity', label: 'Sensitivity' },
+      { key: 'specificity', label: 'Specificity' },
+      { key: 'accuracy',    label: 'Accuracy' },
+    ];
+
+    const traces = metrics.map(mt => ({
+      type: 'bar',
+      name: mt.label,
+      x: names,
+      y: models.map(m => Math.round(m[mt.key] * 1000) / 1000),
+      marker: { color: colors },
+      hovertemplate: '<b>%{x}</b><br>' + mt.label + ': %{y:.3f}<extra></extra>',
+      visible: mt.key === 'auc' ? true : 'legendonly'
+    }));
+
+    // Grouped bar: show all metrics side-by-side
+    const tracesFull = metrics.map((mt, mi) => ({
+      type: 'bar',
+      name: mt.label,
+      x: names,
+      y: models.map(m => Math.round(m[mt.key] * 1000) / 1000),
+      marker: { color: ['#2563EB', '#9CA3AF', '#D97706', '#6B7280'][mi] },
+      hovertemplate: '<b>%{x}</b><br>' + mt.label + ': %{y:.3f}<extra></extra>',
+    }));
+
+    const layout = {
+      ...LAYOUT_BASE,
+      barmode: 'group',
+      xaxis: { title: '' },
+      yaxis: { title: 'Score', range: [0.3, 0.7], gridcolor: '#F3F4F6', zeroline: false },
+      height: 320,
+    };
+
+    const el = document.getElementById('park-compare-chart');
+    el.style.height = '';
+    Plotly.newPlot('park-compare-chart', tracesFull, layout, CONFIG);
+
+    // Update best AUC card
+    const bestAUC = Math.max(...models.map(m => m.auc));
+    document.getElementById('park-best-auc').textContent = bestAUC.toFixed(3);
+  } catch(e) { showError('park-compare-chart', 'Could not render model comparison.'); }
+}
+
+// ─── Boot ──────────────────────────────────────────────────────────────────────
+window.addEventListener('load', async () => {
+  // Fire all data loads in parallel
+  const parkPromise = loadJSON('figures/parkinson/data/parkinson_data.json');
+
+  await Promise.allSettled([
+    initROC(),
+    initDevHistory(),
+    initFeatureImportance(),
+    initSiteMetrics(),
+    initSHAP(),
+    initFCHeatmap(),
+    parkPromise.then(d => Promise.all([initParkROC(d), initParkComparison(d)])),
+  ]);
+});
+</script>
 </body>
 </html>

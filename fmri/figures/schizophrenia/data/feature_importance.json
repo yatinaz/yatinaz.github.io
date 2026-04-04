@@ -1,0 +1,124 @@
+{
+  "features": [
+    {
+      "rank": 1,
+      "name": "Insula_L \u2014 Cingulum_Ant_L",
+      "coefficient": 0.874,
+      "abs_coefficient": 0.874,
+      "network": "DMN",
+      "color": "#8B5CF6"
+    },
+    {
+      "rank": 2,
+      "name": "Cingulum_Ant_L \u2014 Cingulum_Ant_R",
+      "coefficient": -0.5565,
+      "abs_coefficient": 0.5565,
+      "network": "DMN",
+      "color": "#8B5CF6"
+    },
+    {
+      "rank": 3,
+      "name": "Hippocampus_R \u2014 Frontal_Mid_R",
+      "coefficient": 0.5316,
+      "abs_coefficient": 0.5316,
+      "network": "Other",
+      "color": "#9CA3AF"
+    },
+    {
+      "rank": 4,
+      "name": "Thalamus_L \u2014 Temporal_Sup_L",
+      "coefficient": -0.3996,
+      "abs_coefficient": 0.3996,
+      "network": "Thalamic",
+      "color": "#F87171"
+    },
+    {
+      "rank": 5,
+      "name": "Temporal_Sup_L \u2014 Temporal_Sup_R",
+      "coefficient": -0.3873,
+      "abs_coefficient": 0.3873,
+      "network": "Fronto-temporal",
+      "color": "#0D9488"
+    },
+    {
+      "rank": 6,
+      "name": "Thalamus_L \u2014 Frontal_Sup_L",
+      "coefficient": -0.2868,
+      "abs_coefficient": 0.2868,
+      "network": "Thalamic",
+      "color": "#F87171"
+    },
+    {
+      "rank": 7,
+      "name": "Frontal_Sup_L \u2014 Temporal_Sup_L",
+      "coefficient": -0.1789,
+      "abs_coefficient": 0.1789,
+      "network": "Fronto-temporal",
+      "color": "#0D9488"
+    },
+    {
+      "rank": 8,
+      "name": "Cingulum_Ant_R \u2014 Frontal_Mid_R",
+      "coefficient": 0.1663,
+      "abs_coefficient": 0.1663,
+      "network": "DMN",
+      "color": "#8B5CF6"
+    },
+    {
+      "rank": 9,
+      "name": "Hippocampus_L \u2014 Frontal_Mid_L",
+      "coefficient": 0.1091,
+      "abs_coefficient": 0.1091,
+      "network": "Other",
+      "color": "#9CA3AF"
+    },
+    {
+      "rank": 10,
+      "name": "Cingulum_Ant_L \u2014 Frontal_Mid_L",
+      "coefficient": -0.0866,
+      "abs_coefficient": 0.0866,
+      "network": "DMN",
+      "color": "#8B5CF6"
+    },
+    {
+      "rank": 11,
+      "name": "Frontal_Mid_L \u2014 Temporal_Sup_L",
+      "coefficient": -0.0272,
+      "abs_coefficient": 0.0272,
+      "network": "Fronto-temporal",
+      "color": "#0D9488"
+    },
+    {
+      "rank": 12,
+      "name": "Thalamus_R \u2014 Temporal_Sup_R",
+      "coefficient": -0.026,
+      "abs_coefficient": 0.026,
+      "network": "Thalamic",
+      "color": "#F87171"
+    },
+    {
+      "rank": 13,
+      "name": "Frontal_Sup_L \u2014 Frontal_Sup_R",
+      "coefficient": -0.0206,
+      "abs_coefficient": 0.0206,
+      "network": "Fronto-temporal",
+      "color": "#0D9488"
+    },
+    {
+      "rank": 14,
+      "name": "Frontal_Sup_R \u2014 Temporal_Sup_R",
+      "coefficient": 0.0,
+      "abs_coefficient": 0.0,
+      "network": "Fronto-temporal",
+      "color": "#0D9488"
+    },
+    {
+      "rank": 15,
+      "name": "Thalamus_R \u2014 Frontal_Sup_R",
+      "coefficient": 0.0,
+      "abs_coefficient": 0.0,
+      "network": "Thalamic",
+      "color": "#F87171"
+    }
+  ]
+}

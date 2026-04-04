@@ -1,0 +1,60 @@
+{
+  "sites": [
+    "cobre",
+    "ds000030"
+  ],
+  "site_names": {
+    "cobre": "COBRE",
+    "ds000030": "ds000030"
+  },
+  "counts": {
+    "cobre": {
+      "hc": 74,
+      "sz": 72,
+      "total": 146
+    },
+    "ds000030": {
+      "hc": 130,
+      "sz": 50,
+      "total": 180
+    }
+  },
+  "aucs": {
+    "cobre": {
+      "lr": 0.8007,
+      "svm": 0.7682,
+      "xgb": 0.7185,
+      "lgbm": 0.7325,
+      "ens": 0.8106
+    },
+    "ds000030": {
+      "lr": 0.6072,
+      "svm": 0.584,
+      "xgb": 0.5642,
+      "lgbm": 0.6152,
+      "ens": 0.624
+    }
+  },
+  "models": [
+    {
+      "tag": "lr",
+      "name": "LR"
+    },
+    {
+      "tag": "svm",
+      "name": "SVM"
+    },
+    {
+      "tag": "xgb",
+      "name": "XGB"
+    },
+    {
+      "tag": "lgbm",
+      "name": "LGBM"
+    },
+    {
+      "tag": "ens",
+      "name": "Ensemble"
+    }
+  ]
+}
