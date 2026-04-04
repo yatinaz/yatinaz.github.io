@@ -256,6 +256,11 @@ function showError(id, msg) {
   if (el) el.innerHTML = `<span style="color:#EF4444;font-size:0.8rem">${msg}</span>`;
 }
 
+function clearLoading(id) {
+  const el = document.getElementById(id);
+  if (el) { el.className = 'chart-wrap'; el.innerHTML = ''; }
+}
+
 // ─── ROC curves ────────────────────────────────────────────────────────────────
 const ROC_MODEL_COLORS = {
   lr: '#2563EB', svm: '#16A34A', xgb: '#D97706', lgbm: '#9333EA', ens: '#DC2626'
@@ -301,8 +306,7 @@ function renderROC() {
     height: 360,
   };
 
-  const el = document.getElementById('roc-chart');
-  el.style.height = '';
+  clearLoading('roc-chart');
   Plotly.react('roc-chart', traces, layout, CONFIG);
 }
 
@@ -372,8 +376,7 @@ async function initDevHistory() {
       annotations,
     };
 
-    const el = document.getElementById('dev-chart');
-    el.style.height = '';
+    clearLoading('dev-chart');
     Plotly.newPlot('dev-chart', traces, layout, CONFIG);
   } catch(e) { showError('dev-chart', 'Could not load development history.'); }
 }
@@ -413,8 +416,7 @@ async function initFeatureImportance() {
       legend: { orientation: 'h', y: -0.12, x: 0, font: { size: 11 } },
     };
 
-    const el = document.getElementById('feat-chart');
-    el.style.height = '';
+    clearLoading('feat-chart');
     Plotly.newPlot('feat-chart', traces, layout, CONFIG);
   } catch(e) { showError('feat-chart', 'Could not load feature importance.'); }
 }
@@ -445,8 +447,7 @@ async function initSiteMetrics() {
       height: 320,
     };
 
-    const el = document.getElementById('site-chart');
-    el.style.height = '';
+    clearLoading('site-chart');
     Plotly.newPlot('site-chart', traces, layout, CONFIG);
   } catch(e) { showError('site-chart', 'Could not load site metrics.'); }
 }
@@ -503,8 +504,7 @@ async function initSHAP() {
       showlegend: false,
     };
 
-    const el = document.getElementById('shap-chart');
-    el.style.height = '';
+    clearLoading('shap-chart');
     Plotly.newPlot('shap-chart', traces, layout, CONFIG);
   } catch(e) { showError('shap-chart', 'Could not load SHAP values.'); }
 }
@@ -551,8 +551,7 @@ async function initFCHeatmap() {
       showlegend: false,
     };
 
-    const el = document.getElementById('fc-chart');
-    el.style.height = '';
+    clearLoading('fc-chart');
     Plotly.newPlot('fc-chart', [trace], layout, CONFIG);
   } catch(e) { showError('fc-chart', 'Could not load FC matrices.'); }
 }
@@ -578,8 +577,7 @@ async function initParkROC(data) {
       height: 340,
     };
 
-    const el = document.getElementById('park-roc-chart');
-    el.style.height = '';
+    clearLoading('park-roc-chart');
     Plotly.newPlot('park-roc-chart', traces, layout, CONFIG);
   } catch(e) { showError('park-roc-chart', 'Could not render Parkinson ROC.'); }
 }
@@ -626,8 +624,7 @@ async function initParkComparison(data) {
       height: 320,
     };
 
-    const el = document.getElementById('park-compare-chart');
-    el.style.height = '';
+    clearLoading('park-compare-chart');
     Plotly.newPlot('park-compare-chart', tracesFull, layout, CONFIG);
 
     // Update best AUC card
