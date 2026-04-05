@@ -55,9 +55,9 @@ footer{padding:48px 0 64px;text-align:center}
     <p class="subtitle">Predicting which reverse transcriptases work for prime editing using protein language models (ESM-2) and structural features extracted from AlphaFold structures. Built at Mandrake Bioworks.</p>
     <span class="badge">CLS 0.803</span>
     <span class="badge">10/12 Retroviral TPs recovered</span>
-    <span class="badge">ESM-2 · XGBoost · LightGBM</span>
+    <span class="badge">ESM-2 · LogisticRegression · XGBoost · CatBoost</span>
     <br>
-    <a class="repo-link" href="https://github.com/yatinaz/mandrake-rt-prediction" target="_blank" rel="noopener">
+    <a class="repo-link" href="https://github.com/yatinaz/opensrc-retroviral-problem" target="_blank" rel="noopener">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
       View source on GitHub →
     </a>
@@ -66,50 +66,59 @@ footer{padding:48px 0 64px;text-align:center}
   <p class="section-label">Figures</p>
 
   <div class="figure-block">
-    <p class="figure-caption"><strong>Fig 1. RT family overview.</strong> The landscape of retroviral and non-LTR RT families in the training dataset. Colour bands show evolutionary clade membership — a proxy for shared structural features.</p>
+    <p class="figure-caption"><strong>Fig 1. RT family overview.</strong> Dataset composition across 7 evolutionary RT families. 21 active vs 36 inactive across 57 sequences. The Retroviral family contributes 12 of 21 active RTs — this imbalance is the core structural challenge the LOFO evaluation is designed to expose.</p>
     <img class="figure-img" src="figures/family_overview.png" alt="Retroviral RT family overview" loading="lazy">
   </div>
   <hr class="divider">
 
   <div class="figure-block">
-    <p class="figure-caption"><strong>Fig 2. Era 1 training progression.</strong> Model performance across early training epochs using only sequence-derived ESM-2 embeddings. Plateau here motivates adding structural features in Era 2.</p>
+    <p class="figure-caption"><strong>Fig 2. Era 1 training progression.</strong> Era 1 (v1–v7): optimising binary classification. Early versions used Random Forest and SVM ensembles with handcrafted features. The best Era 1 result was Macro-F1=0.650 with 10/12 Retroviral true positives recovered using a 7-model rank-blend.</p>
     <img class="figure-img" src="figures/01_era1_progression.png" alt="Era 1 training progression" loading="lazy">
   </div>
   <hr class="divider">
 
   <div class="figure-block">
-    <p class="figure-caption"><strong>Fig 3. Era 2 training progression.</strong> Performance after incorporating AlphaFold structural descriptors. The CLS score lifts noticeably — confirming that 3D shape captures activity-relevant information beyond sequence alone.</p>
+    <p class="figure-caption"><strong>Fig 3. Era 2 training progression.</strong> Era 2 (v8–v14): optimising CLS — the harmonic mean of PR-AUC and Weighted Spearman. The biggest single gain was switching the classifier from XGBoost to L2 LogisticRegression in v10 (+0.105 CLS), driven by LR's ability to use all 30+ features simultaneously at n=57.</p>
     <img class="figure-img" src="figures/02_era2_progression.png" alt="Era 2 training progression with structural features" loading="lazy">
   </div>
   <hr class="divider">
 
   <div class="figure-block">
-    <p class="figure-caption"><strong>Fig 4. CLS score progression.</strong> The combined CLS (classification score) across all training eras. The final ensemble recovers 10 of 12 known retroviral true positives from the held-out set.</p>
+    <p class="figure-caption"><strong>Fig 4. CLS score progression.</strong> CLS score progression from v8 to v14. Each annotation marks the specific change that produced the improvement. PR-AUC and WSpearman must be optimised simultaneously — the harmonic mean structure of CLS collapses to zero if either component fails.</p>
     <img class="figure-img" src="figures/cls_progression.png" alt="CLS score progression across eras" loading="lazy">
   </div>
   <hr class="divider">
 
   <div class="figure-block">
-    <p class="figure-caption"><strong>Fig 5. Feature distributions.</strong> Distribution of the top engineered features split by active/inactive RTs. Features with clearly separated distributions are the ones carrying the most discriminative signal.</p>
+    <p class="figure-caption"><strong>Fig 5. Feature distributions.</strong> Feature distributions for active vs inactive RTs. thumb_fident (Spearman rho=0.901 with PE efficiency) and foldseek_best_TM show near-perfect separation. Features were selected through OOF residual analysis, not upfront correlation screening alone.</p>
     <img class="figure-img" src="figures/feature_distributions.png" alt="Feature distributions for active vs inactive RTs" loading="lazy">
   </div>
   <hr class="divider">
 
   <div class="figure-block">
-    <p class="figure-caption"><strong>Fig 6. Feature importance.</strong> SHAP-derived feature importance from the final XGBoost ensemble. ESM-2 embedding dimensions dominate, but several structural descriptors (e.g. thumb subdomain RMSD) rank in the top 20.</p>
+    <p class="figure-caption"><strong>Fig 6. Feature importance.</strong> XGBoost feature importance by normalised gain, split by model role. FoldSeek structural similarity scores dominate the classifier. Palm domain geometry features (thumb_fident, n_hairpins_found) dominate the regressor — these capture processivity-relevant structure absent from the global TM-scores.</p>
     <img class="figure-img" src="figures/feature_importance.png" alt="Feature importance for RT activity prediction" loading="lazy">
   </div>
   <hr class="divider">
 
   <div class="figure-block">
-    <p class="figure-caption"><strong>Fig 7. Leave-one-family-out performance.</strong> LOFO cross-validation: each RT family is held out in turn. Performance drops for families with few representatives — a signal about where more data would help most.</p>
+    <p class="figure-caption"><strong>Fig 7. Leave-one-family-out performance.</strong> Per-family PR-AUC under Leave-One-Family-Out cross-validation. Group II Intron achieves perfect separation. LTR Retrotransposon is hardest — Tf1-RT and Ty3-RT are structurally unlike MMLV, so the model must generalise from non-retroviral training signal alone.</p>
     <img class="figure-img" src="figures/lofo_performance.png" alt="Leave-one-family-out performance" loading="lazy">
   </div>
   <hr class="divider">
 
   <div class="figure-block">
-    <p class="figure-caption"><strong>Fig 8. Rank-ensemble predictions.</strong> Final rank-aggregated predictions across all ensemble members. Candidates ranked in the top decile are the priority leads for experimental validation.</p>
+    <p class="figure-caption"><strong>Fig 8. Rank-ensemble predictions.</strong> Rank blending diagram. Both LR probabilities and XGB+CatBoost regression outputs are converted to fractional ranks [0,1] before the 0.66/0.34 weighted sum. This removes calibration bias — LR probabilities and efficiency predictions live on incompatible scales.</p>
     <img class="figure-img" src="figures/rank_ensemble.png" alt="Rank ensemble predictions" loading="lazy">
+  </div>
+
+  <p class="section-label">How it works</p>
+
+  <div style="font-size:0.9rem;color:var(--text-muted);line-height:1.75;margin-bottom:36px">
+    <p style="margin-bottom:1em"><strong style="color:var(--text)">Evaluation.</strong> Leave-One-Family-Out (LOFO) cross-validation holds out all members of one evolutionary RT family per fold, rotating across all 7 families. Standard random k-fold would mix family members across train and test, letting the model learn "if it looks like the Retroviral clade, it's probably active" — inflating apparent performance while testing nothing about generalisation. LOFO forces the model to predict activity for a family it has never seen, which is exactly what happens when a company screens an RT from a novel organism.</p>
+    <p style="margin-bottom:1em"><strong style="color:var(--text)">Architecture.</strong> The pipeline uses a two-stage design: a Logistic Regression classifier produces P(active) probabilities that feed into PR-AUC, and an XGBoost + CatBoost regressor ensemble predicts PE efficiency values that feed into Weighted Spearman. Both outputs are converted to fractional ranks [0,1] before blending at a 0.66/0.34 ratio. Rank blending rather than score multiplication avoids the calibration problem — LR probabilities and regression predictions live on incompatible numerical scales, so direct averaging is meaningless. The blend weight was tuned by sweeping 0.00–1.00 in 0.01 steps under LOFO CV.</p>
+    <p style="margin-bottom:1em"><strong style="color:var(--text)">Key features.</strong> FoldSeek TM-scores (structural similarity to known RTs) go into both models — they are the primary activity signal. Palm domain geometry features (thumb_fident: ρ=0.901 with PE efficiency; n_hairpins_found: ρ=0.816) go into the regressor only: they capture processivity-relevant local structure that is absent from global TM-scores and would add noise to the classifier. Thermal stability features (t55, t60, t65) also go into the regressor, reflecting the correlation between thermostability and enzymatic activity. ESM-2 PCA components (5 dims, fitted inside each LOFO fold) go into both models, contributing evolutionary context without leaking test-set information into the embedding space.</p>
+    <p><strong style="color:var(--text)">Experiment discipline.</strong> v10–v14 represents 20+ controlled experiments. v12 swept LR regularisation strength and PCA dimension count. v13 tested 13 candidate features one at a time in OOF — features were only added if they improved the held-out CLS on all 7 folds. v14 combined the winning features from v13. A key lesson from v11: features that help classification (e.g. hbonds_per_res) can hurt WSpearman when added to the regressor, because they introduce signal that is discriminative for active/inactive but uncorrelated with efficiency rank order. The regressor was kept pure — only features correlating with efficiency were allowed in.</p>
   </div>
 
   <p class="section-label">Interactive course</p>
