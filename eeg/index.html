@@ -3,592 +3,344 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EEG Motor Imagery Classification — Yatin Azad</title>
+<title>EEG Motor Imagery — Interactive Course · Yatin Azad</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
 <style>
-/* ── RESET ──────────────────────────────────────────────────────────────── */
+/* ── RESET ──────────────────────────────────────────────────────── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-/* ── DESIGN TOKENS ──────────────────────────────────────────────────────── */
+/* ── DESIGN TOKENS ──────────────────────────────────────────────── */
 :root{
-  /* Content section — matches fMRI page palette */
   --bg:#FAFAF9;
   --surface:#fff;
   --border:#E5E2DC;
   --accent:#1D4ED8;
+  --accent-light:#EFF6FF;
   --text:#111827;
   --text-muted:#6B7280;
   --text-light:#9CA3AF;
-
-  /* Hero — dark navy */
   --hero-bg:#0d1b2a;
   --hero-gradient:linear-gradient(160deg,#0d1b2a 0%,#0f2744 55%,#0a1f38 100%);
-  --hero-text:#ffffff;
+  --hero-text:#fff;
   --hero-sub:rgba(255,255,255,0.72);
   --hero-badge-bg:rgba(255,255,255,0.10);
   --hero-badge-border:rgba(255,255,255,0.22);
-  --hero-badge-text:rgba(255,255,255,0.92);
-
-  /* Content badges */
   --badge-bg:#EFF6FF;
   --badge-text:#1D4ED8;
-
-  /* Figure palette */
   --left-color:#1D4ED8;
   --right-color:#DC2626;
+  --code-bg:#1e293b;
+  --code-text:#e2e8f0;
+  --insight-bg:#fffbeb;
+  --insight-border:#fbbf24;
+  --reveal-duration:500ms;
 }
 
-/* ── BASE ───────────────────────────────────────────────────────────────── */
+/* ── BASE ───────────────────────────────────────────────────────── */
 html{font-size:16px;scroll-behavior:smooth}
-body{
-  font-family:'Inter',sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  -webkit-font-smoothing:antialiased;
-}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
 a{color:var(--accent);text-decoration:none}
 a:hover{text-decoration:underline}
+code{font-family:'JetBrains Mono',monospace;font-size:0.82em;background:#f1f5f9;padding:1px 5px;border-radius:3px;color:#334155}
 
-/* ── HERO ───────────────────────────────────────────────────────────────── */
-.hero{
-  background:var(--hero-gradient);
-  padding:48px 0 52px;
-  position:relative;
-  overflow:hidden;
+/* ── SCROLL REVEAL ──────────────────────────────────────────────── */
+.reveal{opacity:0;transform:translateY(22px);transition:opacity var(--reveal-duration) ease,transform var(--reveal-duration) ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:80ms}
+.reveal-delay-2{transition-delay:160ms}
+.reveal-delay-3{transition-delay:240ms}
+.reveal-delay-4{transition-delay:320ms}
+
+/* ── PROGRESS BAR ───────────────────────────────────────────────── */
+#progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--accent);width:0%;z-index:999;transition:width .1s linear}
+
+/* ── NAV PILLS ──────────────────────────────────────────────────── */
+#course-nav{
+  position:sticky;top:0;z-index:100;background:rgba(250,250,249,0.92);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--border);
+  padding:0;overflow-x:auto;
 }
-/* Subtle glow behind the heading */
-.hero::before{
-  content:'';
-  position:absolute;inset:0;
-  background:radial-gradient(ellipse 70% 60% at 50% 30%,
-    rgba(29,78,216,0.14) 0%,transparent 70%);
-  pointer-events:none;
-}
-.hero-inner{
-  max-width:800px;
-  margin:0 auto;
-  padding:0 24px;
-  position:relative;z-index:1;
-}
-.back-link{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  font-size:0.8rem;
-  font-weight:500;
-  color:var(--hero-sub);
-  margin-bottom:28px;
-  transition:color .15s;
-}
+.nav-pills{display:flex;gap:0;list-style:none;min-width:max-content;max-width:800px;margin:0 auto;padding:0 24px}
+.nav-pills li a{display:block;font-size:0.72rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;padding:10px 14px;color:var(--text-light);border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}
+.nav-pills li a:hover{color:var(--accent);text-decoration:none}
+.nav-pills li a.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* ── HERO ───────────────────────────────────────────────────────── */
+.hero{background:var(--hero-gradient);padding:48px 0 52px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 30%,rgba(29,78,216,0.14) 0%,transparent 70%);pointer-events:none}
+.hero-inner{max-width:800px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:0.8rem;font-weight:500;color:var(--hero-sub);margin-bottom:28px;transition:color .15s}
 .back-link:hover{color:#fff;text-decoration:none}
-.hero h1{
-  font-size:clamp(1.6rem,4vw,2.25rem);
-  font-weight:700;
-  letter-spacing:-0.025em;
-  line-height:1.18;
-  color:var(--hero-text);
-  margin-bottom:12px;
-}
-.hero-sub{
-  font-size:0.95rem;
-  line-height:1.7;
-  color:var(--hero-sub);
-  max-width:560px;
-  margin-bottom:20px;
-}
-.hero-badges{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  margin-bottom:24px;
-}
-.hbadge{
-  display:inline-block;
-  background:var(--hero-badge-bg);
-  border:1px solid var(--hero-badge-border);
-  color:var(--hero-badge-text);
-  font-size:0.72rem;
-  font-weight:600;
-  padding:4px 11px;
-  border-radius:20px;
-  font-family:'JetBrains Mono',monospace;
-  letter-spacing:0.02em;
-}
-.hero-meta{
-  font-size:0.8rem;
-  color:var(--hero-sub);
-  display:flex;
-  gap:20px;
-  flex-wrap:wrap;
-}
+.hero h1{font-size:clamp(1.6rem,4vw,2.25rem);font-weight:700;letter-spacing:-0.025em;line-height:1.18;color:var(--hero-text);margin-bottom:12px}
+.hero-sub{font-size:0.95rem;line-height:1.7;color:var(--hero-sub);max-width:560px;margin-bottom:20px}
+.hero-badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+.hbadge{display:inline-block;background:var(--hero-badge-bg);border:1px solid var(--hero-badge-border);color:rgba(255,255,255,0.92);font-size:0.72rem;font-weight:600;padding:4px 11px;border-radius:20px;font-family:'JetBrains Mono',monospace;letter-spacing:0.02em}
+.hero-meta{font-size:0.8rem;color:var(--hero-sub);display:flex;gap:20px;flex-wrap:wrap}
 .hero-meta span{display:flex;align-items:center;gap:5px}
+.course-label{display:inline-flex;align-items:center;gap:6px;font-size:0.7rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:10px}
+.course-label::before{content:'';display:inline-block;width:18px;height:2px;background:rgba(255,255,255,0.35);border-radius:2px}
 
-/* ── CONTENT LAYOUT ─────────────────────────────────────────────────────── */
+/* ── CONTENT LAYOUT ─────────────────────────────────────────────── */
 .content{background:var(--bg);padding-bottom:0}
 .container{max-width:800px;margin:0 auto;padding:0 24px}
 
-/* ── SECTION LABELS ─────────────────────────────────────────────────────── */
-.section-label{
-  font-size:0.68rem;
-  font-weight:600;
-  letter-spacing:0.12em;
-  text-transform:uppercase;
-  color:var(--text-light);
-  margin:52px 0 18px;
-}
+/* ── SECTION LABELS ─────────────────────────────────────────────── */
+.section-label{font-size:0.68rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-light);margin:52px 0 18px}
 
-/* ── PROSE ──────────────────────────────────────────────────────────────── */
-.prose{
-  font-size:0.925rem;
-  line-height:1.75;
-  color:var(--text-muted);
-  margin-bottom:16px;
-  max-width:660px;
-}
+/* ── PROSE ──────────────────────────────────────────────────────── */
+.prose{font-size:0.925rem;line-height:1.75;color:var(--text-muted);margin-bottom:16px;max-width:660px}
 .prose strong{color:var(--text)}
 
-/* ── PIPELINE STEPS ─────────────────────────────────────────────────────── */
-.steps{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  margin:16px 0 4px;
-}
-.step{
-  display:flex;
-  align-items:flex-start;
-  gap:14px;
-  font-size:0.88rem;
-  line-height:1.55;
-  color:var(--text-muted);
-}
-.step-num{
-  flex-shrink:0;
-  width:22px;height:22px;
-  border-radius:50%;
-  background:var(--badge-bg);
-  color:var(--accent);
-  font-size:0.72rem;
-  font-weight:700;
-  display:flex;align-items:center;justify-content:center;
-  margin-top:1px;
-}
+/* ── CODE + EXPLAIN PANEL ───────────────────────────────────────── */
+.code-explain{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:20px 0 32px;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
+@media(max-width:640px){.code-explain{grid-template-columns:1fr}}
+.ce-code{background:var(--code-bg);padding:20px;overflow-x:auto}
+.ce-code pre{font-family:'JetBrains Mono',monospace;font-size:0.75rem;line-height:1.7;color:var(--code-text);white-space:pre}
+.ce-code .kw{color:#93c5fd}
+.ce-code .fn{color:#6ee7b7}
+.ce-code .str{color:#fcd34d}
+.ce-code .cm{color:#64748b;font-style:italic}
+.ce-code .num{color:#f9a8d4}
+.ce-explain{background:#fff;padding:20px 22px;border-left:1px solid var(--border)}
+@media(max-width:640px){.ce-explain{border-left:none;border-top:1px solid var(--border)}}
+.ce-explain h4{font-size:0.8rem;font-weight:700;color:var(--text);margin-bottom:10px;letter-spacing:-0.01em}
+.ce-explain p{font-size:0.825rem;line-height:1.65;color:var(--text-muted);margin-bottom:8px}
+.ce-explain p:last-child{margin-bottom:0}
+.ce-explain strong{color:var(--text)}
+
+/* ── INSIGHT BOX ────────────────────────────────────────────────── */
+.insight{background:var(--insight-bg);border:1px solid var(--insight-border);border-left:4px solid var(--insight-border);border-radius:8px;padding:14px 18px;margin:20px 0 24px;font-size:0.875rem;line-height:1.65;color:#78350f}
+.insight strong{color:#92400e}
+.insight-blue{background:#eff6ff;border-color:#93c5fd;border-left-color:#2563eb;color:#1e3a8a}
+.insight-blue strong{color:#1e40af}
+.insight-red{background:#fff1f2;border-color:#fca5a5;border-left-color:#dc2626;color:#7f1d1d}
+.insight-red strong{color:#991b1b}
+
+/* ── STEPS ──────────────────────────────────────────────────────── */
+.steps{display:flex;flex-direction:column;gap:12px;margin:16px 0 4px}
+.step{display:flex;align-items:flex-start;gap:14px;font-size:0.88rem;line-height:1.6;color:var(--text-muted)}
+.step-num{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--badge-bg);color:var(--accent);font-size:0.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:2px}
 .step strong{color:var(--text);font-weight:600}
 
-/* ── BAND TABLE ─────────────────────────────────────────────────────────── */
-.band-table{
-  width:100%;
-  border-collapse:collapse;
-  font-size:0.84rem;
-  margin:16px 0;
-}
-.band-table th{
-  text-align:left;
-  font-size:0.68rem;
-  font-weight:600;
-  letter-spacing:0.08em;
-  text-transform:uppercase;
-  color:var(--text-light);
-  padding:6px 12px 6px 0;
-  border-bottom:1px solid var(--border);
-}
-.band-table td{
-  padding:8px 12px 8px 0;
-  border-bottom:1px solid var(--border);
-  color:var(--text-muted);
-}
-.band-table td:first-child{
-  font-family:'JetBrains Mono',monospace;
-  font-size:0.8rem;
-  color:var(--text);
-}
-.band-pill{
-  display:inline-block;
-  padding:2px 8px;
-  border-radius:4px;
-  font-size:0.72rem;
-  font-weight:600;
-  font-family:'JetBrains Mono',monospace;
-}
+/* ── BAND TABLE ─────────────────────────────────────────────────── */
+.band-table{width:100%;border-collapse:collapse;font-size:0.84rem;margin:16px 0}
+.band-table th{text-align:left;font-size:0.68rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-light);padding:6px 12px 6px 0;border-bottom:1px solid var(--border)}
+.band-table td{padding:8px 12px 8px 0;border-bottom:1px solid var(--border);color:var(--text-muted)}
+.band-table td:first-child{font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--text)}
+.band-pill{display:inline-block;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:600;font-family:'JetBrains Mono',monospace}
 .band-alpha{background:#dbeafe;color:#1e40af}
 .band-beta{background:#fce7f3;color:#9d174d}
-.badge-sm{
-  display:inline-block;
-  background:var(--badge-bg);
-  color:var(--badge-text);
-  font-size:0.72rem;
-  font-weight:600;
-  padding:3px 9px;
-  border-radius:20px;
-  font-family:'JetBrains Mono',monospace;
-  margin-right:6px;
-}
+.band-riemann{background:#ede9fe;color:#5b21b6}
+.badge-sm{display:inline-block;background:var(--badge-bg);color:var(--badge-text);font-size:0.72rem;font-weight:600;padding:3px 9px;border-radius:20px;font-family:'JetBrains Mono',monospace;margin-right:6px}
 
-/* ── FIGURE BLOCKS ──────────────────────────────────────────────────────── */
+/* ── FIGURE BLOCKS ──────────────────────────────────────────────── */
 .figure-block{margin-bottom:40px}
-.figure-caption{
-  font-size:0.85rem;
-  color:var(--text-muted);
-  line-height:1.65;
-  margin-bottom:12px;
-}
+.figure-caption{font-size:0.85rem;color:var(--text-muted);line-height:1.65;margin-bottom:12px}
 .figure-caption strong{color:var(--text);font-weight:600}
 .divider{border:none;border-top:1px solid var(--border);margin:4px 0 40px}
-
-/* Interactive figure container */
-.fig-wrap{
-  border-radius:10px;
-  border:1px solid var(--border);
-  overflow:hidden;
-  background:var(--surface);
-  box-shadow:0 1px 4px rgba(0,0,0,0.05);
-}
+.fig-wrap{border-radius:10px;border:1px solid var(--border);overflow:hidden;background:var(--surface);box-shadow:0 1px 4px rgba(0,0,0,0.05)}
 .plotly-fig{width:100%;height:380px}
 .plotly-fig-tall{width:100%;height:440px}
 .plotly-fig-sm{width:100%;height:320px}
 
 /* Controls above figures */
-.fig-controls{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  flex-wrap:wrap;
-  padding:12px 16px;
-  border-bottom:1px solid var(--border);
-  background:#fdfcfa;
-}
-.fig-controls label{
-  font-size:0.75rem;
-  font-weight:600;
-  color:var(--text-muted);
-  letter-spacing:0.05em;
-  text-transform:uppercase;
-  margin-right:4px;
-}
-.ctrl-btn{
-  padding:5px 13px;
-  border-radius:6px;
-  border:1px solid var(--border);
-  background:#fff;
-  font-size:0.78rem;
-  font-weight:600;
-  color:var(--text-muted);
-  cursor:pointer;
-  font-family:'Inter',sans-serif;
-  transition:all .15s;
-}
+.fig-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid var(--border);background:#fdfcfa}
+.fig-controls label{font-size:0.75rem;font-weight:600;color:var(--text-muted);letter-spacing:0.05em;text-transform:uppercase;margin-right:4px}
+.ctrl-btn{padding:5px 13px;border-radius:6px;border:1px solid var(--border);background:#fff;font-size:0.78rem;font-weight:600;color:var(--text-muted);cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s}
 .ctrl-btn:hover{border-color:var(--accent);color:var(--accent)}
-.ctrl-btn.active{
-  background:var(--accent);
-  border-color:var(--accent);
-  color:#fff;
-}
-.ctrl-select{
-  padding:5px 10px;
-  border-radius:6px;
-  border:1px solid var(--border);
-  background:#fff;
-  font-size:0.78rem;
-  font-weight:500;
-  color:var(--text);
-  cursor:pointer;
-  font-family:'Inter',sans-serif;
-}
+.ctrl-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.ctrl-select{padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:#fff;font-size:0.78rem;font-weight:500;color:var(--text);cursor:pointer;font-family:'Inter',sans-serif}
 .ctrl-select:focus{outline:none;border-color:var(--accent)}
 
-/* Placeholder shown before JSON is available */
-.fig-placeholder{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  height:380px;
-  gap:10px;
-  color:var(--text-light);
-  font-size:0.85rem;
-  background:#fdfcfa;
-}
-.fig-placeholder svg{opacity:.35}
-.fig-placeholder code{
-  font-family:'JetBrains Mono',monospace;
-  font-size:0.78rem;
-  background:#f3f4f6;
-  padding:2px 8px;
-  border-radius:4px;
-  color:var(--text-muted);
-}
+/* Placeholder */
+.fig-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;height:380px;gap:10px;color:var(--text-light);font-size:0.85rem;background:#fdfcfa}
+.fig-placeholder code{font-family:'JetBrains Mono',monospace;font-size:0.78rem;background:#f3f4f6;padding:2px 8px;border-radius:4px;color:var(--text-muted)}
 
-/* ── RESULTS GRID ───────────────────────────────────────────────────────── */
-.results-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:16px;
-  margin-bottom:16px;
-}
-@media(max-width:560px){.results-grid{grid-template-columns:1fr}}
-.result-card{
-  border:1px solid var(--border);
-  border-radius:10px;
-  padding:16px 18px;
-  background:#fff;
-}
-.result-label{
-  font-size:0.68rem;
-  font-weight:600;
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-  color:var(--text-light);
-  margin-bottom:4px;
-}
-.result-value{
-  font-size:1.5rem;
-  font-weight:700;
-  color:var(--text);
-  font-family:'JetBrains Mono',monospace;
-  letter-spacing:-0.02em;
-}
+/* ── RESULTS GRID ───────────────────────────────────────────────── */
+.results-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
+@media(max-width:560px){.results-grid{grid-template-columns:1fr 1fr}}
+.result-card{border:1px solid var(--border);border-radius:10px;padding:16px 18px;background:#fff}
+.result-label{font-size:0.68rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-light);margin-bottom:4px}
+.result-value{font-size:1.5rem;font-weight:700;color:var(--text);font-family:'JetBrains Mono',monospace;letter-spacing:-0.02em}
 .result-sub{font-size:0.78rem;color:var(--text-muted);margin-top:2px}
 
-/* ── FOOTER ─────────────────────────────────────────────────────────────── */
-footer{
-  padding:56px 0 72px;
-  text-align:center;
-  border-top:1px solid var(--border);
-  margin-top:56px;
-}
+/* ── QUIZ ───────────────────────────────────────────────────────── */
+.quiz-block{border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:28px 0 36px;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.quiz-header{background:#1D4ED8;padding:14px 20px;display:flex;align-items:center;gap:10px}
+.quiz-header span{font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.8)}
+.quiz-header svg{flex-shrink:0;opacity:.8}
+.quiz-body{padding:20px 22px;background:#fff}
+.quiz-q{font-size:0.92rem;font-weight:600;color:var(--text);margin-bottom:14px;line-height:1.5}
+.quiz-options{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.quiz-option{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-radius:8px;border:1.5px solid var(--border);cursor:pointer;font-size:0.85rem;color:var(--text-muted);line-height:1.45;transition:all .15s;user-select:none}
+.quiz-option:hover{border-color:var(--accent);color:var(--text)}
+.quiz-option.selected{border-color:var(--accent);background:var(--badge-bg);color:var(--accent)}
+.quiz-option.correct{border-color:#16a34a;background:#f0fdf4;color:#15803d}
+.quiz-option.wrong{border-color:#dc2626;background:#fff1f2;color:#b91c1c}
+.quiz-option .opt-letter{flex-shrink:0;width:20px;height:20px;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;font-family:'JetBrains Mono',monospace;margin-top:1px}
+.quiz-check{padding:7px 18px;border-radius:6px;border:none;background:var(--accent);color:#fff;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s}
+.quiz-check:hover{background:#1e40af}
+.quiz-check:disabled{background:#9CA3AF;cursor:not-allowed}
+.quiz-feedback{margin-top:12px;padding:10px 14px;border-radius:8px;font-size:0.83rem;line-height:1.55;display:none}
+.quiz-feedback.correct{background:#f0fdf4;color:#15803d;border:1px solid #86efac}
+.quiz-feedback.wrong{background:#fff1f2;color:#b91c1c;border:1px solid #fca5a5}
+.quiz-feedback.show{display:block}
+
+/* ── INTER-SUBJECT GRID ─────────────────────────────────────────── */
+.subj-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:16px 0 24px}
+@media(max-width:480px){.subj-grid{grid-template-columns:repeat(3,1fr)}}
+.subj-card{border:1px solid var(--border);border-radius:8px;padding:10px 8px;text-align:center;background:#fff;transition:transform .15s}
+.subj-card:hover{transform:translateY(-2px)}
+.subj-card .subj-id{font-size:0.7rem;font-weight:600;color:var(--text-light);letter-spacing:0.06em;margin-bottom:4px}
+.subj-card .subj-acc{font-size:1.05rem;font-weight:700;font-family:'JetBrains Mono',monospace}
+.subj-card.high .subj-acc{color:#16a34a}
+.subj-card.mid .subj-acc{color:#d97706}
+.subj-card.low .subj-acc{color:#dc2626}
+.subj-card .subj-bar{height:4px;border-radius:2px;margin-top:6px;background:#e5e7eb}
+.subj-card .subj-fill{height:4px;border-radius:2px}
+.subj-card.high .subj-fill{background:#16a34a}
+.subj-card.mid .subj-fill{background:#d97706}
+.subj-card.low .subj-fill{background:#dc2626}
+
+/* ── SECTION DIVIDER ────────────────────────────────────────────── */
+.section-sep{border:none;border-top:1px solid var(--border);margin:0 0 0}
+
+/* ── FOOTER ─────────────────────────────────────────────────────── */
+footer{padding:56px 0 72px;text-align:center;border-top:1px solid var(--border);margin-top:56px}
 .footer-back{font-size:0.875rem;color:var(--text-muted)}
 .footer-back:hover{color:var(--accent)}
 
 @media(max-width:600px){
   .plotly-fig,.plotly-fig-sm{height:300px}
   .plotly-fig-tall{height:360px}
+  .results-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════ HERO ═══════════════════════════════ -->
+<div id="progress-bar"></div>
+
+<!-- ══════════ HERO ══════════════════════════════════════════════ -->
 <section class="hero">
   <div class="hero-inner">
     <a class="back-link" href="https://yatinaz.github.io">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-           stroke="currentColor" stroke-width="2">
-        <path d="M19 12H5m7-7-7 7 7 7"/>
-      </svg>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5m7-7-7 7 7 7"/></svg>
       Back to portfolio
     </a>
 
+    <div class="course-label">Interactive Course</div>
     <h1>EEG Motor Imagery Classification</h1>
     <p class="hero-sub">
-      End-to-end signal processing and classification pipeline on the
-      PhysioNet EEGBCI dataset. Left-hand vs right-hand motor imagery
-      decoded from alpha and beta band power using LDA and SVM, with
-      five interactive figures exploring the signal at every stage.
+      A step-by-step walkthrough of how a computer can read your mind — or at least
+      tell which hand you're imagining moving — using brainwave signals and machine learning.
     </p>
 
     <div class="hero-badges">
       <span class="hbadge">Alpha ERD</span>
       <span class="hbadge">Beta Desync</span>
       <span class="hbadge">MNE-Python</span>
-      <span class="hbadge">ICA Artefact Removal</span>
-      <span class="hbadge">10 subjects</span>
-      <span class="hbadge">Motor Imagery</span>
+      <span class="hbadge">ICA Artifact Removal</span>
+      <span class="hbadge">10 Subjects</span>
       <span class="hbadge">CSP · LDA · SVM · Riemannian</span>
     </div>
 
     <div class="hero-meta">
       <span>
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
-             stroke="currentColor" stroke-width="2">
-          <rect x="2" y="3" width="20" height="14" rx="2"/>
-          <path d="M8 21h8M12 17v4"/>
-        </svg>
-        PhysioNet EEGBCI
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        PhysioNet EEGBCI dataset
       </span>
       <span>
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
-             stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"/>
-          <path d="M12 6v6l4 2"/>
-        </svg>
-        64 EEG channels · 160 Hz
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        64 channels · 160 Hz · 10 subjects
       </span>
       <span>
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
-             stroke="currentColor" stroke-width="2">
-          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-        </svg>
-        Runs 6, 10, 14 — imagery only
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        3 classifiers compared
       </span>
     </div>
   </div>
 </section>
 
-<!-- ══════════════════════════ CONTENT ════════════════════════════════ -->
+<!-- ══════════ STICKY NAV ════════════════════════════════════════ -->
+<nav id="course-nav">
+  <ul class="nav-pills">
+    <li><a href="#overview"    class="active" data-sec="overview">Overview</a></li>
+    <li><a href="#the-signal"  data-sec="the-signal">The Signal</a></li>
+    <li><a href="#preprocessing" data-sec="preprocessing">Preprocessing</a></li>
+    <li><a href="#features"    data-sec="features">Feature Engineering</a></li>
+    <li><a href="#classification" data-sec="classification">Classification</a></li>
+    <li><a href="#results"     data-sec="results">Results &amp; Insights</a></li>
+  </ul>
+</nav>
+
+<!-- ══════════ CONTENT ═══════════════════════════════════════════ -->
 <div class="content">
 <div class="container">
 
-  <!-- OVERVIEW ─────────────────────────────────────────────────────── -->
-  <p class="section-label">Overview</p>
-  <p class="prose">
-    During motor imagery — imagining moving a limb without actually moving it — the brain
-    produces a characteristic suppression of alpha (8–13 Hz) and beta (13–30 Hz) oscillations
-    over the contralateral motor cortex.  This <strong>event-related desynchronisation (ERD)</strong>
-    is strong enough to decode left vs right hand intention from scalp EEG alone, forming the
-    basis of non-invasive brain-computer interfaces (BCIs).
-  </p>
-  <p class="prose">
-    This project applies a full signal processing and classification pipeline to the publicly
-    available <strong>PhysioNet EEGBCI dataset</strong> (subjects 1-10, motor imagination runs),
-    exported as interactive figures so every processing decision can be explored visually.
+<!-- ─────────────────── OVERVIEW ────────────────────────────────── -->
+<section id="overview">
+  <p class="section-label reveal">Overview</p>
+
+  <p class="prose reveal reveal-delay-1">
+    When you imagine moving your left hand — without actually moving it — your brain generates
+    measurable electrical patterns that are detectably different from imagining moving your right hand.
+    This sounds almost like science fiction, but it's the basis of real <strong>brain-computer interfaces
+    (BCIs)</strong> used today to help people with paralysis communicate or control prosthetics.
   </p>
 
-  <!-- PREPROCESSING ────────────────────────────────────────────────── -->
-  <p class="section-label">Preprocessing pipeline</p>
-  <div class="steps">
-    <div class="step">
-      <span class="step-num">1</span>
-      <span><strong>Load &amp; concatenate.</strong>
-        Three motor-imagery runs (6, 10, 14) loaded via
-        <code style="font-family:'JetBrains Mono',monospace;font-size:0.82em">mne.datasets.eegbci</code>
-        and concatenated per subject.</span>
-    </div>
-    <div class="step">
-      <span class="step-num">2</span>
-      <span><strong>Bandpass filter 1–40 Hz</strong> (FIR, Hamming window).
-        Low-cut removes slow drift; high-cut excludes EMG and power-line noise
-        above our frequency bands of interest.</span>
-    </div>
-    <div class="step">
-      <span class="step-num">3</span>
-      <span><strong>Average re-reference.</strong>
-        Subtracts the instantaneous mean across all 64 electrodes,
-        removing the influence of the physical reference electrode choice.</span>
-    </div>
-    <div class="step">
-      <span class="step-num">4</span>
-      <span><strong>ICA artefact removal</strong> (FastICA, 20 components).
-        Ocular components identified by correlation with frontal electrodes
-        Fp1/Fp2 (surrogate EOG) and excluded if correlation exceeds 0.25.</span>
-    </div>
-    <div class="step">
-      <span class="step-num">5</span>
-      <span><strong>Epoching −1 … +4 s</strong> around each T1/T2 event,
-        with baseline correction (−1 … 0 s) to remove pre-trial drift.</span>
-    </div>
+  <p class="prose reveal reveal-delay-2">
+    This project builds a complete pipeline to do exactly that: load raw brainwave recordings,
+    clean them, extract meaningful features, and train classifiers that can tell left-hand from
+    right-hand motor imagery with above-chance accuracy — all from a cap of 64 electrodes placed
+    on the scalp.
+  </p>
+
+  <div class="insight reveal reveal-delay-3">
+    <strong>The key phenomenon: Event-Related Desynchronisation (ERD).</strong>
+    When you imagine moving a limb, the brain's motor cortex <em>on the opposite side</em>
+    (contralateral) suppresses its alpha (8–13 Hz) and beta (13–30 Hz) rhythms.
+    This dip in oscillatory power is the signal we're hunting.
   </div>
 
-  <!-- SIGNAL ANALYSIS ──────────────────────────────────────────────── -->
-  <p class="section-label">Signal analysis</p>
-  <p class="prose">
-    Five frequency bands are computed per epoch per channel using Welch's PSD
-    (2-second FFT window, 50% overlap).  Alpha and beta are used as classification
-    features; theta and gamma serve as controls.
-  </p>
-
-  <table class="band-table">
-    <thead>
-      <tr>
-        <th>Band</th><th>Range</th><th>Role in motor imagery</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Delta</td><td>1–4 Hz</td>
-        <td>Baseline control; not directly modulated by imagery</td>
-      </tr>
-      <tr>
-        <td>Theta</td><td>4–8 Hz</td>
-        <td>Working memory and cognitive load; mild modulation</td>
-      </tr>
-      <tr>
-        <td><span class="band-pill band-alpha">Alpha</span> &nbsp;C3/C4</td>
-        <td>8–13 Hz</td>
-        <td>Primary ERD band — <strong>suppressed contralateral</strong> to the imagined movement</td>
-      </tr>
-      <tr>
-        <td><span class="band-pill band-beta">Beta</span> &nbsp;C3/C4</td>
-        <td>13–30 Hz</td>
-        <td>Secondary ERD; post-movement beta rebound after imagery ends</td>
-      </tr>
-      <tr>
-        <td>Gamma</td><td>30–40 Hz</td>
-        <td>High-frequency activity; partially overlaps with residual EMG</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <!-- CLASSIFICATION ───────────────────────────────────────────────── -->
-  <p class="section-label">Classification</p>
-  <p class="prose">
-    <strong>Common Spatial Patterns (CSP)</strong> first learns 6 spatial filters from the
-    8–30 Hz band-filtered epochs that maximally separate the covariance structure
-    of left vs right conditions.  The log-variance of the 6 filtered signals forms
-    a compact 6-feature vector — far more discriminative than raw band power.
-    Two classifiers follow CSP in a joint pipeline with
-    <strong>stratified 5-fold cross-validation</strong> (CSP fitted on training folds only,
-    preventing data leakage): Linear Discriminant Analysis and an RBF-SVM.
-    Results are pooled across all 10 subjects.
-  </p>
-
-  <!-- Summary cards filled by JS after JSON loads -->
-  <div class="results-grid" id="summary-cards" style="grid-template-columns:1fr 1fr 1fr">
-    <div class="result-card">
-      <div class="result-label">CSP + LDA accuracy</div>
-      <div class="result-value" id="lda-acc">—</div>
-      <div class="result-sub" id="lda-auc">AUC —</div>
-    </div>
-    <div class="result-card">
-      <div class="result-label">CSP + SVM accuracy</div>
-      <div class="result-value" id="svm-acc">—</div>
-      <div class="result-sub" id="svm-auc">AUC —</div>
-    </div>
-    <div class="result-card">
-      <div class="result-label">MDM (Riemannian) accuracy</div>
-      <div class="result-value" id="riemann-acc">—</div>
-      <div class="result-sub" id="riemann-auc">AUC —</div>
-    </div>
+  <div class="steps reveal">
+    <div class="step"><span class="step-num">1</span><span><strong>Load & clean EEG signals</strong> from 10 subjects using MNE-Python, removing eye-blink artifacts with ICA.</span></div>
+    <div class="step"><span class="step-num">2</span><span><strong>Extract frequency-band features</strong> (alpha, beta power at each electrode) using Welch's PSD.</span></div>
+    <div class="step"><span class="step-num">3</span><span><strong>Compare three classifiers:</strong> Flat Band Power, CSP+LDA, and Riemannian MDM — measuring accuracy and AUC.</span></div>
+    <div class="step"><span class="step-num">4</span><span><strong>Visualise everything:</strong> raw signals, spectrograms, scalp maps, and confusion matrices — all interactive.</span></div>
   </div>
+</section>
 
-  <!-- Results comparison table -->
-  <table class="band-table" style="margin-top:8px;margin-bottom:32px">
-    <thead>
-      <tr>
-        <th>Classifier</th><th>Accuracy</th><th>±&nbsp;std</th><th>AUC</th><th>Note</th>
-      </tr>
-    </thead>
-    <tbody id="results-table-body">
-      <tr>
-        <td><span class="band-pill band-alpha">CSP + LDA</span></td>
-        <td id="rt-lda-acc">—</td><td id="rt-lda-std">—</td><td id="rt-lda-auc">—</td>
-        <td style="color:var(--text-muted);font-size:0.8rem">Compact 6-component features, linear boundary</td>
-      </tr>
-      <tr>
-        <td><span class="band-pill band-beta">CSP + SVM</span></td>
-        <td id="rt-svm-acc">—</td><td id="rt-svm-std">—</td><td id="rt-svm-auc">—</td>
-        <td style="color:var(--text-muted);font-size:0.8rem">RBF kernel, non-linear boundary</td>
-      </tr>
-      <tr>
-        <td><span class="band-pill" style="background:#ede9fe;color:#5b21b6">MDM (Riemann)</span></td>
-        <td id="rt-riemann-acc">—</td><td id="rt-riemann-std">—</td><td id="rt-riemann-auc">—</td>
-        <td style="color:var(--text-muted);font-size:0.8rem">Geodesic distance on SPD manifold, no spatial filter</td>
-      </tr>
-    </tbody>
-  </table>
+<hr class="section-sep" style="margin:40px 0">
 
-  <!-- INTERACTIVE FIGURES ──────────────────────────────────────────── -->
-  <p class="section-label">Interactive figures</p>
+<!-- ─────────────────── THE SIGNAL ──────────────────────────────── -->
+<section id="the-signal">
+  <p class="section-label reveal">The Signal</p>
 
-  <!-- ── Figure 1: Raw vs Cleaned ────────────────────────────────── -->
-  <div class="figure-block">
+  <p class="prose reveal reveal-delay-1">
+    EEG (electroencephalography) measures the tiny electrical voltages produced by millions of
+    neurons firing in synchrony beneath the scalp. We place 64 electrodes in a standard "10-20"
+    grid — named because electrodes sit at 10% or 20% intervals along the head. Each electrode
+    captures a weighted sum of activity from the underlying cortex.
+  </p>
+
+  <p class="prose reveal reveal-delay-2">
+    The signal is measured in <strong>microvolts</strong> (µV) — about a millionth of a volt, or roughly
+    one-thousandth the voltage of a typical AA battery. It is buried in noise: muscle movement (EMG),
+    eye blinks, heartbeats, and 50/60 Hz power-line interference all contaminate the recording.
+    The preprocessing steps exist to scrub all of this away.
+  </p>
+
+  <!-- Figure 1: Raw vs Cleaned -->
+  <div class="figure-block reveal">
     <p class="figure-caption">
       <strong>Figure 1 — Raw vs ICA-cleaned EEG signal.</strong>
-      Toggle between the unprocessed and ICA-cleaned signal for a 4-second
-      window from subject 1.  ICA removal reduces the large slow eye-blink
-      artefact visible in frontal channels (Fp1, Fp2) without distorting the
-      motor cortex signal at C3/C4.
+      The raw signal (grey) contains large slow deflections from eye blinks, most visible
+      in frontal channels Fp1/Fp2. Toggle to <em>ICA Cleaned</em> to see these removed
+      while the motor-cortex channels (C3, C4) remain virtually unchanged.
     </p>
     <div class="fig-wrap">
       <div class="fig-controls">
@@ -601,16 +353,274 @@ footer{
       <div id="fig1" class="plotly-fig"></div>
     </div>
   </div>
-  <hr class="divider">
 
-  <!-- ── Figure 2: Power Spectral Density ────────────────────────── -->
-  <div class="figure-block">
+  <div class="insight insight-blue reveal">
+    <strong>Why do frontal channels show the biggest artifact?</strong>
+    Eye muscles sit directly beneath Fp1 and Fp2. When you blink, a large dipole sweeps
+    across the frontal electrodes. ICA decomposes the signal into 20 independent components
+    and discards those that correlate strongly with the frontal channels — leaving the rest intact.
+  </div>
+
+  <p class="prose reveal">
+    The data comes from the <strong>PhysioNet EEGBCI dataset</strong> — a publicly available
+    benchmark containing 64-channel EEG from 109 subjects performing motor-imagery tasks.
+    We use subjects 1–10 and runs 6, 10, and 14 (motor imagery only, no actual movement).
+    Each run contains trials where participants were shown an arrow and asked to imagine
+    moving the corresponding hand.
+  </p>
+</section>
+
+<hr class="section-sep" style="margin:40px 0">
+
+<!-- ─────────────────── PREPROCESSING ──────────────────────────── -->
+<section id="preprocessing">
+  <p class="section-label reveal">Preprocessing</p>
+
+  <p class="prose reveal reveal-delay-1">
+    Raw EEG is essentially unusable for classification. Before we can extract any meaningful signal,
+    five processing steps clean the data and put all subjects on a common footing.
+  </p>
+
+  <!-- Step 1: Bandpass -->
+  <div class="code-explain reveal">
+    <div class="ce-code">
+      <pre><span class="cm"># Step 1: Bandpass filter 1–40 Hz</span>
+<span class="cm"># Removes DC drift (below 1 Hz)</span>
+<span class="cm"># and EMG/noise (above 40 Hz)</span>
+raw.<span class="fn">filter</span>(
+    <span class="num">1.0</span>, <span class="num">40.0</span>,
+    fir_window=<span class="str">'hamming'</span>,
+    verbose=<span class="kw">False</span>
+)</pre>
+    </div>
+    <div class="ce-explain">
+      <h4>Bandpass filter 1–40 Hz</h4>
+      <p>Think of this like an audio equaliser that cuts the very low rumble
+         (slow drift from sweat/electrode movement) and the very high hiss
+         (muscle noise, power-line interference above 40 Hz).</p>
+      <p>We use a <strong>Hamming-windowed FIR filter</strong> — a standard choice
+         that minimises ringing artefacts at band edges. This preserves the
+         delta through gamma brain rhythms we care about.</p>
+    </div>
+  </div>
+
+  <!-- Step 2: Average reference -->
+  <div class="code-explain reveal">
+    <div class="ce-code">
+      <pre><span class="cm"># Step 2: Average re-reference</span>
+<span class="cm"># Each channel = channel − mean(all channels)</span>
+raw.<span class="fn">set_eeg_reference</span>(
+    <span class="str">'average'</span>,
+    projection=<span class="kw">True</span>
+)
+raw.<span class="fn">apply_proj</span>()</pre>
+    </div>
+    <div class="ce-explain">
+      <h4>Average re-reference</h4>
+      <p>EEG voltages are always measured <em>relative to some reference electrode</em>.
+         If that reference sits over an active area, it contaminates every channel.</p>
+      <p>Subtracting the mean across all 64 electrodes at each time point makes
+         the measurement reference-independent, giving each channel a fair starting point.</p>
+    </div>
+  </div>
+
+  <!-- Step 3: ICA -->
+  <div class="code-explain reveal">
+    <div class="ce-code">
+      <pre><span class="cm"># Step 3: ICA artifact removal</span>
+ica = mne.preprocessing.<span class="fn">ICA</span>(
+    n_components=<span class="num">20</span>,
+    method=<span class="str">'fastica'</span>,
+    random_state=<span class="num">42</span>
+)
+ica.<span class="fn">fit</span>(raw)
+
+<span class="cm"># Find eye-blink components via</span>
+<span class="cm"># correlation with Fp1/Fp2</span>
+inds, _ = ica.<span class="fn">find_bads_eog</span>(
+    raw, ch_name=[<span class="str">'Fp1'</span>,<span class="str">'Fp2'</span>]
+)
+ica.exclude = inds[:<span class="num">2</span>]
+ica.<span class="fn">apply</span>(cleaned)</pre>
+    </div>
+    <div class="ce-explain">
+      <h4>ICA artifact removal</h4>
+      <p><strong>Independent Component Analysis</strong> mathematically unmixes
+         the 64 EEG channels into 20 "source" components — each ideally reflecting
+         one underlying source (a brain region, eye muscle, or heartbeat).</p>
+      <p>Components that correlate with the frontal "EOG surrogate" channels
+         Fp1/Fp2 are labelled as eye-blink artefacts and zeroed out.
+         The remaining 18+ components are then remixed back into 64 clean channels.</p>
+    </div>
+  </div>
+
+  <!-- Step 4: Epoching -->
+  <div class="code-explain reveal">
+    <div class="ce-code">
+      <pre><span class="cm"># Step 4: Extract epochs</span>
+<span class="cm"># T1 = left hand, T2 = right hand</span>
+epochs = mne.<span class="fn">Epochs</span>(
+    raw, events,
+    event_id={<span class="str">'left'</span>:<span class="num">2</span>,<span class="str">'right'</span>:<span class="num">3</span>},
+    tmin=<span class="num">-1.0</span>,   <span class="cm"># 1s before cue</span>
+    tmax=<span class="num">+4.0</span>,   <span class="cm"># 4s after cue</span>
+    baseline=(<span class="num">-1.0</span>, <span class="num">0.0</span>)
+)</pre>
+    </div>
+    <div class="ce-explain">
+      <h4>Epoching (−1 to +4 s)</h4>
+      <p>Rather than analysing a continuous hour-long stream, we cut out
+         5-second <strong>epochs</strong> around each experimental cue.
+         The −1 s pre-cue period serves as a <strong>baseline</strong>:
+         we subtract its mean to correct for any residual slow drift.</p>
+      <p>Event code T1 marks left-hand cues; T2 marks right-hand cues.
+         Each subject contributes roughly 45 trials per condition.</p>
+    </div>
+  </div>
+
+  <!-- Quiz 1 -->
+  <div class="quiz-block reveal" id="quiz1">
+    <div class="quiz-header">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+      <span>Quick Check — Preprocessing</span>
+    </div>
+    <div class="quiz-body">
+      <p class="quiz-q">Why do we bandpass filter at 1–40 Hz instead of keeping the full signal?</p>
+      <div class="quiz-options" id="q1-opts">
+        <div class="quiz-option" onclick="selectOpt('q1',0)" data-idx="0">
+          <span class="opt-letter">A</span>
+          <span>To reduce file size — high-frequency data takes more storage</span>
+        </div>
+        <div class="quiz-option" onclick="selectOpt('q1',1)" data-idx="1">
+          <span class="opt-letter">B</span>
+          <span>To remove EMG muscle noise and DC drift while keeping all relevant brain rhythms (delta to gamma)</span>
+        </div>
+        <div class="quiz-option" onclick="selectOpt('q1',2)" data-idx="2">
+          <span class="opt-letter">C</span>
+          <span>Because EEG amplifiers can't record above 40 Hz</span>
+        </div>
+        <div class="quiz-option" onclick="selectOpt('q1',3)" data-idx="3">
+          <span class="opt-letter">D</span>
+          <span>The alpha band is at exactly 40 Hz</span>
+        </div>
+      </div>
+      <button class="quiz-check" onclick="checkQuiz('q1',1)" id="q1-btn" disabled>Check Answer</button>
+      <div class="quiz-feedback" id="q1-feedback"></div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-sep" style="margin:40px 0">
+
+<!-- ─────────────────── FEATURE ENGINEERING ─────────────────────── -->
+<section id="features">
+  <p class="section-label reveal">Feature Engineering</p>
+
+  <p class="prose reveal reveal-delay-1">
+    Raw epoch data is a 3-D array: (n_epochs × 64 channels × 500 time samples).
+    No classifier works well on 32,000 raw numbers per trial. We need to compress
+    each epoch into a compact, informative feature vector.
+  </p>
+
+  <p class="prose reveal reveal-delay-2">
+    Two complementary approaches are used, targeting different properties of the signal.
+  </p>
+
+  <!-- Band power table -->
+  <table class="band-table reveal">
+    <thead>
+      <tr><th>Band</th><th>Range</th><th>Role in motor imagery</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Delta</td><td>1–4 Hz</td>
+        <td>Baseline control; not directly modulated by imagery</td>
+      </tr>
+      <tr>
+        <td>Theta</td><td>4–8 Hz</td>
+        <td>Cognitive load and working memory; mild modulation</td>
+      </tr>
+      <tr>
+        <td><span class="band-pill band-alpha">Alpha</span>&nbsp;µ-rhythm</td>
+        <td>8–13 Hz</td>
+        <td>Primary ERD band — <strong>suppressed contralateral</strong> to imagined movement</td>
+      </tr>
+      <tr>
+        <td><span class="band-pill band-beta">Beta</span></td>
+        <td>13–30 Hz</td>
+        <td>Secondary ERD; post-movement beta rebound after imagery ends</td>
+      </tr>
+      <tr>
+        <td>Gamma</td><td>30–40 Hz</td>
+        <td>High-frequency; partially contaminated by residual EMG</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Band power code panel -->
+  <div class="code-explain reveal">
+    <div class="ce-code">
+      <pre><span class="cm"># Approach 1: Band Power (Welch PSD)</span>
+<span class="cm"># For each epoch × channel:</span>
+psds, freqs = <span class="fn">psd_array_welch</span>(
+    data,
+    sfreq=<span class="num">160</span>,
+    fmin=<span class="num">8.0</span>, fmax=<span class="num">13.0</span>,  <span class="cm"># alpha</span>
+    n_fft=<span class="kw">int</span>(<span class="num">160</span> * <span class="num">2</span>)   <span class="cm"># 2s window</span>
+)
+<span class="cm"># Average power across frequencies</span>
+alpha_power = psds.<span class="fn">mean</span>(axis=<span class="num">-1</span>)
+<span class="cm"># Shape: (n_epochs, n_channels)</span></pre>
+    </div>
+    <div class="ce-explain">
+      <h4>Approach 1 — Band Power Features</h4>
+      <p>For each epoch, we run <strong>Welch's PSD</strong> (power spectral density)
+         on every channel: split the epoch into overlapping 2-second windows,
+         compute the FFT of each, and average the squared magnitudes.</p>
+      <p>The result is a single number per channel per frequency band — the mean
+         oscillatory power in that band. We use alpha and beta, giving
+         <strong>64 × 2 = 128 features</strong> per epoch.</p>
+      <p>Simple, interpretable, but spatially naïve — it treats all 64 channels
+         equally rather than finding the optimal spatial combination.</p>
+    </div>
+  </div>
+
+  <!-- CSP code panel -->
+  <div class="code-explain reveal">
+    <div class="ce-code">
+      <pre><span class="cm"># Approach 2: Common Spatial Patterns</span>
+<span class="cm"># Learns spatial filters that maximally</span>
+<span class="cm"># separate left vs right covariances</span>
+csp = <span class="fn">CSP</span>(
+    n_components=<span class="num">6</span>,
+    log=<span class="kw">True</span>,          <span class="cm"># log-variance</span>
+    reg=<span class="str">'ledoit_wolf'</span>  <span class="cm"># regularisation</span>
+)
+<span class="cm"># Fit only on training data!</span>
+X_feat = csp.<span class="fn">fit_transform</span>(X_train, y_train)
+<span class="cm"># Shape: (n_epochs, 6) — compact!</span></pre>
+    </div>
+    <div class="ce-explain">
+      <h4>Approach 2 — Common Spatial Patterns (CSP)</h4>
+      <p>CSP is the gold standard for motor imagery EEG. It finds <strong>6 spatial
+         filters</strong> (weighted combinations of the 64 electrodes) that maximise
+         the ratio of left-trial variance to right-trial variance — and vice versa.</p>
+      <p>The log-variance of each filtered signal becomes one feature. Just 6 numbers
+         per epoch, yet far more discriminative than 128 raw band-power values
+         because the filters are optimally tuned to the left/right difference.</p>
+      <p><strong>Key constraint:</strong> CSP must be fitted only on training data
+         inside each cross-validation fold to prevent data leakage.</p>
+    </div>
+  </div>
+
+  <!-- Figure 2: PSD -->
+  <div class="figure-block reveal">
     <p class="figure-caption">
-      <strong>Figure 2 — Power spectral density: left vs right hand imagery.</strong>
-      Welch PSD computed across all epochs in each condition (subject 1).
-      The shaded region marks the alpha band (8–13 Hz).  Look for the dip in
-      power at C4 during right-hand imagery — alpha suppression contralateral
-      to the imagined movement.
+      <strong>Figure 2 — Power spectral density: left vs right hand imagery (Subject 1).</strong>
+      The blue/red curves show mean Welch PSD across all epochs of each condition.
+      The shaded region marks the alpha band. Switch to channel <em>C4</em> (right motor
+      cortex → controls left hand) and watch the right-hand (red) curve dip below
+      the left-hand curve in the alpha range — this is the ERD signature.
     </p>
     <div class="fig-wrap">
       <div class="fig-controls">
@@ -620,17 +630,15 @@ footer{
       <div id="fig2" class="plotly-fig"></div>
     </div>
   </div>
-  <hr class="divider">
 
-  <!-- ── Figure 3: Alpha Topomap ──────────────────────────────────── -->
-  <div class="figure-block">
+  <!-- Figure 3: Topomap -->
+  <div class="figure-block reveal">
     <p class="figure-caption">
-      <strong>Figure 3 — Alpha band scalp map.</strong>
-      Average alpha power per electrode pooled across all 10 subjects.
-      Switch views to compare absolute power in each condition or the
-      ERD% (right minus left, normalised by left).  Hover over any
-      electrode to see its name and value.  Contralateral alpha
-      suppression appears as a blue patch over C4 during right-hand imagery.
+      <strong>Figure 3 — Alpha power scalp map across all 10 subjects.</strong>
+      Average alpha power pooled across 450+ epochs per condition.
+      Switch to <em>ERD %</em> to see the contralateral suppression pattern:
+      right-hand imagery suppresses alpha over C4 (left side of map = right hemisphere
+      in the azimuthal projection — hover to confirm electrode names).
     </p>
     <div class="fig-wrap">
       <div class="fig-controls">
@@ -642,22 +650,30 @@ footer{
       <div id="fig3" class="plotly-fig-tall"></div>
     </div>
   </div>
-  <hr class="divider">
 
-  <!-- ── Figure 4: Time-Frequency ─────────────────────────────────── -->
-  <div class="figure-block">
+  <div class="insight reveal">
+    <strong>The alpha ERD contralateral effect:</strong>
+    When you imagine moving your right hand, the left motor cortex (around electrode C3)
+    suppresses its alpha rhythm. When you imagine moving your left hand, the suppression
+    flips to the right motor cortex (C4). This spatial asymmetry is the key signal that
+    distinguishes the two classes.
+  </div>
+
+  <!-- Figure 4: Time-frequency -->
+  <div class="figure-block reveal">
     <p class="figure-caption">
-      <strong>Figure 4 — Event-related desynchronisation (ERD/ERS) spectrogram.</strong>
-      Morlet wavelet power in decibels relative to pre-cue baseline (−1…0 s),
-      for subject 1.  Blue regions (negative dB) indicate ERD — oscillatory
-      suppression.  Switch channels and conditions to see how alpha-beta
-      suppression shifts contralaterally with the imagined hand.
+      <strong>Figure 4 — Event-related desynchronisation (ERD) spectrogram.</strong>
+      Morlet wavelet power in decibels relative to the pre-cue baseline.
+      Blue regions = ERD (suppression); red = ERS (enhancement).
+      Try <em>C4 + Left Hand</em>: after the cue at t=0, a broad blue band appears
+      in the alpha-beta range — the motor cortex suppressing oscillations in preparation
+      for the imagined movement.
     </p>
     <div class="fig-wrap">
       <div class="fig-controls">
         <label>Channel</label>
-        <button class="ctrl-btn active" id="tfr-C3" onclick="switchTFR('C3')">C3 (right motor)</button>
-        <button class="ctrl-btn"        id="tfr-C4" onclick="switchTFR('C4')">C4 (left motor)</button>
+        <button class="ctrl-btn active" id="tfr-C3" onclick="switchTFR('C3')">C3 (right hemisphere)</button>
+        <button class="ctrl-btn"        id="tfr-C4" onclick="switchTFR('C4')">C4 (left hemisphere)</button>
         <label style="margin-left:12px">Condition</label>
         <button class="ctrl-btn active" id="tfr-left"  onclick="switchTFRCond('left')">Left Hand</button>
         <button class="ctrl-btn"        id="tfr-right" onclick="switchTFRCond('right')">Right Hand</button>
@@ -665,15 +681,189 @@ footer{
       <div id="fig4" class="plotly-fig-tall"></div>
     </div>
   </div>
-  <hr class="divider">
 
-  <!-- ── Figure 5: Classification Results ────────────────────────── -->
-  <div class="figure-block">
+  <!-- Quiz 2 -->
+  <div class="quiz-block reveal" id="quiz2">
+    <div class="quiz-header">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+      <span>Quick Check — Feature Engineering</span>
+    </div>
+    <div class="quiz-body">
+      <p class="quiz-q">If a participant imagines moving their right hand, which electrode should show the strongest alpha ERD?</p>
+      <div class="quiz-options" id="q2-opts">
+        <div class="quiz-option" onclick="selectOpt('q2',0)" data-idx="0">
+          <span class="opt-letter">A</span>
+          <span>Fp1 — frontal lobe handles all motor planning</span>
+        </div>
+        <div class="quiz-option" onclick="selectOpt('q2',1)" data-idx="1">
+          <span class="opt-letter">B</span>
+          <span>C4 — the right hemisphere (C4 electrode) controls the left hand</span>
+        </div>
+        <div class="quiz-option" onclick="selectOpt('q2',2)" data-idx="2">
+          <span class="opt-letter">C</span>
+          <span>C3 — the left hemisphere motor cortex controls the right hand (contralateral)</span>
+        </div>
+        <div class="quiz-option" onclick="selectOpt('q2',3)" data-idx="3">
+          <span class="opt-letter">D</span>
+          <span>Oz — the occipital lobe is responsible for motor output</span>
+        </div>
+      </div>
+      <button class="quiz-check" onclick="checkQuiz('q2',2)" id="q2-btn" disabled>Check Answer</button>
+      <div class="quiz-feedback" id="q2-feedback"></div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-sep" style="margin:40px 0">
+
+<!-- ─────────────────── CLASSIFICATION ──────────────────────────── -->
+<section id="classification">
+  <p class="section-label reveal">Classification</p>
+
+  <p class="prose reveal reveal-delay-1">
+    With features in hand, we train three different classifiers and evaluate them with
+    <strong>stratified 5-fold cross-validation</strong> done <em>within each subject</em>.
+    The within-subject design matters: CSP spatial filters are highly subject-specific.
+    Mixing subjects would dilute the filters and make results look artificially bad.
+  </p>
+
+  <div class="code-explain reveal">
+    <div class="ce-code">
+      <pre><span class="cm"># Stratified 5-fold, within-subject</span>
+skf = <span class="fn">StratifiedKFold</span>(
+    n_splits=<span class="num">5</span>,
+    shuffle=<span class="kw">True</span>,
+    random_state=<span class="num">42</span>
+)
+<span class="kw">for</span> train, test <span class="kw">in</span> skf.<span class="fn">split</span>(X_s, y_s):
+    csp = <span class="fn">CSP</span>().<span class="fn">fit</span>(X_s[train], y_s[train])
+    X_feat = csp.<span class="fn">transform</span>(X_s[test])
+    acc = clf.<span class="fn">score</span>(X_feat, y_s[test])</pre>
+    </div>
+    <div class="ce-explain">
+      <h4>Why within-subject cross-validation?</h4>
+      <p>CSP learns subject-specific spatial filters. If we mix subjects before fitting,
+         the filters get averaged across anatomical differences and stop working well
+         for any individual.</p>
+      <p>Instead: for each of 10 subjects, run 5 folds independently.
+         Report mean accuracy per subject, then average across subjects.
+         <strong>10 × 5 = 50 model fits in total.</strong></p>
+      <p>CSP is always fitted only on the training fold — never touching test data —
+         to prevent data leakage from optimistic filtering.</p>
+    </div>
+  </div>
+
+  <table class="band-table reveal">
+    <thead>
+      <tr><th>Classifier</th><th>How it works</th><th>Key strength</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="band-pill band-alpha">CSP + LDA</span></td>
+        <td>CSP extracts 6 spatial log-variances; LDA draws a linear decision boundary</td>
+        <td>Fast, interpretable, strong baseline for motor imagery</td>
+      </tr>
+      <tr>
+        <td><span class="band-pill band-beta">CSP + SVM</span></td>
+        <td>Same CSP features; RBF-kernel SVM draws a non-linear boundary</td>
+        <td>Can capture non-linear class separation with kernel trick</td>
+      </tr>
+      <tr>
+        <td><span class="band-pill band-riemann">MDM (Riemann)</span></td>
+        <td>Treats each epoch's covariance matrix as a point on a curved geometric manifold; classifies by geodesic distance to class means</td>
+        <td>No spatial filter needed; inherently geometry-aware</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Quiz 3 -->
+  <div class="quiz-block reveal" id="quiz3">
+    <div class="quiz-header">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+      <span>Quick Check — Classification</span>
+    </div>
+    <div class="quiz-body">
+      <p class="quiz-q">What would happen if we fitted CSP on the entire dataset (all subjects, both train and test) before cross-validation?</p>
+      <div class="quiz-options" id="q3-opts">
+        <div class="quiz-option" onclick="selectOpt('q3',0)" data-idx="0">
+          <span class="opt-letter">A</span>
+          <span>The accuracy would go up — more data means better filters</span>
+        </div>
+        <div class="quiz-option" onclick="selectOpt('q3',1)" data-idx="1">
+          <span class="opt-letter">B</span>
+          <span>Nothing changes — CSP is a filter, not a classifier</span>
+        </div>
+        <div class="quiz-option" onclick="selectOpt('q3',2)" data-idx="2">
+          <span class="opt-letter">C</span>
+          <span>Data leakage: the filters would "see" test labels during training, making reported accuracy optimistically inflated</span>
+        </div>
+        <div class="quiz-option" onclick="selectOpt('q3',3)" data-idx="3">
+          <span class="opt-letter">D</span>
+          <span>The model would refuse to converge — CSP requires equal class sizes</span>
+        </div>
+      </div>
+      <button class="quiz-check" onclick="checkQuiz('q3',2)" id="q3-btn" disabled>Check Answer</button>
+      <div class="quiz-feedback" id="q3-feedback"></div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-sep" style="margin:40px 0">
+
+<!-- ─────────────────── RESULTS & INSIGHTS ───────────────────────── -->
+<section id="results">
+  <p class="section-label reveal">Results &amp; Insights</p>
+
+  <!-- Summary cards -->
+  <div class="results-grid reveal">
+    <div class="result-card">
+      <div class="result-label">CSP + LDA accuracy</div>
+      <div class="result-value" id="lda-acc">—</div>
+      <div class="result-sub" id="lda-auc">AUC —</div>
+    </div>
+    <div class="result-card">
+      <div class="result-label">CSP + SVM accuracy</div>
+      <div class="result-value" id="svm-acc">—</div>
+      <div class="result-sub" id="svm-auc">AUC —</div>
+    </div>
+    <div class="result-card">
+      <div class="result-label">MDM (Riemannian)</div>
+      <div class="result-value" id="riemann-acc">—</div>
+      <div class="result-sub" id="riemann-auc">AUC —</div>
+    </div>
+  </div>
+
+  <table class="band-table reveal" style="margin-bottom:32px">
+    <thead>
+      <tr><th>Classifier</th><th>Accuracy</th><th>±&nbsp;std</th><th>AUC</th><th>Note</th></tr>
+    </thead>
+    <tbody id="results-table-body">
+      <tr>
+        <td><span class="band-pill band-alpha">CSP + LDA</span></td>
+        <td id="rt-lda-acc">—</td><td id="rt-lda-std">—</td><td id="rt-lda-auc">—</td>
+        <td style="color:var(--text-muted);font-size:0.8rem">Linear boundary on 6 spatial log-variances</td>
+      </tr>
+      <tr>
+        <td><span class="band-pill band-beta">CSP + SVM</span></td>
+        <td id="rt-svm-acc">—</td><td id="rt-svm-std">—</td><td id="rt-svm-auc">—</td>
+        <td style="color:var(--text-muted);font-size:0.8rem">RBF kernel, non-linear boundary</td>
+      </tr>
+      <tr>
+        <td><span class="band-pill band-riemann">MDM (Riemann)</span></td>
+        <td id="rt-riemann-acc">—</td><td id="rt-riemann-std">—</td><td id="rt-riemann-auc">—</td>
+        <td style="color:var(--text-muted);font-size:0.8rem">Geodesic distance on SPD manifold</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Figure 5: Classification results -->
+  <div class="figure-block reveal">
     <p class="figure-caption">
       <strong>Figure 5 — Classification results.</strong>
-      ROC curves for all three classifiers (left) — hover for exact TPR/FPR.
-      Confusion matrix (centre) and per-subject accuracy bar chart (right)
-      update when you switch classifier above.
+      ROC curves for all three classifiers (left) — higher and to the left is better,
+      with the dashed line representing chance (AUC = 0.5).
+      Switch classifier to update the confusion matrix (centre) and per-subject accuracy bars (right).
+      Notice how subjects 1 and 7 are decoded well, while subjects 6 and 9 hover near chance.
     </p>
 
     <div class="fig-controls" style="border-radius:10px 10px 0 0;border-bottom:1px solid var(--border)">
@@ -686,11 +876,89 @@ footer{
     <div style="display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:0;
                 border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;
                 overflow:hidden;background:#fff">
-      <div id="fig5-roc"  style="height:320px;border-right:1px solid var(--border)"></div>
-      <div id="fig5-cm"   style="height:320px;border-right:1px solid var(--border)"></div>
-      <div id="fig5-acc"  style="height:320px"></div>
+      <div id="fig5-roc" style="height:320px;border-right:1px solid var(--border)"></div>
+      <div id="fig5-cm"  style="height:320px;border-right:1px solid var(--border)"></div>
+      <div id="fig5-acc" style="height:320px"></div>
     </div>
   </div>
+
+  <!-- Inter-subject variability section -->
+  <p class="section-label reveal" style="margin-top:44px">The Hard Problem: Inter-Subject Variability</p>
+
+  <p class="prose reveal reveal-delay-1">
+    The most striking finding is not the mean accuracy — it's the <em>variance</em>.
+    Some subjects are decoded with near-perfect accuracy; others perform no better than
+    a coin flip. This is the central challenge of EEG-based BCIs and an open research problem.
+  </p>
+
+  <div class="subj-grid reveal" id="subj-grid">
+    <!-- filled by JS -->
+  </div>
+
+  <div class="insight insight-red reveal">
+    <strong>Subjects 6 and 9 are near chance level.</strong>
+    This is not a failure of the classifier — it reflects genuine differences in
+    how individuals modulate their alpha/beta rhythms during motor imagery. Some people
+    produce strong, spatially focal ERD; others produce diffuse, weak signals that
+    are essentially indistinguishable from noise at the scalp level.
+  </div>
+
+  <p class="prose reveal">
+    Why does this variability exist? Several factors contribute:
+  </p>
+  <div class="steps reveal">
+    <div class="step"><span class="step-num">→</span><span><strong>Anatomical differences:</strong> skull thickness and conductivity vary, attenuating signals differently between individuals.</span></div>
+    <div class="step"><span class="step-num">→</span><span><strong>Mental strategy:</strong> some subjects use vivid kinaesthetic imagery; others use purely visual mental imagery — producing different neural patterns.</span></div>
+    <div class="step"><span class="step-num">→</span><span><strong>Fatigue and habituation:</strong> the effect of imagining the same movement 90 times can diminish the response in some subjects.</span></div>
+    <div class="step"><span class="step-num">→</span><span><strong>Neural noise floor:</strong> individuals differ in how much spontaneous alpha power they generate at rest, making the ERD harder or easier to detect.</span></div>
+  </div>
+
+  <div class="insight insight-blue reveal">
+    <strong>Implication for real-world BCIs:</strong>
+    A system that works brilliantly for subject 1 (89% accuracy) is essentially useless for
+    subject 6 (47%). This motivates personalised calibration protocols, adaptive classifiers,
+    and neurofeedback training that teaches users to produce stronger ERD signals.
+  </div>
+
+  <!-- Quiz 4 -->
+  <div class="quiz-block reveal" id="quiz4">
+    <div class="quiz-header">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+      <span>Final Check — Results</span>
+    </div>
+    <div class="quiz-body">
+      <p class="quiz-q">Subject 6 achieves ~47% accuracy — slightly below chance. What is the most likely explanation?</p>
+      <div class="quiz-options" id="q4-opts">
+        <div class="quiz-option" onclick="selectOpt('q4',0)" data-idx="0">
+          <span class="opt-letter">A</span>
+          <span>The classifier was not trained on enough data for that subject</span>
+        </div>
+        <div class="quiz-option" onclick="selectOpt('q4',1)" data-idx="1">
+          <span class="opt-letter">B</span>
+          <span>Subject 6's EEG signal does not produce a clearly separable ERD pattern for left vs right — the signal is below the detection threshold of scalp EEG</span>
+        </div>
+        <div class="quiz-option" onclick="selectOpt('q4',2)" data-idx="2">
+          <span class="opt-letter">C</span>
+          <span>The ICA step removed too many components and erased the signal</span>
+        </div>
+        <div class="quiz-option" onclick="selectOpt('q4',3)" data-idx="3">
+          <span class="opt-letter">D</span>
+          <span>A 47% accuracy definitively proves the classifier is broken</span>
+        </div>
+      </div>
+      <button class="quiz-check" onclick="checkQuiz('q4',1)" id="q4-btn" disabled>Check Answer</button>
+      <div class="quiz-feedback" id="q4-feedback"></div>
+    </div>
+  </div>
+
+  <p class="prose reveal" style="margin-top:32px">
+    Despite the inter-subject variability, this pipeline demonstrates the full spectrum
+    from raw signal to working classifier — and surfaces exactly the kind of scientific
+    insight that drives BCI research forward. The code is fully reproducible: run
+    <code>python eeg_pipeline.py</code> to regenerate all data and figures from scratch.
+  </p>
+
+</section>
 
 </div><!-- /container -->
 </div><!-- /content -->
@@ -701,11 +969,11 @@ footer{
   </div>
 </footer>
 
-<!-- ══════════════════════ PLOTLY ════════════════════════════════════ -->
+<!-- ══════════ PLOTLY ════════════════════════════════════════════ -->
 <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
 
 <script>
-/* ── Shared Plotly layout defaults ────────────────────────────────── */
+/* ─── Shared layout defaults ───────────────────────────────────── */
 const FONT  = {family:"Inter, sans-serif", color:"#374151"};
 const GRID  = {color:"#E5E2DC", gridcolor:"#E5E2DC"};
 const BG    = {paper_bgcolor:"rgba(0,0,0,0)", plot_bgcolor:"#ffffff"};
@@ -713,16 +981,14 @@ const ACC     = "#1D4ED8";
 const LEFT    = "#1D4ED8";
 const RIGHT   = "#DC2626";
 const RIEMANN = "#7C3AED";
-const MUTED   = "#9CA3AF";
-const CLF_COLORS = {lda: LEFT, svm: RIGHT, riemann: RIEMANN};
-const MARGIN_DEFAULT = {t:32, r:20, b:52, l:56, pad:4};
+const CLF_COLORS = {lda:LEFT, svm:RIGHT, riemann:RIEMANN};
 
 function baseLayout(extra={}) {
   return Object.assign({
     font: FONT,
     paper_bgcolor: BG.paper_bgcolor,
     plot_bgcolor:  BG.plot_bgcolor,
-    margin: MARGIN_DEFAULT,
+    margin: {t:32,r:20,b:52,l:56,pad:4},
     xaxis: {gridcolor:GRID.color, linecolor:"#E5E2DC", zerolinecolor:"#E5E2DC"},
     yaxis: {gridcolor:GRID.color, linecolor:"#E5E2DC", zerolinecolor:"#E5E2DC"},
     legend: {bgcolor:"rgba(255,255,255,0.8)", bordercolor:"#E5E2DC", borderwidth:1},
@@ -730,19 +996,16 @@ function baseLayout(extra={}) {
   }, extra);
 }
 
-/* ── Placeholder helper ────────────────────────────────────────────── */
-function showPlaceholder(divId, msg="Run <code>python eeg_pipeline.py</code> to generate data") {
+function showPlaceholder(divId) {
   const el = document.getElementById(divId);
   if (!el) return;
-  el.innerHTML = `
-    <div class="fig-placeholder">
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none"
-           stroke="currentColor" stroke-width="1.5">
-        <path d="M3 3l18 18M9 9v6m6-6v6M3 12h3m15 0h-3M12 3v3m0 15v-3"/>
-      </svg>
-      <span>No data yet</span>
-      <span>Run <code>python eeg_pipeline.py</code> first</span>
-    </div>`;
+  el.innerHTML = `<div class="fig-placeholder">
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M3 3l18 18M9 9v6m6-6v6M3 12h3m15 0h-3M12 3v3m0 15v-3"/>
+    </svg>
+    <span>No data yet</span>
+    <span>Run <code>python eeg_pipeline.py</code> first</span>
+  </div>`;
 }
 
 async function loadJSON(path) {
@@ -753,20 +1016,15 @@ async function loadJSON(path) {
   } catch(e) { return null; }
 }
 
-/* ══════════════════════════════════════════════════════════════════
-   FIGURE 1 — Raw vs Cleaned time series
-   ══════════════════════════════════════════════════════════════════ */
-let tsData = null;
-let tsMode = 'raw';
+/* ─── Figure 1: Raw vs Cleaned ─────────────────────────────────── */
+let tsData = null, tsMode = 'raw';
 
 async function initFig1() {
   tsData = await loadJSON('outputs/eeg_timeseries.json');
   if (!tsData) { showPlaceholder('fig1'); return; }
-
   const sel = document.getElementById('ch-select-1');
   tsData.channels.forEach(ch => {
-    const opt = document.createElement('option'); opt.value=ch; opt.text=ch;
-    sel.appendChild(opt);
+    const opt = document.createElement('option'); opt.value=ch; opt.text=ch; sel.appendChild(opt);
   });
   updateFig1();
 }
@@ -784,110 +1042,64 @@ function updateFig1() {
   const signal = tsData[tsMode][ch];
   const colour = tsMode === 'raw' ? '#6B7280' : ACC;
   const label  = tsMode === 'raw' ? 'Raw EEG' : 'ICA Cleaned';
-
   Plotly.react('fig1', [{
-    x: tsData.time, y: signal,
-    type:'scatter', mode:'lines',
-    line:{color:colour, width:1.4},
-    name: label,
-    hovertemplate: '%{y:.1f} µV<extra></extra>',
+    x:tsData.time, y:signal, type:'scatter', mode:'lines',
+    line:{color:colour, width:1.4}, name:label,
+    hovertemplate:'%{y:.1f} µV<extra></extra>',
   }], Object.assign(baseLayout(), {
-    xaxis: Object.assign({}, GRID, {title:{text:'Time (s)',font:{size:12}},
-      tickfont:{size:11}}),
-    yaxis: Object.assign({}, GRID, {title:{text:'Amplitude (µV)',font:{size:12}},
-      tickfont:{size:11}}),
-    showlegend: false,
-    title: {text: `${label}  —  ${ch}`, font:{size:13, color:"#374151"}, x:0.5},
-    margin: {t:44, r:20, b:52, l:60},
+    xaxis:Object.assign({},GRID,{title:{text:'Time (s)',font:{size:12}},tickfont:{size:11}}),
+    yaxis:Object.assign({},GRID,{title:{text:'Amplitude (µV)',font:{size:12}},tickfont:{size:11}}),
+    showlegend:false,
+    title:{text:`${label}  —  ${ch}`,font:{size:13,color:"#374151"},x:0.5},
+    margin:{t:44,r:20,b:52,l:60},
   }), {displayModeBar:false, responsive:true});
 }
 
-/* ══════════════════════════════════════════════════════════════════
-   FIGURE 2 — PSD
-   ══════════════════════════════════════════════════════════════════ */
+/* ─── Figure 2: PSD ─────────────────────────────────────────────── */
 let psdData = null;
 
 async function initFig2() {
   psdData = await loadJSON('outputs/psd_data.json');
   if (!psdData) { showPlaceholder('fig2'); return; }
-
   const sel = document.getElementById('ch-select-2');
   psdData.channels.forEach(ch => {
-    const opt = document.createElement('option'); opt.value=ch; opt.text=ch;
-    sel.appendChild(opt);
+    const opt = document.createElement('option'); opt.value=ch; opt.text=ch; sel.appendChild(opt);
   });
-  // Default to C4 to highlight the contralateral effect
   sel.value = psdData.channels.includes('C4') ? 'C4' : psdData.channels[0];
   updateFig2();
 }
 
 function updateFig2() {
   if (!psdData) return;
-  const ch = document.getElementById('ch-select-2').value;
+  const ch    = document.getElementById('ch-select-2').value;
   const freqs = psdData.freqs;
-  const [a0, a1] = [psdData.alpha_band[0], psdData.alpha_band[1]];
-
-  // Shaded alpha band (use a filled area trace)
-  const alphaIdxs = freqs.map((f,i)=>i).filter(i=>freqs[i]>=a0 && freqs[i]<=a1);
+  const [a0,a1] = [psdData.alpha_band[0], psdData.alpha_band[1]];
+  const alphaIdxs = freqs.map((_,i)=>i).filter(i=>freqs[i]>=a0&&freqs[i]<=a1);
   const alphaFreqs = alphaIdxs.map(i=>freqs[i]);
-  const maxPow = Math.max(
-    ...psdData.left_hand[ch].mean, ...psdData.right_hand[ch].mean) * 1.15;
-  const minPow = 0;
-
-  const traces = [
-    // Alpha band shading
-    {
-      x: [...alphaFreqs, ...alphaFreqs.slice().reverse()],
-      y: [...alphaFreqs.map(()=>maxPow), ...alphaFreqs.map(()=>minPow)],
-      fill:'toself', fillcolor:'rgba(29,78,216,0.06)',
-      line:{color:'rgba(29,78,216,0.15)', width:1},
-      hoverinfo:'skip', showlegend:false, type:'scatter', mode:'lines',
-    },
-    // Left hand
-    {
-      x: freqs, y: psdData.left_hand[ch].mean,
-      type:'scatter', mode:'lines',
-      line:{color:LEFT, width:2},
-      name:'Left hand',
-      hovertemplate: `%{x:.1f} Hz: %{y:.4f} µV²/Hz<extra>Left hand</extra>`,
-    },
-    // Right hand
-    {
-      x: freqs, y: psdData.right_hand[ch].mean,
-      type:'scatter', mode:'lines',
-      line:{color:RIGHT, width:2},
-      name:'Right hand',
-      hovertemplate: `%{x:.1f} Hz: %{y:.4f} µV²/Hz<extra>Right hand</extra>`,
-    },
-    // Alpha band label annotation drawn as a trace label
-  ];
-
-  Plotly.react('fig2', traces, Object.assign(baseLayout(), {
-    xaxis: Object.assign({}, GRID, {
-      title:{text:'Frequency (Hz)',font:{size:12}},
-      tickfont:{size:11}, range:[1,40],
-    }),
-    yaxis: Object.assign({}, GRID, {
-      title:{text:'Power (µV²/Hz)',font:{size:12}},
-      tickfont:{size:11}, rangemode:'tozero',
-    }),
-    annotations:[{
-      x:(a0+a1)/2, y:maxPow*0.95,
-      xref:'x', yref:'y',
-      text:'α band', showarrow:false,
-      font:{size:10, color:'#1D4ED8'}, opacity:0.6,
-    }],
+  const maxPow = Math.max(...psdData.left_hand[ch].mean, ...psdData.right_hand[ch].mean)*1.15;
+  Plotly.react('fig2', [
+    {x:[...alphaFreqs,...alphaFreqs.slice().reverse()],
+     y:[...alphaFreqs.map(()=>maxPow),...alphaFreqs.map(()=>0)],
+     fill:'toself',fillcolor:'rgba(29,78,216,0.06)',line:{color:'rgba(29,78,216,0.15)',width:1},
+     hoverinfo:'skip',showlegend:false,type:'scatter',mode:'lines'},
+    {x:freqs,y:psdData.left_hand[ch].mean,type:'scatter',mode:'lines',
+     line:{color:LEFT,width:2},name:'Left hand',
+     hovertemplate:`%{x:.1f} Hz: %{y:.4f} µV²/Hz<extra>Left hand</extra>`},
+    {x:freqs,y:psdData.right_hand[ch].mean,type:'scatter',mode:'lines',
+     line:{color:RIGHT,width:2},name:'Right hand',
+     hovertemplate:`%{x:.1f} Hz: %{y:.4f} µV²/Hz<extra>Right hand</extra>`},
+  ], Object.assign(baseLayout(), {
+    xaxis:Object.assign({},GRID,{title:{text:'Frequency (Hz)',font:{size:12}},tickfont:{size:11},range:[1,40]}),
+    yaxis:Object.assign({},GRID,{title:{text:'Power (µV²/Hz)',font:{size:12}},tickfont:{size:11},rangemode:'tozero'}),
+    annotations:[{x:(a0+a1)/2,y:maxPow*0.95,xref:'x',yref:'y',text:'α band',
+     showarrow:false,font:{size:10,color:'#1D4ED8'},opacity:.6}],
     title:{text:`PSD — ${ch}`,font:{size:13,color:"#374151"},x:0.5},
-    margin:{t:44,r:20,b:52,l:64},
-    legend:{x:0.72, y:0.98},
+    margin:{t:44,r:20,b:52,l:64},legend:{x:0.72,y:0.98},
   }), {displayModeBar:false, responsive:true});
 }
 
-/* ══════════════════════════════════════════════════════════════════
-   FIGURE 3 — Alpha topomap
-   ══════════════════════════════════════════════════════════════════ */
-let topoData = null;
-let topoView = 'left';
+/* ─── Figure 3: Topomap ─────────────────────────────────────────── */
+let topoData = null, topoView = 'left';
 
 async function initFig3() {
   topoData = await loadJSON('outputs/topomap_data.json');
@@ -905,303 +1117,296 @@ function switchTopo(view) {
 
 function drawTopo() {
   if (!topoData) return;
-
   let values, cscale, ctitle, vmin, vmax;
-  if (topoView === 'left') {
-    values = topoData.left_hand_alpha;
-    cscale = 'Viridis'; ctitle = 'α power (µV²/Hz)';
-    vmin = Math.min(...values); vmax = Math.max(...values);
-  } else if (topoView === 'right') {
-    values = topoData.right_hand_alpha;
-    cscale = 'Viridis'; ctitle = 'α power (µV²/Hz)';
-    vmin = Math.min(...topoData.left_hand_alpha, ...topoData.right_hand_alpha);
-    vmax = Math.max(...topoData.left_hand_alpha, ...topoData.right_hand_alpha);
+  if (topoView==='left') {
+    values=topoData.left_hand_alpha; cscale='Viridis'; ctitle='α power (µV²/Hz)';
+    vmin=Math.min(...values); vmax=Math.max(...values);
+  } else if (topoView==='right') {
+    values=topoData.right_hand_alpha; cscale='Viridis'; ctitle='α power (µV²/Hz)';
+    vmin=Math.min(...topoData.left_hand_alpha,...topoData.right_hand_alpha);
+    vmax=Math.max(...topoData.left_hand_alpha,...topoData.right_hand_alpha);
   } else {
-    values = topoData.erd_percent;
-    cscale = [[0,'#2563EB'],[0.5,'#f9fafb'],[1,'#DC2626']];
-    ctitle = 'ERD (%)';
-    const absmax = Math.max(...values.map(Math.abs));
-    vmin = -absmax; vmax = absmax;
+    values=topoData.erd_percent;
+    cscale=[[0,'#2563EB'],[0.5,'#f9fafb'],[1,'#DC2626']];
+    ctitle='ERD (%)';
+    const absmax=Math.max(...values.map(Math.abs));
+    vmin=-absmax; vmax=absmax;
   }
-
-  const hoverText = topoData.channels.map((ch,i)=>
-    `<b>${ch}</b><br>${ctitle}: ${values[i].toFixed(3)}`);
-
-  // Head outline
-  const N = 200;
-  const theta = Array.from({length:N+1},(_,i)=>i*2*Math.PI/N);
-  const R = 1.0;
-  const headX = theta.map(t=>R*Math.cos(t));
-  const headY = theta.map(t=>R*Math.sin(t));
-
-  // Nose triangle (at top = +y in azimuthal projection)
-  const noseX = [-0.08, 0, 0.08];
-  const noseY = [R*0.97, R*1.12, R*0.97];
-
-  // Ear markers
-  const earX = [-R*1.06, R*1.06];
-  const earY = [0, 0];
-
-  const traces = [
-    // Head circle
-    {x:headX, y:headY, mode:'lines', type:'scatter',
-     line:{color:'#9CA3AF', width:1.5}, hoverinfo:'skip', showlegend:false},
-    // Nose
-    {x:noseX, y:noseY, mode:'lines', type:'scatter',
-     line:{color:'#9CA3AF', width:1.5}, hoverinfo:'skip', showlegend:false},
-    // Ear marks
-    {x:earX, y:earY, mode:'markers', type:'scatter',
-     marker:{color:'#9CA3AF', size:6, symbol:'circle'}, hoverinfo:'skip', showlegend:false},
-    // Electrodes
-    {
-      x: topoData.pos_x,
-      y: topoData.pos_y,
-      mode: 'markers+text',
-      type: 'scatter',
-      marker: {
-        color: values,
-        colorscale: cscale,
-        cmin: vmin, cmax: vmax,
-        size: 12,
-        line:{color:'rgba(255,255,255,0.6)', width:1},
-        colorbar:{
-          title:{text:ctitle, side:'right', font:{size:11}},
-          thickness:14, len:0.65,
-          tickfont:{size:10},
-        },
-      },
-      text: topoData.channels,
-      textposition: 'top center',
-      textfont: {size:8, color:'rgba(55,65,81,0.7)'},
-      hovertext: hoverText,
-      hovertemplate: '%{hovertext}<extra></extra>',
-      name: '',
-      showlegend: false,
-    },
-  ];
-
-  const titleMap = {
-    left:'Left-hand alpha power', right:'Right-hand alpha power', erd:'Alpha ERD (right − left)'};
-
-  Plotly.react('fig3', traces, {
-    font: FONT,
-    paper_bgcolor: BG.paper_bgcolor,
-    plot_bgcolor:  '#fff',
-    title: {text:titleMap[topoView], font:{size:13,color:"#374151"}, x:0.5},
-    xaxis: {range:[-1.3,1.3], scaleanchor:'y', showgrid:false,
-            zeroline:false, showticklabels:false, visible:false},
-    yaxis: {range:[-1.3,1.4], showgrid:false,
-            zeroline:false, showticklabels:false, visible:false},
-    margin: {t:44, r:80, b:20, l:20},
-    hovermode:'closest',
-    height:440,
+  const hoverText = topoData.channels.map((ch,i)=>`<b>${ch}</b><br>${ctitle}: ${values[i].toFixed(3)}`);
+  const N=200, theta=Array.from({length:N+1},(_,i)=>i*2*Math.PI/N), R=1.0;
+  const headX=theta.map(t=>R*Math.cos(t)), headY=theta.map(t=>R*Math.sin(t));
+  const noseX=[-0.08,0,0.08], noseY=[R*0.97,R*1.12,R*0.97];
+  Plotly.react('fig3', [
+    {x:headX,y:headY,mode:'lines',type:'scatter',line:{color:'#9CA3AF',width:1.5},hoverinfo:'skip',showlegend:false},
+    {x:noseX,y:noseY,mode:'lines',type:'scatter',line:{color:'#9CA3AF',width:1.5},hoverinfo:'skip',showlegend:false},
+    {x:[-R*1.06,R*1.06],y:[0,0],mode:'markers',type:'scatter',
+     marker:{color:'#9CA3AF',size:6,symbol:'circle'},hoverinfo:'skip',showlegend:false},
+    {x:topoData.pos_x,y:topoData.pos_y,mode:'markers+text',type:'scatter',
+     marker:{color:values,colorscale:cscale,cmin:vmin,cmax:vmax,size:12,
+       line:{color:'rgba(255,255,255,0.6)',width:1},
+       colorbar:{title:{text:ctitle,side:'right',font:{size:11}},thickness:14,len:0.65,tickfont:{size:10}}},
+     text:topoData.channels,textposition:'top center',textfont:{size:8,color:'rgba(55,65,81,0.7)'},
+     hovertext:hoverText,hovertemplate:'%{hovertext}<extra></extra>',name:'',showlegend:false},
+  ], {font:FONT,paper_bgcolor:BG.paper_bgcolor,plot_bgcolor:'#fff',
+    title:{text:{left:'Left-hand alpha power',right:'Right-hand alpha power',erd:'Alpha ERD (right − left)'}[topoView],
+           font:{size:13,color:"#374151"},x:0.5},
+    xaxis:{range:[-1.3,1.3],scaleanchor:'y',showgrid:false,zeroline:false,showticklabels:false,visible:false},
+    yaxis:{range:[-1.3,1.4],showgrid:false,zeroline:false,showticklabels:false,visible:false},
+    margin:{t:44,r:80,b:20,l:20},hovermode:'closest',height:440,
   }, {displayModeBar:false, responsive:true});
 }
 
-/* ══════════════════════════════════════════════════════════════════
-   FIGURE 4 — Time-frequency (ERD/ERS) spectrogram
-   ══════════════════════════════════════════════════════════════════ */
-let tfrData = null;
-let tfrCh   = 'C3';
-let tfrCond = 'left';
+/* ─── Figure 4: TFR ─────────────────────────────────────────────── */
+let tfrData=null, tfrCh='C3', tfrCond='left';
 
 async function initFig4() {
   tfrData = await loadJSON('outputs/tfr_data.json');
   if (!tfrData) { showPlaceholder('fig4'); return; }
-
-  // Use first available channel if C3 not present
-  const avChs = tfrData.channels || [];
+  const avChs = tfrData.channels||[];
   tfrCh = avChs.includes('C3') ? 'C3' : avChs[0];
   ['C3','C4'].forEach(ch=>{
-    const btn = document.getElementById(`tfr-${ch}`);
-    if (btn) btn.classList.toggle('active', ch===tfrCh);
+    const btn=document.getElementById(`tfr-${ch}`);
+    if(btn) btn.classList.toggle('active',ch===tfrCh);
   });
   drawTFR();
 }
 
 function switchTFR(ch) {
-  tfrCh = ch;
-  ['C3','C4'].forEach(c=>{
-    const b=document.getElementById(`tfr-${c}`); if(b) b.classList.toggle('active',c===ch);
-  });
+  tfrCh=ch;
+  ['C3','C4'].forEach(c=>{const b=document.getElementById(`tfr-${c}`);if(b)b.classList.toggle('active',c===ch);});
   drawTFR();
 }
-
 function switchTFRCond(cond) {
-  tfrCond = cond;
-  ['left','right'].forEach(c=>{
-    const b=document.getElementById(`tfr-${c}`); if(b) b.classList.toggle('active',c===cond);
-  });
+  tfrCond=cond;
+  ['left','right'].forEach(c=>{const b=document.getElementById(`tfr-${c}`);if(b)b.classList.toggle('active',c===cond);});
   drawTFR();
 }
 
 function drawTFR() {
   if (!tfrData) return;
-  const key = `${tfrCh}_${tfrCond}`;
-  const z = tfrData[key];
+  const key=`${tfrCh}_${tfrCond}`;
+  const z=tfrData[key];
   if (!z) { showPlaceholder('fig4'); return; }
-
-  const times = tfrData.times;
-  const freqs = tfrData.freqs;
-
-  // Symmetric colour range centred on 0
-  const allVals = z.flat();
-  const absMax  = Math.min(Math.max(...allVals.map(Math.abs)), 8);
-
+  const allVals=z.flat(), absMax=Math.min(Math.max(...allVals.map(Math.abs)),8);
   Plotly.react('fig4', [{
-    x: times, y: freqs, z: z,
-    type:'heatmap',
-    colorscale:'RdBu',
-    zmin:-absMax, zmax:absMax,
-    reversescale:true,   // blue=ERD (negative dB), red=ERS
-    colorbar:{
-      title:{text:'dB re baseline', side:'right', font:{size:11}},
-      thickness:14, len:0.75, tickfont:{size:10},
-    },
-    hovertemplate: 'Time: %{x:.2f}s<br>Freq: %{y} Hz<br>Power: %{z:.2f} dB<extra></extra>',
+    x:tfrData.times, y:tfrData.freqs, z:z, type:'heatmap',
+    colorscale:'RdBu', zmin:-absMax, zmax:absMax, reversescale:true,
+    colorbar:{title:{text:'dB re baseline',side:'right',font:{size:11}},thickness:14,len:0.75,tickfont:{size:10}},
+    hovertemplate:'Time: %{x:.2f}s<br>Freq: %{y} Hz<br>Power: %{z:.2f} dB<extra></extra>',
   }], Object.assign(baseLayout(), {
-    xaxis: {title:{text:'Time (s)',font:{size:12}}, tickfont:{size:11},
-            gridcolor:'rgba(0,0,0,0)', zeroline:true, zerolinecolor:'rgba(0,0,0,0.25)',
-            zerolinewidth:1.5},
-    yaxis: {title:{text:'Frequency (Hz)',font:{size:12}}, tickfont:{size:11},
-            gridcolor:'rgba(0,0,0,0)'},
-    title:{text:`ERD/ERS — ${tfrCh}  (${tfrCond==='left'?'Left':'Right'} hand)`,
-           font:{size:13,color:"#374151"}, x:0.5},
-    margin:{t:44, r:80, b:52, l:60},
-    height:440,
+    xaxis:{title:{text:'Time (s)',font:{size:12}},tickfont:{size:11},
+      gridcolor:'rgba(0,0,0,0)',zeroline:true,zerolinecolor:'rgba(0,0,0,0.25)',zerolinewidth:1.5},
+    yaxis:{title:{text:'Frequency (Hz)',font:{size:12}},tickfont:{size:11},gridcolor:'rgba(0,0,0,0)'},
+    title:{text:`ERD/ERS — ${tfrCh}  (${tfrCond==='left'?'Left':'Right'} hand)`,font:{size:13,color:"#374151"},x:0.5},
+    margin:{t:44,r:80,b:52,l:60},height:440,
   }), {displayModeBar:false, responsive:true});
 }
 
-/* ══════════════════════════════════════════════════════════════════
-   FIGURE 5 — Classification results
-   ══════════════════════════════════════════════════════════════════ */
-let clfData = null;
-let clfMode = 'lda';
+/* ─── Figure 5: Classification ──────────────────────────────────── */
+let clfData=null, clfMode='lda';
 
 async function initFig5() {
   clfData = await loadJSON('outputs/classification_results.json');
-  if (!clfData) {
-    ['fig5-roc','fig5-cm','fig5-acc'].forEach(id=>showPlaceholder(id));
-    return;
-  }
+  if (!clfData) { ['fig5-roc','fig5-cm','fig5-acc'].forEach(showPlaceholder); return; }
 
-  // Populate summary cards + results table
   for (const name of ['lda','svm','riemann']) {
     if (!clfData[name]) continue;
-    const d = clfData[name];
-    const accStr = `${(d.mean_acc*100).toFixed(1)}%`;
-    const stdStr = `±${(d.std_acc*100).toFixed(1)}%`;
-    const aucStr = `${d.auc.toFixed(3)}`;
-    // cards
-    const cardAcc = document.getElementById(`${name}-acc`);
-    const cardAuc = document.getElementById(`${name}-auc`);
-    if (cardAcc) cardAcc.textContent = accStr;
-    if (cardAuc) cardAuc.textContent = `AUC ${aucStr}  ${stdStr}`;
-    // table
-    const tAcc = document.getElementById(`rt-${name}-acc`);
-    const tStd = document.getElementById(`rt-${name}-std`);
-    const tAuc = document.getElementById(`rt-${name}-auc`);
-    if (tAcc) tAcc.textContent = accStr;
-    if (tStd) tStd.textContent = stdStr;
-    if (tAuc) tAuc.textContent = aucStr;
+    const d=clfData[name];
+    const accStr=`${(d.mean_acc*100).toFixed(1)}%`;
+    const stdStr=`±${(d.std_acc*100).toFixed(1)}%`;
+    const aucStr=`${d.auc.toFixed(3)}`;
+    const cardAcc=document.getElementById(`${name}-acc`);
+    const cardAuc=document.getElementById(`${name}-auc`);
+    if(cardAcc) cardAcc.textContent=accStr;
+    if(cardAuc) cardAuc.textContent=`AUC ${aucStr}  ${stdStr}`;
+    const tAcc=document.getElementById(`rt-${name}-acc`);
+    const tStd=document.getElementById(`rt-${name}-std`);
+    const tAuc=document.getElementById(`rt-${name}-auc`);
+    if(tAcc) tAcc.textContent=accStr;
+    if(tStd) tStd.textContent=stdStr;
+    if(tAuc) tAuc.textContent=aucStr;
   }
 
+  // Build per-subject variability grid using LDA fold accs
+  buildSubjGrid(clfData.lda.fold_accs);
   drawFig5();
 }
 
+function buildSubjGrid(accs) {
+  const grid=document.getElementById('subj-grid');
+  if (!grid || !accs) return;
+  grid.innerHTML='';
+  accs.forEach((acc,i) => {
+    const pct=acc*100;
+    const cls = pct>=75?'high' : pct>=55?'mid':'low';
+    const w = Math.round(pct);
+    grid.innerHTML+=`<div class="subj-card ${cls}">
+      <div class="subj-id">SUBJ ${i+1}</div>
+      <div class="subj-acc">${pct.toFixed(0)}%</div>
+      <div class="subj-bar"><div class="subj-fill" style="width:${w}%"></div></div>
+    </div>`;
+  });
+}
+
 function switchClf(mode) {
-  clfMode = mode;
-  ['lda','svm','riemann'].forEach(n => {
-    const b = document.getElementById(`clf-${n}`);
-    if (b) b.classList.toggle('active', n===mode);
+  clfMode=mode;
+  ['lda','svm','riemann'].forEach(n=>{
+    const b=document.getElementById(`clf-${n}`);
+    if(b) b.classList.toggle('active',n===mode);
   });
   drawFig5();
 }
 
 function drawFig5() {
   if (!clfData) return;
-  const d   = clfData[clfMode];
+  const d=clfData[clfMode];
   if (!d) return;
-  const col = CLF_COLORS[clfMode] || LEFT;
-  const H   = 320;  // explicit pixel height passed into every layout
+  const col=CLF_COLORS[clfMode]||LEFT;
+  const H=320;
 
-  /* ROC curve — always shows all three classifiers */
   Plotly.react('fig5-roc', [
-    {x:[0,1],y:[0,1], mode:'lines', line:{color:'#D1D5DB',dash:'dash',width:1.2},
-     name:'Chance', hoverinfo:'skip'},
-    {x:clfData.lda.roc.fpr, y:clfData.lda.roc.tpr,
-     mode:'lines', line:{color:LEFT,width:2},
+    {x:[0,1],y:[0,1],mode:'lines',line:{color:'#D1D5DB',dash:'dash',width:1.2},name:'Chance',hoverinfo:'skip'},
+    {x:clfData.lda.roc.fpr,y:clfData.lda.roc.tpr,mode:'lines',line:{color:LEFT,width:2},
      name:`CSP+LDA  AUC=${clfData.lda.auc.toFixed(3)}`,
-     hovertemplate:'FPR: %{x:.3f}<br>TPR: %{y:.3f}<extra>LDA</extra>'},
-    {x:clfData.svm.roc.fpr, y:clfData.svm.roc.tpr,
-     mode:'lines', line:{color:RIGHT,width:2},
+     hovertemplate:'FPR:%{x:.3f}<br>TPR:%{y:.3f}<extra>LDA</extra>'},
+    {x:clfData.svm.roc.fpr,y:clfData.svm.roc.tpr,mode:'lines',line:{color:RIGHT,width:2},
      name:`CSP+SVM  AUC=${clfData.svm.auc.toFixed(3)}`,
-     hovertemplate:'FPR: %{x:.3f}<br>TPR: %{y:.3f}<extra>SVM</extra>'},
-    ...(clfData.riemann ? [{x:clfData.riemann.roc.fpr, y:clfData.riemann.roc.tpr,
-     mode:'lines', line:{color:RIEMANN,width:2},
+     hovertemplate:'FPR:%{x:.3f}<br>TPR:%{y:.3f}<extra>SVM</extra>'},
+    ...(clfData.riemann?[{x:clfData.riemann.roc.fpr,y:clfData.riemann.roc.tpr,
+     mode:'lines',line:{color:RIEMANN,width:2},
      name:`MDM  AUC=${clfData.riemann.auc.toFixed(3)}`,
-     hovertemplate:'FPR: %{x:.3f}<br>TPR: %{y:.3f}<extra>MDM</extra>'}] : []),
-  ], {
-    height:H, font:FONT, paper_bgcolor:BG.paper_bgcolor, plot_bgcolor:'#fff',
+     hovertemplate:'FPR:%{x:.3f}<br>TPR:%{y:.3f}<extra>MDM</extra>'}]:[]),
+  ], {height:H,font:FONT,paper_bgcolor:BG.paper_bgcolor,plot_bgcolor:'#fff',
     margin:{t:36,r:12,b:48,l:48},
     xaxis:{title:{text:'FPR',font:{size:11}},range:[0,1],gridcolor:GRID.color,tickfont:{size:10}},
     yaxis:{title:{text:'TPR',font:{size:11}},range:[0,1],gridcolor:GRID.color,tickfont:{size:10}},
     title:{text:'ROC Curves',font:{size:12,color:'#374151'},x:0.5},
-    legend:{font:{size:10},x:0.42,y:0.08},
-    hovermode:'closest',
-  }, {displayModeBar:false, responsive:false});
+    legend:{font:{size:9},x:0.38,y:0.08},hovermode:'closest',
+  }, {displayModeBar:false,responsive:false});
 
-  /* Confusion matrix */
-  const cm = d.confusion_matrix;
-  const clfLabel = {lda:'CSP+LDA', svm:'CSP+SVM', riemann:'MDM'}[clfMode] || clfMode;
+  const cm=d.confusion_matrix;
+  const clfLabel={lda:'CSP+LDA',svm:'CSP+SVM',riemann:'MDM'}[clfMode]||clfMode;
   Plotly.react('fig5-cm', [{
-    z:cm,
-    x:['Pred Left','Pred Right'], y:['True Left','True Right'],
-    type:'heatmap',
-    colorscale:[[0,'#EFF6FF'],[1,col]],
-    showscale:false,
-    text:cm.map(row=>row.map(v=>`${v}`)),
-    texttemplate:'%{text}',
-    textfont:{size:16, color:'#111827'},
+    z:cm, x:['Pred Left','Pred Right'], y:['True Left','True Right'], type:'heatmap',
+    colorscale:[[0,'#EFF6FF'],[1,col]], showscale:false,
+    text:cm.map(row=>row.map(v=>`${v}`)), texttemplate:'%{text}',
+    textfont:{size:16,color:'#111827'},
     hovertemplate:'%{y} → %{x}: %{z}<extra></extra>',
-  }], {
-    height:H, font:FONT, paper_bgcolor:BG.paper_bgcolor, plot_bgcolor:'#fff',
+  }], {height:H,font:FONT,paper_bgcolor:BG.paper_bgcolor,plot_bgcolor:'#fff',
     margin:{t:36,r:12,b:60,l:72},
-    xaxis:{tickfont:{size:10}},
-    yaxis:{tickfont:{size:10}},
+    xaxis:{tickfont:{size:10}},yaxis:{tickfont:{size:10}},
     title:{text:`${clfLabel} Confusion`,font:{size:12,color:'#374151'},x:0.5},
-  }, {displayModeBar:false, responsive:false});
+  }, {displayModeBar:false,responsive:false});
 
-  /* Per-subject accuracy bar chart */
-  const n = d.fold_accs.length;
+  const n=d.fold_accs.length;
   Plotly.react('fig5-acc', [{
     x:d.fold_accs.map((_,i)=>`S${i+1}`),
     y:d.fold_accs.map(v=>+(v*100).toFixed(2)),
     type:'bar',
-    marker:{color:col, opacity:0.85, line:{color:'rgba(255,255,255,0.4)',width:1}},
+    marker:{color:d.fold_accs.map(v=>v>=0.75?'#16a34a':v>=0.55?'#d97706':'#dc2626'),
+            opacity:0.85,line:{color:'rgba(255,255,255,0.4)',width:1}},
     hovertemplate:'Subject %{x}: %{y:.1f}%<extra></extra>',
-  }], {
-    height:H, font:FONT, paper_bgcolor:BG.paper_bgcolor, plot_bgcolor:'#fff',
+  }], {height:H,font:FONT,paper_bgcolor:BG.paper_bgcolor,plot_bgcolor:'#fff',
     margin:{t:36,r:12,b:48,l:44},
-    xaxis:{title:{text:'Subject',font:{size:11}}, tickfont:{size:10}},
-    yaxis:{title:{text:'Accuracy (%)',font:{size:11}}, tickfont:{size:10}, range:[20,100]},
+    xaxis:{title:{text:'Subject',font:{size:11}},tickfont:{size:10}},
+    yaxis:{title:{text:'Accuracy (%)',font:{size:11}},tickfont:{size:10},range:[20,100]},
     title:{text:'Per-subject Accuracy',font:{size:12,color:'#374151'},x:0.5},
-    shapes:[{
-      type:'line', x0:-0.5, x1:n-0.5,
-      y0:d.mean_acc*100, y1:d.mean_acc*100,
-      line:{color:'rgba(0,0,0,0.25)',dash:'dot',width:1.5},
-    }],
-  }, {displayModeBar:false, responsive:false});
+    shapes:[{type:'line',x0:-0.5,x1:n-0.5,y0:d.mean_acc*100,y1:d.mean_acc*100,
+      line:{color:'rgba(0,0,0,0.25)',dash:'dot',width:1.5}}],
+  }, {displayModeBar:false,responsive:false});
 }
 
-/* ── Boot ─────────────────────────────────────────────────────────── */
+/* ─── Boot ──────────────────────────────────────────────────────── */
 window.addEventListener('DOMContentLoaded', () => {
-  initFig1();
-  initFig2();
-  initFig3();
-  initFig4();
-  initFig5();
+  initFig1(); initFig2(); initFig3(); initFig4(); initFig5();
 });
+
+/* ─── Scroll Reveal ─────────────────────────────────────────────── */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+}, {threshold:0.1, rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+/* ─── Progress Bar ──────────────────────────────────────────────── */
+window.addEventListener('scroll', () => {
+  const docH = document.documentElement.scrollHeight - window.innerHeight;
+  const pct  = docH > 0 ? (window.scrollY / docH) * 100 : 0;
+  document.getElementById('progress-bar').style.width = pct + '%';
+});
+
+/* ─── Active Nav Link ───────────────────────────────────────────── */
+const sections = ['overview','the-signal','preprocessing','features','classification','results'];
+const navLinks  = {};
+sections.forEach(s => { navLinks[s] = document.querySelector(`.nav-pills a[data-sec="${s}"]`); });
+
+const secObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const id = e.target.id;
+      Object.values(navLinks).forEach(l => l && l.classList.remove('active'));
+      if (navLinks[id]) navLinks[id].classList.add('active');
+    }
+  });
+}, {rootMargin:'-30% 0px -60% 0px'});
+sections.forEach(s => { const el=document.getElementById(s); if(el) secObserver.observe(el); });
+
+/* ─── Quiz Logic ────────────────────────────────────────────────── */
+const quizState = {};
+
+function selectOpt(quizId, idx) {
+  if (quizState[quizId]?.answered) return;
+  if (!quizState[quizId]) quizState[quizId] = {};
+  quizState[quizId].selected = idx;
+  document.querySelectorAll(`#${quizId} .quiz-option`).forEach((opt,i) => {
+    opt.classList.toggle('selected', i===idx);
+  });
+  document.getElementById(`${quizId}-btn`).disabled = false;
+}
+
+function checkQuiz(quizId, correctIdx) {
+  if (quizState[quizId]?.answered) return;
+  if (quizState[quizId]?.selected === undefined) return;
+  quizState[quizId].answered = true;
+
+  const selected = quizState[quizId].selected;
+  const correct  = selected === correctIdx;
+
+  document.querySelectorAll(`#${quizId} .quiz-option`).forEach((opt,i) => {
+    opt.classList.remove('selected');
+    if (i===correctIdx) opt.classList.add('correct');
+    else if (i===selected && !correct) opt.classList.add('wrong');
+    opt.style.cursor='default';
+  });
+
+  const feedback = document.getElementById(`${quizId}-feedback`);
+  feedback.className = 'quiz-feedback show ' + (correct?'correct':'wrong');
+  feedback.innerHTML = correct
+    ? '&#10003; Correct! ' + getFeedbackText(quizId, true)
+    : '&#10007; Not quite. ' + getFeedbackText(quizId, false);
+  document.getElementById(`${quizId}-btn`).disabled = true;
+}
+
+function getFeedbackText(qid, correct) {
+  const texts = {
+    q1: {
+      t: 'Exactly. The 1–40 Hz range preserves all five brain rhythm bands (delta through gamma) while removing slow DC drift and high-frequency muscle contamination.',
+      f: 'The correct answer is B. The filter preserves brain rhythms (delta through gamma) while removing slow drift and EMG noise. File size and amplifier limits are not the reason.',
+    },
+    q2: {
+      t: 'Right — the nervous system is crossed (contralateral control). Right-hand imagery activates the left motor cortex, which sits under electrode C3. So we expect ERD at C3 for right-hand trials.',
+      f: 'The correct answer is C. Motor control is contralateral: the left hemisphere (C3) controls the right hand. Alpha ERD during right-hand imagery appears at C3, not C4.',
+    },
+    q3: {
+      t: 'Exactly — this is classic data leakage. The CSP filter would have "seen" the test labels during its fitting, making the reported performance look better than it would on genuinely unseen data.',
+      f: 'The correct answer is C. Fitting CSP on all data before cross-validation introduces data leakage: the filter learns from test-set labels, making reported accuracy overoptimistic.',
+    },
+    q4: {
+      t: 'Correct. A 47% accuracy means the classifier is essentially flipping a coin, suggesting the underlying EEG signal for this subject does not contain a cleanly separable ERD pattern between left and right conditions.',
+      f: 'The correct answer is B. Below-chance performance reflects a weak or absent ERD signal for this subject — a genuine neuroscientific finding, not a data or algorithm failure.',
+    },
+  };
+  return texts[qid]?.[correct?'t':'f'] || '';
+}
 </script>
 
 </body>
