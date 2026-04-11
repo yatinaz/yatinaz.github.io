@@ -1,580 +1,709 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yatin Azad — Computational Biologist</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-<style>
-/* ── RESET ── */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{font-size:16px;scroll-behavior:smooth}
-body{
-  font-family:'Inter',sans-serif;
-  background:#0d0d14;
-  color:#c8c8e0;
-  line-height:1.6;
-  -webkit-font-smoothing:antialiased;
-  overflow-x:hidden;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yatin Azad - Computational Biologist</title>
+  <meta name="description" content="Computational biologist and ML scientist working across genomics, neuroimaging, protein engineering, and Bayesian cognitive modelling.">
 
-/* ── TYPOGRAPHY ── */
-h1,h2,h3{font-family:'Space Grotesk',sans-serif;line-height:1.15}
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-/* ── LAYOUT ── */
-.container{max-width:1100px;margin:0 auto;padding:0 32px}
-@media(max-width:600px){.container{padding:0 20px}}
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-/* ── ANIMATIONS ── */
-@keyframes gradientShift{
-  0%{background-position:0% 50%}
-  50%{background-position:100% 50%}
-  100%{background-position:0% 50%}
-}
-@keyframes fadeUp{
-  from{opacity:0;transform:translateY(24px)}
-  to{opacity:1;transform:translateY(0)}
-}
-@keyframes bounce{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(7px)}
-}
-@keyframes fadeIn{
-  from{opacity:0}
-  to{opacity:1}
-}
+  <!-- GSAP + ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
-/* ─────────────────────────────────────────
-   SECTION 1: HERO
-───────────────────────────────────────── */
-.hero{
-  min-height:100vh;
-  min-height:100svh;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  padding:80px 32px 60px;
-  position:relative;
-  background:linear-gradient(135deg,#0d0d14 0%,#0f0f22 40%,#0c1318 100%);
-  background-size:300% 300%;
-  animation:gradientShift 8s ease infinite;
-}
-.hero::before{
-  content:'';
-  position:absolute;inset:0;
-  background:radial-gradient(ellipse 60% 50% at 50% 40%,rgba(108,99,255,0.07) 0%,transparent 70%),
-             radial-gradient(ellipse 40% 30% at 70% 60%,rgba(0,201,167,0.04) 0%,transparent 60%);
-  pointer-events:none;
-}
-.hero-content{
-  position:relative;z-index:1;
-  animation:fadeUp 0.9s ease forwards;
-}
-.hero h1{
-  font-size:clamp(40px,7vw,72px);
-  font-weight:700;
-  color:#ffffff;
-  letter-spacing:-1.5px;
-  margin-bottom:16px;
-}
-.hero-role{
-  font-size:18px;
-  color:#9d9dbf;
-  margin-bottom:10px;
-  font-weight:400;
-}
-.hero-creds{
-  font-size:12px;
-  letter-spacing:2.5px;
-  text-transform:uppercase;
-  color:#4a4a6a;
-  margin-bottom:36px;
-  font-weight:500;
-}
-.hero-links{
-  display:flex;gap:12px;flex-wrap:wrap;justify-content:center;
-  animation:fadeIn 1.2s ease forwards;
-}
-.hero-link{
-  display:inline-flex;align-items:center;gap:7px;
-  font-size:13px;font-weight:500;
-  padding:9px 20px;border-radius:999px;
-  text-decoration:none;transition:all 0.2s ease;
-  border:1px solid #2a2a45;color:#a0a0c0;background:transparent;
-}
-.hero-link:hover{
-  border-color:#6C63FF;color:#ffffff;
-  background:rgba(108,99,255,0.1);
-}
-.hero-link.primary{
-  border-color:#6C63FF;color:#6C63FF;
-}
-.hero-link.primary:hover{
-  background:#6C63FF;color:#fff;
-}
-.scroll-indicator{
-  position:absolute;bottom:32px;left:50%;transform:translateX(-50%);
-  display:flex;flex-direction:column;align-items:center;gap:6px;
-  color:#2a2a45;font-size:11px;letter-spacing:1px;text-transform:uppercase;
-  animation:bounce 1.6s ease-in-out infinite;
-}
-.scroll-indicator svg{opacity:0.5}
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap');
 
-/* ─────────────────────────────────────────
-   SECTION 2: BIO
-───────────────────────────────────────── */
-.bio-section{
-  padding:80px 0;
-  border-bottom:1px solid #1a1a2e;
-}
-.bio-text{
-  font-size:clamp(18px,2.5vw,22px);
-  line-height:1.75;
-  color:#c0c0dc;
-  max-width:700px;
-  margin:0 auto;
-  text-align:center;
-  font-weight:400;
-}
-.bio-text .accent-indigo{color:#6C63FF;font-weight:500}
-.bio-text .accent-teal{color:#00C9A7;font-weight:500}
+    /* Techniques: editorial hero, grain layer, staggered text reveal, sticky nav state, active nav observer, card hover lift, image zoom, scroll-triggered reveals, custom cursor, infinite ticker. */
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --border: #222222;
+      --text-primary: #f0ede6;
+      --text-muted: #6b6b6b;
+      --accent: #c8b89a;
+      --accent-bright: #e8d5b0;
+      --font-display: "Playfair Display", Georgia, serif;
+      --font-body: "DM Sans", Arial, sans-serif;
+    }
 
-/* ─────────────────────────────────────────
-   SECTION HEADERS
-───────────────────────────────────────── */
-.section-header{
-  display:flex;align-items:center;gap:20px;
-  margin-bottom:40px;
-  padding-top:80px;
-}
-.section-header-label{
-  font-family:'Space Grotesk',sans-serif;
-  font-size:11px;font-weight:700;
-  letter-spacing:4px;text-transform:uppercase;
-  color:#4a4a6a;white-space:nowrap;
-}
-.section-header-line{
-  flex:1;height:1px;
-  background:linear-gradient(to right,#1e1e35,transparent);
-}
+    *, *::before, *::after { box-sizing: border-box; }
 
-/* ─────────────────────────────────────────
-   SECTION 3: ML PROJECT CARDS
-───────────────────────────────────────── */
-.projects-section{padding-bottom:16px}
-.projects-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:20px;
-}
-@media(max-width:768px){.projects-grid{grid-template-columns:1fr}}
+    html {
+      scroll-behavior: smooth;
+      background: var(--bg);
+    }
 
-.project-card{
-  background:#13131f;
-  border:1px solid #1e1e35;
-  border-radius:16px;
-  overflow:hidden;
-  transition:transform 0.2s ease,border-color 0.2s ease,box-shadow 0.2s ease;
-  display:flex;flex-direction:column;
-}
-.project-card:hover{
-  transform:translateY(-4px);
-  border-color:#6C63FF;
-  box-shadow:0 8px 32px rgba(108,99,255,0.12);
-}
-.card-img-wrap{
-  position:relative;height:200px;overflow:hidden;flex-shrink:0;
-}
-.card-img-wrap img{
-  width:100%;height:100%;object-fit:cover;
-  display:block;transition:transform 0.4s ease;
-}
-.project-card:hover .card-img-wrap img{transform:scale(1.04)}
-.card-badge{
-  position:absolute;top:12px;right:12px;
-  background:#6C63FF;color:#fff;
-  font-size:10px;font-weight:700;
-  padding:4px 10px;border-radius:999px;
-  font-family:'Space Grotesk',sans-serif;
-  letter-spacing:0.04em;
-  box-shadow:0 2px 8px rgba(108,99,255,0.4);
-}
-.card-body{padding:22px 22px 20px;display:flex;flex-direction:column;flex:1}
-.card-title{
-  font-family:'Space Grotesk',sans-serif;
-  font-size:17px;font-weight:600;
-  color:#ffffff;margin-bottom:8px;line-height:1.3;
-}
-.card-desc{
-  font-size:13.5px;color:#7a7a9a;
-  line-height:1.7;margin-bottom:14px;flex:1;
-}
-.card-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
-.card-tag{
-  font-size:11px;font-weight:500;
-  padding:3px 10px;border-radius:999px;
-  background:#1a1a2e;color:#6060a0;
-  border:1px solid #2a2a45;
-}
-.card-actions{display:flex;gap:8px;flex-wrap:wrap}
-.btn{
-  display:inline-flex;align-items:center;gap:5px;
-  font-size:12.5px;font-weight:500;
-  padding:7px 16px;border-radius:8px;
-  text-decoration:none;transition:all 0.18s ease;
-  border:1px solid;cursor:pointer;
-}
-.btn-ghost{
-  background:transparent;color:#6060a0;border-color:#2a2a45;
-}
-.btn-ghost:hover{border-color:#6C63FF;color:#6C63FF;background:rgba(108,99,255,0.06)}
-.btn-accent{
-  background:transparent;color:#6C63FF;border-color:#6C63FF;
-}
-.btn-accent:hover{background:#6C63FF;color:#fff}
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.75;
+      -webkit-font-smoothing: antialiased;
+      cursor: none;
+    }
 
-/* ─────────────────────────────────────────
-   SECTION 4: RESEARCH CARDS
-───────────────────────────────────────── */
-.research-section{padding-bottom:16px}
-.research-grid{display:flex;flex-direction:column;gap:16px}
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      pointer-events: none;
+      opacity: 0.34;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.86' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.045'/%3E%3C/svg%3E");
+    }
 
-.research-card{
-  background:#0f0f1a;
-  border:1px solid #1a1a2e;
-  border-left:3px solid #6C63FF;
-  border-radius:0 14px 14px 0;
-  padding:26px 28px;
-  transition:border-color 0.2s ease,box-shadow 0.2s ease,transform 0.2s ease;
-}
-.research-card:hover{
-  border-color:#6C63FF;
-  border-left-color:#00C9A7;
-  box-shadow:0 4px 20px rgba(0,201,167,0.07);
-  transform:translateX(3px);
-}
-.rcard-inst{
-  font-size:11px;font-weight:700;letter-spacing:1.5px;
-  text-transform:uppercase;color:#3a3a5a;
-  margin-bottom:10px;font-family:'Space Grotesk',sans-serif;
-}
-.rcard-grade{
-  display:inline-block;
-  background:rgba(0,201,167,0.1);color:#00C9A7;
-  font-size:10px;font-weight:700;padding:3px 9px;
-  border-radius:999px;border:1px solid rgba(0,201,167,0.25);
-  margin-left:10px;vertical-align:middle;
-  font-family:'Space Grotesk',sans-serif;letter-spacing:0.03em;
-}
-.rcard-title{
-  font-family:'Space Grotesk',sans-serif;
-  font-size:17px;font-weight:600;
-  color:#ffffff;margin-bottom:10px;line-height:1.3;
-}
-.rcard-desc{font-size:13.5px;color:#7a7a9a;line-height:1.7;margin-bottom:14px}
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+    ::selection { background: var(--accent); color: var(--bg); }
 
-/* thesis preview image */
-.rcard-preview{
-  display:block;width:100%;border-radius:8px;
-  border:1px solid #1e1e35;margin:14px 0;
-  transition:opacity 0.2s;
-}
-.research-card:hover .rcard-preview{opacity:0.92}
+    #cursor {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 12px;
+      height: 12px;
+      z-index: 9999;
+      border-radius: 999px;
+      background: var(--accent-bright);
+      pointer-events: none;
+      opacity: 0;
+      mix-blend-mode: difference;
+      transform: translate(-50%, -50%);
+      transition: width 220ms ease, height 220ms ease, opacity 220ms ease;
+    }
 
-.rcard-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
-.rcard-tag{
-  font-size:11px;font-weight:500;
-  padding:3px 10px;border-radius:999px;
-  background:#13131f;color:#504a80;
-  border:1px solid #252540;
-}
-.rcard-actions{display:flex;gap:8px;flex-wrap:wrap}
+    #cursor.is-visible { opacity: 0.8; }
+    #cursor.is-hovering { width: 40px; height: 40px; opacity: 0.45; }
 
-/* ─────────────────────────────────────────
-   SECTION 5: SKILLS
-───────────────────────────────────────── */
-.skills-section{
-  padding:64px 0;
-  border-top:1px solid #1a1a2e;
-  border-bottom:1px solid #1a1a2e;
-  margin-top:64px;
-}
-.skills-strip{
-  display:flex;flex-wrap:wrap;gap:10px;justify-content:center;
-}
-.skill-pill{
-  font-size:13px;font-weight:500;
-  padding:7px 18px;border-radius:999px;
-  background:#1a1a2e;color:#8080b0;
-  border:1px solid #2a2a45;
-  transition:all 0.18s ease;cursor:default;
-}
-.skill-pill:hover{border-color:#6C63FF;color:#ffffff;background:#17172e}
+    .depth-0, .depth-1, .depth-2, .depth-3, .depth-4, .depth-5, .grain-field { transform: translateZ(0); }
 
-/* ─────────────────────────────────────────
-   SECTION 6: FOOTER
-───────────────────────────────────────── */
-footer{
-  padding:56px 0 48px;text-align:center;
-}
-.footer-bio{
-  font-size:14px;color:#4a4a6a;
-  max-width:500px;margin:0 auto 14px;line-height:1.75;
-}
-.footer-email{
-  display:inline-block;
-  font-family:'Space Grotesk',monospace;
-  font-size:14px;font-weight:500;color:#6C63FF;
-  text-decoration:none;transition:color 0.15s;
-  margin-bottom:28px;
-}
-.footer-email:hover{color:#8f89ff}
-.footer-divider{
-  width:40px;height:1px;background:#1e1e35;
-  margin:0 auto 20px;
-}
-.footer-copy{font-size:11px;color:#2a2a45;letter-spacing:1px}
-</style>
+    .grain-field { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+    .grain-field::before, .grain-field::after { content: ""; position: absolute; border: 1px solid var(--border); opacity: 0.45; }
+    .grain-field::before { inset: 0 33.333% 0 auto; width: 1px; border-width: 0 1px 0 0; }
+    .grain-field::after { inset: 0 auto 0 33.333%; width: 1px; border-width: 0 1px 0 0; }
+
+    .text-link { position: relative; display: inline-flex; align-items: center; gap: 0.45rem; width: fit-content; }
+    .text-link::after { content: ""; position: absolute; left: 0; right: 0; bottom: -0.18rem; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform 300ms ease; }
+    .text-link:hover::after { transform: scaleX(1); }
+
+    .section-frame { position: relative; border-top: 1px solid var(--border); content-visibility: auto; contain-intrinsic-size: 900px; }
+    .section-inner { width: min(1200px, calc(100% - 48px)); margin: 0 auto; padding: 160px 0; }
+    .section-label { margin: 0 0 64px; color: var(--text-muted); font-family: var(--font-body); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.2em; line-height: 1; text-transform: uppercase; }
+
+    .nav-shell { position: fixed; top: 0; left: 0; right: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; padding: 24px 48px; border-bottom: 1px solid transparent; color: var(--text-primary); transition: background 300ms ease, border-color 300ms ease, padding 300ms ease, backdrop-filter 300ms ease; }
+    .nav-shell.is-scrolled { padding-top: 16px; padding-bottom: 16px; border-bottom-color: var(--border); background: rgba(10, 10, 10, 0.74); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+    .nav-logo { font-family: var(--font-display); font-size: 1.35rem; line-height: 1; transition: color 220ms ease; }
+    .nav-logo:hover { color: var(--accent-bright); }
+    .nav-links { display: flex; align-items: center; gap: clamp(18px, 4vw, 42px); margin: 0; padding: 0; list-style: none; }
+    .nav-links a { position: relative; display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; transition: color 220ms ease; }
+    .nav-links a:hover, .nav-links a.is-active { color: var(--text-primary); }
+    .nav-links a::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--accent-bright); opacity: 0; transform: scale(0.4); transition: opacity 220ms ease, transform 220ms ease; }
+    .nav-links a.is-active::before { opacity: 1; transform: scale(1); }
+
+    .hero { position: relative; min-height: 100vh; min-height: 100svh; display: grid; align-items: center; overflow: hidden; padding: 128px 48px 96px; }
+    .hero::after { content: ""; position: absolute; inset: auto 0 0; height: 35vh; pointer-events: none; background: linear-gradient(to top, var(--bg), rgba(10, 10, 10, 0)); }
+    .hero-inner { position: relative; z-index: 2; width: min(1200px, 100%); margin: 0 auto; }
+    .hero-kicker { margin: 0 0 28px; color: var(--text-muted); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.2em; line-height: 1; text-transform: uppercase; opacity: 0; }
+    .hero-title { margin: 0; color: var(--text-primary); font-family: var(--font-display); font-size: clamp(4rem, 10vw, 9rem); font-weight: 400; line-height: 0.9; }
+    .hero-title span { display: block; opacity: 0; transform: translateY(48px); }
+    .hero-subtitle { max-width: 760px; margin: 40px 0 0; color: var(--text-muted); font-size: clamp(1rem, 2vw, 1.2rem); font-weight: 400; line-height: 1.7; opacity: 0; }
+    .hero-bottom { position: absolute; z-index: 3; left: 48px; right: 48px; bottom: 42px; display: flex; align-items: flex-end; justify-content: space-between; opacity: 0; }
+    .hero-social { display: flex; align-items: center; gap: 22px; }
+    .hero-social a { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; transition: color 220ms ease; }
+    .hero-social a:hover { color: var(--accent-bright); }
+    .scroll-cue { display: grid; gap: 10px; justify-items: center; color: var(--text-muted); font-size: 0.72rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; }
+    .scroll-line { width: 1px; height: 54px; background: linear-gradient(to bottom, var(--accent-bright), rgba(232, 213, 176, 0)); animation: scrollLine 2.3s ease-in-out infinite; transform-origin: top; }
+    @keyframes scrollLine { 0%, 100% { opacity: 0.35; transform: scaleY(0.72); } 50% { opacity: 1; transform: scaleY(1); } }
+
+    .work-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px; background: var(--border); }
+    .work-card { position: relative; min-width: 0; overflow: hidden; background: var(--surface); transform: translateY(0); transition: transform 300ms ease, box-shadow 300ms ease; }
+    .work-card::after { content: ""; position: absolute; inset: 0; z-index: 2; border: 1px solid transparent; pointer-events: none; transition: border-color 300ms ease; }
+    .work-card:hover { transform: translateY(-4px); box-shadow: 0 22px 70px rgba(0, 0, 0, 0.28); }
+    .work-card:hover::after { border-color: var(--accent); }
+    .project-image { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: #1a1a1a; }
+    .project-image img { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.9) contrast(1.04); transform: scale(1); transition: transform 500ms ease, filter 500ms ease; }
+    .work-card:hover .project-image img { filter: saturate(1) contrast(1.08); transform: scale(1.02); }
+    .metric-badge { position: absolute; top: 18px; right: 18px; display: inline-flex; align-items: center; min-height: 30px; padding: 6px 12px; border: 1px solid rgba(232, 213, 176, 0.32); border-radius: 999px; background: rgba(10, 10, 10, 0.72); color: var(--accent-bright); font-size: 0.7rem; font-weight: 500; letter-spacing: 0.12em; line-height: 1; text-transform: uppercase; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+    .card-body { display: grid; gap: 20px; padding: 44px; }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 8px; min-height: 27px; }
+    .tag { display: inline-flex; align-items: center; padding: 5px 9px; border: 1px solid var(--border); border-radius: 999px; color: var(--text-muted); font-size: 0.68rem; font-weight: 500; letter-spacing: 0.12em; line-height: 1; text-transform: uppercase; }
+    .card-title { margin: 0; color: var(--text-primary); font-family: var(--font-display); font-size: 1.5rem; font-weight: 400; line-height: 1.2; }
+    .card-desc { margin: -8px 0 0; color: var(--text-muted); font-size: 1rem; line-height: 1.75; }
+    .card-actions { display: flex; flex-wrap: wrap; gap: 24px; padding-top: 6px; }
+    .ghost-link { color: var(--text-primary); font-size: 0.82rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; }
+
+    .story-grid { display: grid; grid-template-columns: minmax(0, 0.4fr) minmax(0, 0.6fr); gap: clamp(48px, 8vw, 112px); align-items: start; }
+    .pull-quote { position: sticky; top: 128px; margin: 0; color: var(--text-primary); font-family: var(--font-display); font-size: clamp(2.35rem, 5vw, 4.8rem); font-style: italic; font-weight: 400; line-height: 1.05; }
+    .research-list { display: grid; gap: 2px; background: var(--border); }
+    .research-entry { padding: 44px; background: var(--surface); }
+    .entry-meta { margin: 0 0 16px; color: var(--text-muted); font-size: 0.76rem; font-weight: 500; letter-spacing: 0.12em; line-height: 1.4; text-transform: uppercase; }
+    .entry-meta strong { color: var(--accent-bright); font-weight: 500; }
+    .entry-title { margin: 0 0 14px; color: var(--text-primary); font-family: var(--font-body); font-size: 1.1rem; font-weight: 500; line-height: 1.35; }
+    .entry-desc { margin: 0 0 22px; color: var(--text-muted); font-size: 1rem; line-height: 1.75; }
+    .entry-links { display: flex; flex-wrap: wrap; gap: 22px; margin-top: 26px; }
+    .entry-thumb { display: block; width: 100%; border-radius: 4px; margin: 20px 0 4px; overflow: hidden; border: 1px solid var(--border); aspect-ratio: 16/9; object-fit: cover; object-position: center top; filter: saturate(0.85) contrast(1.05); transition: filter 350ms ease, transform 350ms ease; }
+    .research-entry:hover .entry-thumb { filter: saturate(1) contrast(1.08); }
+
+    .cta-frame { border-top: 1px solid var(--border); }
+    .cta-inner { width: min(1200px, calc(100% - 48px)); margin: 0 auto; padding: 120px 0; }
+    .cta-label { margin: 0 0 56px; color: var(--text-muted); font-family: var(--font-body); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.2em; line-height: 1; text-transform: uppercase; }
+    .cta-intro { margin: 0 0 64px; max-width: 700px; color: var(--text-primary); font-family: var(--font-display); font-size: clamp(1.6rem, 3.5vw, 2.6rem); font-weight: 400; line-height: 1.2; }
+    .cta-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: var(--border); }
+    .cta-card { background: var(--surface); padding: 40px 36px; }
+    .cta-card-number { display: block; margin: 0 0 20px; color: var(--accent); font-size: 0.72rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; }
+    .cta-card-title { margin: 0 0 14px; color: var(--text-primary); font-family: var(--font-body); font-size: 1.05rem; font-weight: 500; line-height: 1.35; }
+    .cta-card-desc { margin: 0; color: var(--text-muted); font-size: 0.92rem; line-height: 1.75; }
+    .cta-cv { display: inline-flex; align-items: center; gap: 10px; margin-top: 64px; color: var(--text-primary); font-size: 0.85rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; border: 1px solid var(--border); padding: 16px 32px; transition: border-color 300ms ease, color 300ms ease, background 300ms ease; }
+    .cta-cv:hover { border-color: var(--accent); color: var(--accent-bright); background: rgba(200, 184, 154, 0.05); }
+    @media (max-width: 900px) { .cta-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 640px) { .cta-card { padding: 32px 24px; } }
+
+    .skills-strip { overflow: hidden; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--surface); content-visibility: auto; contain-intrinsic-size: 360px; }
+    .skills-inner { padding: 100px 0; }
+    .skills-bio { width: min(1000px, calc(100% - 48px)); margin: 0 auto 52px; color: var(--text-primary); font-family: var(--font-display); font-size: clamp(1.8rem, 4vw, 3.5rem); font-style: italic; font-weight: 400; line-height: 1.2; text-align: center; }
+    .ticker { display: flex; width: max-content; gap: 28px; animation: tickerMove 42s linear infinite; will-change: transform; }
+    .ticker-item { display: inline-flex; align-items: center; gap: 28px; color: var(--text-muted); font-size: clamp(1rem, 2vw, 1.35rem); white-space: nowrap; }
+    .ticker-item::after { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); opacity: 0.7; }
+    @keyframes tickerMove { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    .contact-frame { min-height: 86vh; display: grid; align-items: center; border-top: 1px solid var(--border); content-visibility: auto; contain-intrinsic-size: 760px; }
+    .contact-inner { width: min(1200px, calc(100% - 48px)); margin: 0 auto; padding: 160px 0 64px; text-align: center; }
+    .contact-heading { margin: 0 0 48px; color: var(--text-primary); font-family: var(--font-display); font-size: clamp(4rem, 12vw, 10rem); font-weight: 400; line-height: 0.9; }
+    .contact-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 26px; }
+    .contact-link { display: inline-flex; align-items: center; gap: 9px; color: var(--text-muted); font-size: 0.9rem; font-weight: 500; transition: color 220ms ease; }
+    .contact-link:hover { color: var(--accent-bright); }
+    .footer { display: flex; justify-content: space-between; gap: 24px; margin-top: 126px; color: var(--text-muted); font-size: 0.74rem; letter-spacing: 0.12em; text-transform: uppercase; }
+
+    .reveal, .section-frame, .skills-strip, .contact-frame { opacity: 0; transform: translateY(40px); }
+
+    @media (max-width: 900px) {
+      body { cursor: auto; }
+      .section-inner { width: min(100% - 32px, 1200px); padding: 112px 0; }
+      .nav-shell { padding: 20px 24px; }
+      .nav-shell.is-scrolled { padding: 14px 24px; }
+      .hero { padding: 116px 24px 128px; }
+      .hero-bottom { left: 24px; right: 24px; }
+      .work-grid, .story-grid { grid-template-columns: 1fr; }
+      .pull-quote { position: static; max-width: 720px; }
+    }
+
+    @media (max-width: 640px) {
+      .nav-links { gap: 14px; }
+      .nav-links a { font-size: 0.68rem; letter-spacing: 0.08em; }
+      .nav-links a::before { display: none; }
+      .hero-bottom { display: grid; gap: 24px; justify-content: start; }
+      .hero-social { gap: 16px; }
+      .scroll-cue { justify-items: start; }
+      .card-body, .research-entry { padding: 32px 24px; }
+      .contact-links, .footer { display: grid; justify-content: center; }
+      .footer { text-align: center; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
+      body { cursor: auto; }
+      #cursor { display: none; }
+      .reveal, .section-frame, .skills-strip, .contact-frame, .hero-kicker, .hero-title span, .hero-subtitle, .hero-bottom { opacity: 1 !important; transform: none !important; }
+    }
+  </style>
 </head>
+
 <body>
+  <div id="cursor" aria-hidden="true"></div>
 
-<!-- ── HERO ── -->
-<section class="hero">
-  <div class="hero-content">
-    <h1>Yatin Azad</h1>
-    <p class="hero-role">Computational Biologist · ML for Genomics &amp; Neuroimaging</p>
-    <p class="hero-creds">IIT Kanpur (Silver Medal) · University of Western Australia (High Distinction)</p>
-    <nav class="hero-links">
-      <a class="hero-link" href="https://github.com/yatinaz" target="_blank" rel="noopener">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
-        GitHub
-      </a>
-      <a class="hero-link" href="https://linkedin.com/in/yatin-azad" target="_blank" rel="noopener">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h14m-.5 15.5v-5.3a3.26 3.26 0 00-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 011.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 001.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 00-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
-        LinkedIn
-      </a>
-      <a class="hero-link" href="mailto:yatinazadk1@gmail.com">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 01-2.06 0L2 7"/></svg>
-        Email
-      </a>
-      <a class="hero-link primary" href="/assets/YatinAzad_CV.pdf" target="_blank" rel="noopener">
-        CV ↗
-      </a>
-    </nav>
-  </div>
-  <div class="scroll-indicator">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-  </div>
-</section>
+  <!-- NAVIGATION -->
+  <nav class="nav-shell depth-5" data-depth="5" aria-label="Primary navigation">
+    <a class="nav-logo text-link" href="#top" aria-label="Yatin Azad home">YA</a>
+    <ul class="nav-links">
+      <li><a href="#work" data-section="work">Work</a></li>
+      <li><a href="story.html">Story</a></li>
+      <li><a href="#hire" data-section="hire">Hire</a></li>
+      <li><a href="#contact" data-section="contact">Contact</a></li>
+    </ul>
+  </nav>
 
-<!-- ── BIO ── -->
-<section class="bio-section">
-  <div class="container">
-    <p class="bio-text">
-      I build <span class="accent-indigo">ML pipelines</span> that turn messy biological data into
-      <span class="accent-teal">clinical and scientific insight</span> —
-      across genomics, neuroimaging, and protein engineering.
-    </p>
-  </div>
-</section>
-
-<!-- ── ML & ENGINEERING PROJECTS ── -->
-<section class="projects-section">
-  <div class="container">
-    <div class="section-header">
-      <span class="section-header-label">ML &amp; Engineering Projects</span>
-      <div class="section-header-line"></div>
+  <!-- HERO -->
+  <header class="hero" id="top" data-scene="hero">
+    <div class="grain-field depth-0" data-depth="0" aria-hidden="true"></div>
+    <div class="hero-inner depth-4" data-depth="4">
+      <p class="hero-kicker">Computational Biologist &middot; ML Researcher</p>
+      <h1 class="hero-title" aria-label="Yatin Azad"><span>Yatin</span><span>Azad</span></h1>
+      <p class="hero-subtitle"><em style="font-family:var(--font-display);font-style:italic;font-size:clamp(1.05rem,2.2vw,1.35rem);color:var(--accent);">Turning messy biological data into clinical and scientific insight.</em></p>
     </div>
 
-    <div class="projects-grid">
+    <div class="hero-bottom depth-5" data-depth="5">
+      <div class="hero-social" aria-label="Social links">
+        <a class="text-link" href="https://github.com/yatinaz" target="_blank" rel="noopener"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>GitHub</a>
+        <a class="text-link" href="https://linkedin.com/in/yatin-azad" target="_blank" rel="noopener"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h14m-.5 15.5v-5.3a3.26 3.26 0 00-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 011.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 001.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 00-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>LinkedIn</a>
+      </div>
+      <div class="scroll-cue" aria-hidden="true"><span>Scroll &darr;</span><span class="scroll-line"></span></div>
+    </div>
+  </header>
 
-      <!-- TB -->
-      <article class="project-card">
-        <div class="card-img-wrap">
-          <img src="/assets/tb_preview.png" alt="AUROC heatmap for TB drug resistance models" loading="lazy">
-          <span class="card-badge">AUROC &gt;0.99</span>
-        </div>
-        <div class="card-body">
-          <h2 class="card-title">TB Drug Resistance Prediction</h2>
-          <p class="card-desc">Ensemble ML predicting antibiotic resistance across 3,393 <em>M. tuberculosis</em> isolates and 11 drugs from whole-genome sequencing data.</p>
-          <div class="card-tags">
-            <span class="card-tag">11 drugs</span>
-            <span class="card-tag">XGBoost</span>
-            <span class="card-tag">WGS</span>
-            <span class="card-tag">IIT Kanpur</span>
-          </div>
-          <div class="card-actions">
-            <a class="btn btn-ghost" href="https://github.com/yatinaz/Tuberculosis-Drug-Resistance-Prediction" target="_blank" rel="noopener">View Code →</a>
-            <a class="btn btn-accent" href="/tb/">Interactive Figures →</a>
-          </div>
-        </div>
-      </article>
+  <main>
+    <!-- WORK -->
+    <section class="section-frame" id="work" data-scene="work">
+      <div class="section-inner depth-4" data-depth="4">
+        <p class="section-label reveal">Key Projects</p>
+        <!-- WORK GRID -->
+        <div class="work-grid">
 
-      <!-- Mandrake -->
-      <article class="project-card">
-        <div class="card-img-wrap">
-          <img src="/assets/mandrake_preview.png" alt="RT activity progression across training eras" loading="lazy">
-          <span class="card-badge">CLS 0.803</span>
-        </div>
-        <div class="card-body">
-          <h2 class="card-title">RT Activity Prediction for Prime Editing</h2>
-          <p class="card-desc">Predicting which reverse transcriptases work for prime editing using protein language models and structural features.</p>
-          <div class="card-tags">
-            <span class="card-tag">10/12 Retroviral TPs</span>
-            <span class="card-tag">ESM-2</span>
-            <span class="card-tag">LightGBM</span>
-            <span class="card-tag">Mandrake Bioworks</span>
-          </div>
-          <div class="card-actions">
-            <a class="btn btn-ghost" href="https://github.com/yatinaz/opensrc-retroviral-problem" target="_blank" rel="noopener">View Code →</a>
-            <a class="btn btn-accent" href="/mandrake/">Interactive Figures →</a>
-          </div>
-        </div>
-      </article>
-
-      <!-- EEG Motor Imagery -->
-      <article class="project-card">
-        <div class="card-img-wrap">
-          <img src="/assets/eeg_preview.png" alt="Alpha ERD topomap and per-subject classification accuracy for EEG motor imagery" loading="lazy">
-          <span class="card-badge">CSP 65.8%</span>
-        </div>
-        <div class="card-body">
-          <h2 class="card-title">EEG Motor Imagery Classification</h2>
-          <p class="card-desc">End-to-end BCI pipeline on PhysioNet EEGBCI (10 subjects, 450 epochs). ICA artefact removal, CSP spatial filtering, and Riemannian geometry (MDM) — evaluated with within-subject stratified cross-validation.</p>
-          <div class="card-tags">
-            <span class="card-tag">10 subjects</span>
-            <span class="card-tag">CSP</span>
-            <span class="card-tag">Riemannian</span>
-            <span class="card-tag">MNE-Python</span>
-          </div>
-          <div class="card-actions">
-            <a class="btn btn-ghost" href="https://github.com/yatinaz/yatinaz.github.io/tree/main/eeg" target="_blank" rel="noopener">View Code →</a>
-            <a class="btn btn-accent" href="/eeg/">Interactive Figures →</a>
-          </div>
-        </div>
-      </article>
-
-      <!-- fMRI — spans full width on 2-col grid -->
-      <article class="project-card" style="grid-column:1/-1">
-        <div style="display:grid;grid-template-columns:2fr 3fr">
-          <div class="card-img-wrap" style="height:auto;min-height:200px">
-            <img src="/assets/fmri_preview.png" alt="ROC curves for fMRI biomarker detection models" loading="lazy" style="height:100%">
-            <span class="card-badge">AUC 0.718</span>
-          </div>
-          <div class="card-body">
-            <h2 class="card-title">Multi-Disease fMRI Biomarker Detection</h2>
-            <p class="card-desc">Deep learning framework for schizophrenia and Parkinson's detection from resting-state fMRI functional connectivity. Deployed as FastAPI + Docker service.</p>
-            <div class="card-tags">
-              <span class="card-tag">542 subjects</span>
-              <span class="card-tag">nilearn</span>
-              <span class="card-tag">FastAPI</span>
-              <span class="card-tag">Docker</span>
-              <span class="card-tag">UWA</span>
+          <!-- ── TB Drug Resistance ── -->
+          <article class="work-card" data-depth="4">
+            <div class="project-image depth-3" data-depth="3">
+              <!-- TB: antibiotic resistance heatmap — drugs × isolate clusters -->
+              <svg viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;display:block;position:absolute;inset:0" aria-hidden="true">
+                <rect width="800" height="450" fill="#111111"/>
+                <!-- Title -->
+                <text x="400" y="19" fill="#282828" font-size="10" font-family="monospace" text-anchor="middle">Antibiotic Resistance Profile · 3,393 M. tuberculosis isolates</text>
+                <!-- Group header labels -->
+                <text x="160" y="34" fill="#242424" font-size="8" font-family="monospace" text-anchor="middle">DS</text>
+                <text x="308" y="34" fill="#2e2e2e" font-size="8" font-family="monospace" text-anchor="middle">Mono-R</text>
+                <text x="505" y="34" fill="#3a3028" font-size="8" font-family="monospace" text-anchor="middle">MDR</text>
+                <text x="654" y="34" fill="#4a4030" font-size="8" font-family="monospace" text-anchor="middle">Pre-XDR</text>
+                <text x="736" y="34" fill="#5a5038" font-size="8" font-family="monospace" text-anchor="middle">XDR</text>
+                <!-- Group bracket underlines -->
+                <line x1="113" y1="40" x2="206" y2="40" stroke="#222" stroke-width="0.8"/>
+                <line x1="211" y1="40" x2="404" y2="40" stroke="#2a2a2a" stroke-width="0.8"/>
+                <line x1="409" y1="40" x2="602" y2="40" stroke="#343020" stroke-width="0.8"/>
+                <line x1="607" y1="40" x2="701" y2="40" stroke="#3e3826" stroke-width="0.8"/>
+                <line x1="706" y1="40" x2="769" y2="40" stroke="#48402c" stroke-width="0.8"/>
+                <!-- Grid background -->
+                <rect x="110" y="50" width="660" height="330" fill="#141414"/>
+                <!-- Group divider lines -->
+                <line x1="208" y1="42" x2="208" y2="382" stroke="#1d1d1d" stroke-width="1.5"/>
+                <line x1="406" y1="42" x2="406" y2="382" stroke="#1d1d1d" stroke-width="1.5"/>
+                <line x1="604" y1="42" x2="604" y2="382" stroke="#1d1d1d" stroke-width="1.5"/>
+                <line x1="703" y1="42" x2="703" y2="382" stroke="#1d1d1d" stroke-width="1.5"/>
+                <!-- Horizontal row separators -->
+                <line x1="110" y1="80" x2="770" y2="80" stroke="#161616" stroke-width="0.7"/>
+                <line x1="110" y1="110" x2="770" y2="110" stroke="#161616" stroke-width="0.7"/>
+                <line x1="110" y1="140" x2="770" y2="140" stroke="#161616" stroke-width="0.7"/>
+                <line x1="110" y1="170" x2="770" y2="170" stroke="#161616" stroke-width="0.7"/>
+                <line x1="110" y1="200" x2="770" y2="200" stroke="#161616" stroke-width="0.7"/>
+                <line x1="110" y1="230" x2="770" y2="230" stroke="#161616" stroke-width="0.7"/>
+                <line x1="110" y1="260" x2="770" y2="260" stroke="#161616" stroke-width="0.7"/>
+                <line x1="110" y1="290" x2="770" y2="290" stroke="#161616" stroke-width="0.7"/>
+                <line x1="110" y1="320" x2="770" y2="320" stroke="#161616" stroke-width="0.7"/>
+                <line x1="110" y1="350" x2="770" y2="350" stroke="#161616" stroke-width="0.7"/>
+                <!-- Resistant (R) cells — accent fill — row 0: RIF (y=51), cols 7-19 -->
+                <rect x="342" y="51" width="31" height="28" fill="#c8b89a" opacity="0.85"/>
+                <rect x="375" y="51" width="31" height="28" fill="#c8b89a" opacity="0.85"/>
+                <rect x="408" y="51" width="31" height="28" fill="#c8b89a" opacity="0.85"/>
+                <rect x="441" y="51" width="31" height="28" fill="#c8b89a" opacity="0.85"/>
+                <rect x="474" y="51" width="31" height="28" fill="#c8b89a" opacity="0.85"/>
+                <rect x="507" y="51" width="31" height="28" fill="#c8b89a" opacity="0.85"/>
+                <rect x="540" y="51" width="31" height="28" fill="#c8b89a" opacity="0.85"/>
+                <rect x="573" y="51" width="31" height="28" fill="#c8b89a" opacity="0.85"/>
+                <rect x="606" y="51" width="31" height="28" fill="#c8b89a" opacity="0.85"/>
+                <rect x="639" y="51" width="31" height="28" fill="#c8b89a" opacity="0.85"/>
+                <rect x="672" y="51" width="31" height="28" fill="#c8b89a" opacity="0.85"/>
+                <rect x="705" y="51" width="31" height="28" fill="#c8b89a" opacity="0.85"/>
+                <rect x="738" y="51" width="31" height="28" fill="#c8b89a" opacity="0.85"/>
+                <!-- Row 1: INH (y=81), cols 3,4,5,6,9-19 -->
+                <rect x="210" y="81" width="31" height="28" fill="#c8b89a" opacity="0.85"/>
+                <rect x="243" y="81" width="31" height="28" fill="#c8b89a" opacity="0.85"/>
+                <rect x="276" y="81" width="31" height="28" fill="#c8b89a" opacity="0.85"/>
+                <rect x="309" y="81" width="31" height="28" fill="#c8b89a" opacity="0.85"/>
+                <rect x="408" y="81" width="31" height="28" fill="#c8b89a" opacity="0.85"/>
+                <rect x="441" y="81" width="31" height="28" fill="#c8b89a" opacity="0.85"/>
+                <rect x="474" y="81" width="31" height="28" fill="#c8b89a" opacity="0.85"/>
+                <rect x="507" y="81" width="31" height="28" fill="#c8b89a" opacity="0.85"/>
+                <rect x="540" y="81" width="31" height="28" fill="#c8b89a" opacity="0.85"/>
+                <rect x="573" y="81" width="31" height="28" fill="#c8b89a" opacity="0.85"/>
+                <rect x="606" y="81" width="31" height="28" fill="#c8b89a" opacity="0.85"/>
+                <rect x="639" y="81" width="31" height="28" fill="#c8b89a" opacity="0.85"/>
+                <rect x="672" y="81" width="31" height="28" fill="#c8b89a" opacity="0.85"/>
+                <rect x="705" y="81" width="31" height="28" fill="#c8b89a" opacity="0.85"/>
+                <rect x="738" y="81" width="31" height="28" fill="#c8b89a" opacity="0.85"/>
+                <!-- Row 2: EMB (y=111), cols 5,8,10,12-19 -->
+                <rect x="276" y="111" width="31" height="28" fill="#c8b89a" opacity="0.68"/>
+                <rect x="375" y="111" width="31" height="28" fill="#c8b89a" opacity="0.68"/>
+                <rect x="441" y="111" width="31" height="28" fill="#c8b89a" opacity="0.68"/>
+                <rect x="507" y="111" width="31" height="28" fill="#c8b89a" opacity="0.68"/>
+                <rect x="540" y="111" width="31" height="28" fill="#c8b89a" opacity="0.68"/>
+                <rect x="573" y="111" width="31" height="28" fill="#c8b89a" opacity="0.68"/>
+                <rect x="606" y="111" width="31" height="28" fill="#c8b89a" opacity="0.68"/>
+                <rect x="639" y="111" width="31" height="28" fill="#c8b89a" opacity="0.68"/>
+                <rect x="672" y="111" width="31" height="28" fill="#c8b89a" opacity="0.68"/>
+                <rect x="705" y="111" width="31" height="28" fill="#c8b89a" opacity="0.68"/>
+                <rect x="738" y="111" width="31" height="28" fill="#c8b89a" opacity="0.68"/>
+                <!-- Row 3: PZA (y=141), cols 6,11,12,14,15,17-19 -->
+                <rect x="309" y="141" width="31" height="28" fill="#c8b89a" opacity="0.58"/>
+                <rect x="474" y="141" width="31" height="28" fill="#c8b89a" opacity="0.58"/>
+                <rect x="507" y="141" width="31" height="28" fill="#c8b89a" opacity="0.58"/>
+                <rect x="573" y="141" width="31" height="28" fill="#c8b89a" opacity="0.58"/>
+                <rect x="606" y="141" width="31" height="28" fill="#c8b89a" opacity="0.58"/>
+                <rect x="672" y="141" width="31" height="28" fill="#c8b89a" opacity="0.58"/>
+                <rect x="705" y="141" width="31" height="28" fill="#c8b89a" opacity="0.58"/>
+                <rect x="738" y="141" width="31" height="28" fill="#c8b89a" opacity="0.58"/>
+                <!-- Row 4: STR (y=171), cols 2,4,6,13,14,16,17,19 -->
+                <rect x="177" y="171" width="31" height="28" fill="#c8b89a" opacity="0.52"/>
+                <rect x="243" y="171" width="31" height="28" fill="#c8b89a" opacity="0.52"/>
+                <rect x="309" y="171" width="31" height="28" fill="#c8b89a" opacity="0.52"/>
+                <rect x="540" y="171" width="31" height="28" fill="#c8b89a" opacity="0.52"/>
+                <rect x="573" y="171" width="31" height="28" fill="#c8b89a" opacity="0.52"/>
+                <rect x="639" y="171" width="31" height="28" fill="#c8b89a" opacity="0.52"/>
+                <rect x="672" y="171" width="31" height="28" fill="#c8b89a" opacity="0.52"/>
+                <rect x="738" y="171" width="31" height="28" fill="#c8b89a" opacity="0.52"/>
+                <!-- Row 5: ETH (y=201), col 13 -->
+                <rect x="540" y="201" width="31" height="28" fill="#c8b89a" opacity="0.46"/>
+                <!-- Row 6: KAN (y=231), cols 18,19 -->
+                <rect x="705" y="231" width="31" height="28" fill="#c8b89a" opacity="0.65"/>
+                <rect x="738" y="231" width="31" height="28" fill="#c8b89a" opacity="0.65"/>
+                <!-- Row 7: AMK (y=261), cols 18,19 -->
+                <rect x="705" y="261" width="31" height="28" fill="#c8b89a" opacity="0.65"/>
+                <rect x="738" y="261" width="31" height="28" fill="#c8b89a" opacity="0.65"/>
+                <!-- Row 8: CAP (y=291), col 19 -->
+                <rect x="738" y="291" width="31" height="28" fill="#c8b89a" opacity="0.65"/>
+                <!-- Row 9: OFX (y=321), cols 15-19 -->
+                <rect x="606" y="321" width="31" height="28" fill="#c8b89a" opacity="0.72"/>
+                <rect x="639" y="321" width="31" height="28" fill="#c8b89a" opacity="0.72"/>
+                <rect x="672" y="321" width="31" height="28" fill="#c8b89a" opacity="0.72"/>
+                <rect x="705" y="321" width="31" height="28" fill="#c8b89a" opacity="0.72"/>
+                <rect x="738" y="321" width="31" height="28" fill="#c8b89a" opacity="0.72"/>
+                <!-- Row 10: MXF (y=351), cols 16,17,19 -->
+                <rect x="639" y="351" width="31" height="28" fill="#c8b89a" opacity="0.72"/>
+                <rect x="672" y="351" width="31" height="28" fill="#c8b89a" opacity="0.72"/>
+                <rect x="738" y="351" width="31" height="28" fill="#c8b89a" opacity="0.72"/>
+                <!-- Drug labels -->
+                <text x="108" y="69"  fill="#383838" font-size="9" font-family="monospace" text-anchor="end">RIF</text>
+                <text x="108" y="99"  fill="#383838" font-size="9" font-family="monospace" text-anchor="end">INH</text>
+                <text x="108" y="129" fill="#383838" font-size="9" font-family="monospace" text-anchor="end">EMB</text>
+                <text x="108" y="159" fill="#383838" font-size="9" font-family="monospace" text-anchor="end">PZA</text>
+                <text x="108" y="189" fill="#383838" font-size="9" font-family="monospace" text-anchor="end">STR</text>
+                <text x="108" y="219" fill="#383838" font-size="9" font-family="monospace" text-anchor="end">ETH</text>
+                <text x="108" y="249" fill="#383838" font-size="9" font-family="monospace" text-anchor="end">KAN</text>
+                <text x="108" y="279" fill="#383838" font-size="9" font-family="monospace" text-anchor="end">AMK</text>
+                <text x="108" y="309" fill="#383838" font-size="9" font-family="monospace" text-anchor="end">CAP</text>
+                <text x="108" y="339" fill="#383838" font-size="9" font-family="monospace" text-anchor="end">OFX</text>
+                <text x="108" y="369" fill="#383838" font-size="9" font-family="monospace" text-anchor="end">MXF</text>
+                <!-- Grid border -->
+                <rect x="110" y="50" width="660" height="330" fill="none" stroke="#1e1e1e" stroke-width="1"/>
+                <!-- Legend -->
+                <rect x="115" y="393" width="11" height="10" fill="#c8b89a" opacity="0.82"/>
+                <text x="131" y="402" fill="#333" font-size="9" font-family="monospace">Resistant</text>
+                <rect x="205" y="393" width="11" height="10" fill="#181818" stroke="#252525" stroke-width="1"/>
+                <text x="221" y="402" fill="#333" font-size="9" font-family="monospace">Susceptible</text>
+                <!-- Annotation -->
+                <rect x="530" y="388" width="232" height="22" rx="2" fill="#151515" stroke="#1e1e1e" stroke-width="1"/>
+                <text x="540" y="403" fill="#c8b89a" font-size="9" font-family="monospace">AUROC &gt;0.99 · Ensemble XGBoost · WGS</text>
+              </svg>
+              <span class="metric-badge">AUROC &gt;0.99</span>
             </div>
-            <div class="card-actions">
-              <a class="btn btn-ghost" href="https://github.com/yatinaz/schizo-detect-biomarkerv2" target="_blank" rel="noopener">View Code →</a>
-              <a class="btn btn-accent" href="/fmri/">Interactive Figures →</a>
+            <div class="card-body">
+              <div class="tag-row"><span class="tag">XGBoost</span><span class="tag">WGS</span><span class="tag">IIT Kanpur</span></div>
+              <h2 class="card-title">TB Drug Resistance Prediction</h2>
+              <p class="card-desc">Ensemble ML predicting antibiotic resistance across 3,393 M. tuberculosis isolates.</p>
+              <div class="card-actions">
+                <a class="ghost-link text-link" href="https://github.com/yatinaz/Tuberculosis-Drug-Resistance-Prediction" target="_blank" rel="noopener">Code &rarr;</a>
+                <a class="ghost-link text-link" href="https://yatinaz.github.io/tb/" target="_blank" rel="noopener">Figures &rarr;</a>
+              </div>
             </div>
+          </article>
+
+          <!-- ── RT Activity / Prime Editing (unchanged) ── -->
+          <article class="work-card" data-depth="4"><div class="project-image depth-3" data-depth="3"><img src="https://yatinaz.github.io/assets/mandrake_preview.png" alt="Prime editing reverse transcriptase activity prediction figures" loading="lazy"><span class="metric-badge">CLS 0.803</span></div><div class="card-body"><div class="tag-row"><span class="tag">ESM-2</span><span class="tag">LightGBM</span><span class="tag">Mandrake Bioworks</span></div><h2 class="card-title">RT Activity Prediction for Prime Editing</h2><p class="card-desc">Predicting which reverse transcriptases enable prime editing from protein language models and structural features.</p><div class="card-actions"><a class="ghost-link text-link" href="https://github.com/yatinaz/opensrc-retroviral-problem" target="_blank" rel="noopener">Code &rarr;</a><a class="ghost-link text-link" href="https://yatinaz.github.io/mandrake/" target="_blank" rel="noopener">Figures &rarr;</a></div></div></article>
+
+          <!-- ── fMRI Biomarker ── -->
+          <article class="work-card" data-depth="4">
+            <div class="project-image depth-3" data-depth="3">
+              <!-- fMRI: brain functional connectivity network — curved arcs, disease classification -->
+              <svg viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;display:block;position:absolute;inset:0" aria-hidden="true">
+                <rect width="800" height="450" fill="#111111"/>
+                <!-- Brain outline -->
+                <ellipse cx="390" cy="228" rx="295" ry="182" stroke="#1e1e1e" stroke-width="1.5" fill="none"/>
+                <!-- Midline sulcus hint -->
+                <path d="M390 52 Q382 105 387 148 Q392 178 390 228" stroke="#191919" stroke-width="0.9" fill="none"/>
+                <!-- Orientation labels -->
+                <text x="390" y="29" fill="#1f1f1f" font-size="8" font-family="monospace" text-anchor="middle">ANTERIOR</text>
+                <text x="390" y="432" fill="#1f1f1f" font-size="8" font-family="monospace" text-anchor="middle">POSTERIOR</text>
+                <text x="82"  y="231" fill="#1f1f1f" font-size="8" font-family="monospace" text-anchor="middle">L</text>
+                <text x="698" y="231" fill="#1f1f1f" font-size="8" font-family="monospace" text-anchor="middle">R</text>
+
+                <!-- ── Curved connectivity edges (quadratic bezier) ── -->
+                <!-- Strong DMN: ACC↔PCC — hallmark of schizophrenia disruption -->
+                <path d="M355,102 Q390,68 425,102" fill="none" stroke="#c8b89a" stroke-width="2.4" opacity="0.82" stroke-linecap="round"/>
+                <!-- Strong thalamo-cortical L+R -->
+                <path d="M350,108 Q328,158 352,222" fill="none" stroke="#c8b89a" stroke-width="2.0" opacity="0.72" stroke-linecap="round"/>
+                <path d="M430,108 Q452,158 428,222" fill="none" stroke="#c8b89a" stroke-width="2.0" opacity="0.72" stroke-linecap="round"/>
+                <!-- Inter-hemispheric PFC arc -->
+                <path d="M182,150 Q390,85 608,150" fill="none" stroke="#c8b89a" stroke-width="1.8" opacity="0.52" stroke-linecap="round"/>
+                <!-- PFC to ipsilateral ACC/PCC -->
+                <path d="M182,150 Q268,100 355,102" fill="none" stroke="#c8b89a" stroke-width="1.5" opacity="0.42" stroke-linecap="round"/>
+                <path d="M608,150 Q518,100 425,102" fill="none" stroke="#c8b89a" stroke-width="1.5" opacity="0.42" stroke-linecap="round"/>
+                <!-- Thal to temporal -->
+                <path d="M352,222 Q268,258 198,294" fill="none" stroke="#c8b89a" stroke-width="1.3" opacity="0.30" stroke-linecap="round"/>
+                <path d="M428,222 Q512,258 592,294" fill="none" stroke="#c8b89a" stroke-width="1.3" opacity="0.30" stroke-linecap="round"/>
+                <!-- Temporal inter-hemispheric arc -->
+                <path d="M198,294 Q390,258 592,294" fill="none" stroke="#c8b89a" stroke-width="1.2" opacity="0.24" stroke-linecap="round"/>
+                <!-- Weak long-range: PFC to occipital -->
+                <path d="M182,150 Q200,255 242,358" fill="none" stroke="#c8b89a" stroke-width="0.9" opacity="0.14" stroke-linecap="round"/>
+                <path d="M608,150 Q590,255 548,358" fill="none" stroke="#c8b89a" stroke-width="0.9" opacity="0.14" stroke-linecap="round"/>
+                <!-- Posterior arc: temp to occ -->
+                <path d="M198,294 Q218,326 242,358" fill="none" stroke="#c8b89a" stroke-width="0.9" opacity="0.16" stroke-linecap="round"/>
+                <path d="M592,294 Q572,326 548,358" fill="none" stroke="#c8b89a" stroke-width="0.9" opacity="0.16" stroke-linecap="round"/>
+                <!-- Occipital interhemispheric -->
+                <path d="M242,358 Q390,378 548,358" fill="none" stroke="#c8b89a" stroke-width="0.8" opacity="0.12" stroke-linecap="round"/>
+
+                <!-- ── Region nodes ── -->
+                <circle cx="182" cy="150" r="11" fill="#181818" stroke="#c8b89a" stroke-width="1.6"/>
+                <text x="145" y="138" fill="#3a3a3a" font-size="8" font-family="monospace" text-anchor="middle">L-PFC</text>
+                <circle cx="608" cy="150" r="11" fill="#181818" stroke="#c8b89a" stroke-width="1.6"/>
+                <text x="645" y="138" fill="#3a3a3a" font-size="8" font-family="monospace" text-anchor="middle">R-PFC</text>
+                <!-- ACC — larger, key DMN hub -->
+                <circle cx="355" cy="102" r="13" fill="#1e1c17" stroke="#c8b89a" stroke-width="2.2"/>
+                <text x="332" y="87"  fill="#5a5040" font-size="8" font-family="monospace" text-anchor="middle">ACC</text>
+                <!-- PCC — key DMN hub -->
+                <circle cx="425" cy="102" r="13" fill="#1e1c17" stroke="#c8b89a" stroke-width="2.2"/>
+                <text x="448" y="87"  fill="#5a5040" font-size="8" font-family="monospace" text-anchor="middle">PCC</text>
+                <!-- Thalami -->
+                <circle cx="352" cy="222" r="11" fill="#1c1a16" stroke="#c8b89a" stroke-width="1.8"/>
+                <text x="316" y="244" fill="#3a3a3a" font-size="8" font-family="monospace" text-anchor="middle">L-Thal</text>
+                <circle cx="428" cy="222" r="11" fill="#1c1a16" stroke="#c8b89a" stroke-width="1.8"/>
+                <text x="464" y="244" fill="#3a3a3a" font-size="8" font-family="monospace" text-anchor="middle">R-Thal</text>
+                <!-- Temporal -->
+                <circle cx="198" cy="294" r="9" fill="#181818" stroke="#c8b89a" stroke-width="1.3" opacity="0.82"/>
+                <text x="158" y="293" fill="#323232" font-size="8" font-family="monospace" text-anchor="middle">L-Temp</text>
+                <circle cx="592" cy="294" r="9" fill="#181818" stroke="#c8b89a" stroke-width="1.3" opacity="0.82"/>
+                <text x="634" y="293" fill="#323232" font-size="8" font-family="monospace" text-anchor="middle">R-Temp</text>
+                <!-- Occipital -->
+                <circle cx="242" cy="358" r="8" fill="#181818" stroke="#c8b89a" stroke-width="1.2" opacity="0.65"/>
+                <text x="208" y="378" fill="#2a2a2a" font-size="8" font-family="monospace" text-anchor="middle">L-Occ</text>
+                <circle cx="548" cy="358" r="8" fill="#181818" stroke="#c8b89a" stroke-width="1.2" opacity="0.65"/>
+                <text x="584" y="378" fill="#2a2a2a" font-size="8" font-family="monospace" text-anchor="middle">R-Occ</text>
+
+                <!-- ── Classification target annotation ── -->
+                <rect x="640" y="200" width="142" height="54" rx="2" fill="#151515" stroke="#1e1e1e" stroke-width="1"/>
+                <text x="650" y="218" fill="#3a3a3a" font-size="8" font-family="monospace">FC matrix</text>
+                <text x="650" y="231" fill="#c8b89a" font-size="8" font-family="monospace">→ Schizophrenia</text>
+                <text x="650" y="244" fill="#c8b89a" font-size="8" font-family="monospace">→ Parkinson's</text>
+                <line x1="640" y1="227" x2="628" y2="227" stroke="#2a2a2a" stroke-width="0.8" stroke-dasharray="3 2"/>
+
+                <!-- Bottom label -->
+                <text x="390" y="444" fill="#272727" font-size="9" font-family="monospace" text-anchor="middle">Resting-state fMRI · Functional Connectivity · 542 subjects · Deep Learning</text>
+              </svg>
+              <span class="metric-badge">AUC 0.718</span>
+            </div>
+            <div class="card-body">
+              <div class="tag-row"><span class="tag">nilearn</span><span class="tag">FastAPI</span><span class="tag">Docker</span><span class="tag">UWA</span></div>
+              <h2 class="card-title">Multi-Disease fMRI Biomarker Detection</h2>
+              <p class="card-desc">Deep learning framework for schizophrenia &amp; Parkinson's detection from resting-state fMRI functional connectivity.</p>
+              <div class="card-actions">
+                <a class="ghost-link text-link" href="https://github.com/yatinaz/schizo-detect-biomarkerv2" target="_blank" rel="noopener">Code &rarr;</a>
+                <a class="ghost-link text-link" href="https://yatinaz.github.io/fmri/" target="_blank" rel="noopener">Figures &rarr;</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- ── EEG (unchanged) ── -->
+          <article class="work-card" data-depth="4"><div class="project-image depth-3" data-depth="3"><img src="https://yatinaz.github.io/assets/eeg_preview.png" alt="EEG motor imagery topomap and classification results" loading="lazy"><span class="metric-badge">CSP 65.8%</span></div><div class="card-body"><div class="tag-row"><span class="tag">CSP</span><span class="tag">Riemannian</span><span class="tag">MNE-Python</span></div><h2 class="card-title">EEG Motor Imagery Classification</h2><p class="card-desc">End-to-end BCI pipeline on PhysioNet EEGBCI - ICA artefact removal, CSP, and Riemannian geometry across 10 subjects.</p><div class="card-actions"><a class="ghost-link text-link" href="https://github.com/yatinaz/yatinaz.github.io/tree/main/eeg" target="_blank" rel="noopener">Code &rarr;</a><a class="ghost-link text-link" href="https://yatinaz.github.io/eeg/" target="_blank" rel="noopener">Figures &rarr;</a></div></div></article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- RESEARCH WORK -->
+    <section class="section-frame" id="research" data-scene="research">
+      <div class="section-inner depth-4" data-depth="4">
+        <p class="section-label reveal">Research Work</p>
+        <div class="story-grid">
+          <div class="pull-quote reveal">
+            <p style="font-family:var(--font-display);font-size:clamp(1.55rem,3.2vw,2.55rem);font-style:italic;font-weight:400;line-height:1.25;color:var(--text-primary);margin:0 0 36px;">Mental health technology. Computational psychiatry. Behavioural neuroscience.</p>
+            <p style="font-size:0.93rem;line-height:1.85;color:var(--text-muted);margin:0 0 28px;">Three threads of research — from building CBT-based games to combat depression, to modelling how 105 people learn under uncertainty, to quantifying what alcohol hangover does to the hidden parameters of human cognition.</p>
+            <a class="ghost-link text-link" href="story.html" style="font-size:0.82rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);">Full story &rarr;</a>
+          </div>
+          <div class="research-list">
+
+            <!-- UWA Masters Thesis -->
+            <article class="research-entry reveal">
+              <p class="entry-meta"><strong>University of Western Australia</strong> &middot; 2023–2025</p>
+              <h3 class="entry-title">Effect of Alcohol Hangover on Driving-Related Cognition</h3>
+              <p class="entry-desc">Within-subjects crossover (n=24) decomposing 2,000+ reaction-time trials into latent cognitive parameters via hierarchical Bayesian DDM. Revealed impairment signatures masked by mean reaction time.</p>
+              <a href="https://yatinaz.github.io/talks/thesis_slide.html" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+                <img class="entry-thumb" src="https://yatinaz.github.io/assets/thesis_preview.png" alt="Thesis slide preview — UWA hangover cognition study" loading="lazy">
+              </a>
+              <div class="tag-row"><span class="tag">Hierarchical Bayesian</span><span class="tag">DDM</span><span class="tag">R</span><span class="tag">MCMC</span><span class="tag">Crossover RCT</span></div>
+              <div class="entry-links">
+                <a class="ghost-link text-link" href="https://yatinaz.github.io/talks/thesis_slide.html" target="_blank" rel="noopener">Slide &rarr;</a>
+                <a class="ghost-link text-link" href="https://yatinaz.github.io/talks/masters_thesis_2025.pdf" target="_blank" rel="noopener">Thesis &rarr;</a>
+                <a class="ghost-link text-link" href="https://yatinaz.github.io/talks/uwa_expo_2025.pdf" target="_blank" rel="noopener">Talk &rarr;</a>
+              </div>
+            </article>
+
+            <!-- IIT Kanpur — Decision Making -->
+            <article class="research-entry reveal">
+              <p class="entry-meta"><strong>IIT Kanpur</strong> &middot; 2022–2023</p>
+              <h3 class="entry-title">Hierarchical Bayesian Modelling of Human Decision-Making</h3>
+              <p class="entry-desc">Inferred trial-by-trial learning states across 10,000+ decisions from 105 participants using hierarchical Bayesian RL models. Identified learning rate variability as key driver of reward sensitivity differences.</p>
+              <a href="https://yatinaz.github.io/talks/iitk_slide.html" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+                <img class="entry-thumb" src="https://yatinaz.github.io/assets/iitk_preview.png" alt="IIT Kanpur decision-making study slide preview" loading="lazy">
+              </a>
+              <div class="tag-row"><span class="tag">Bayesian RL</span><span class="tag">hBayesDM</span><span class="tag">R</span><span class="tag">NLME</span><span class="tag">Cognitive Science</span></div>
+              <div class="entry-links">
+                <a class="ghost-link text-link" href="https://yatinaz.github.io/talks/iitk_slide.html" target="_blank" rel="noopener">Slide &rarr;</a>
+                <a class="ghost-link text-link" href="https://yatinaz.github.io/talks/iitd_conclave_2023.pdf" target="_blank" rel="noopener">IIT Delhi Conclave &rarr;</a>
+                <a class="ghost-link text-link" href="https://yatinaz.github.io/talks/cogsci_poster.pdf" target="_blank" rel="noopener">CogSci Poster &rarr;</a>
+              </div>
+            </article>
+
+            <!-- IIT Kanpur — TreadWill -->
+            <article class="research-entry reveal">
+              <p class="entry-meta"><strong>IIT Kanpur</strong> &middot; 2020–2022 &nbsp;·&nbsp; Supervisor: Prof. Nitin Gupta</p>
+              <h3 class="entry-title">TreadWill — Gamified CBT Portal for Depression</h3>
+              <p class="entry-desc">Designed and developed a web portal delivering Cognitive Behavioural Therapy (CBT) through gamified mental imagery exercises targeting cognitive distortions. Based on the established principle that depressed individuals interpret ambiguous situations negatively; the game trains users to reframe this bias. Led front-end engineering for cross-browser compatibility across Chrome, Firefox, Safari and mobile WebKit. Research published in <em>JMIR Games</em> (2023).</p>
+              <div class="tag-row"><span class="tag">JavaScript</span><span class="tag">CSS</span><span class="tag">CBT</span><span class="tag">Mental Health</span><span class="tag">IIT Kanpur</span></div>
+              <div class="entry-links">
+                <a class="ghost-link text-link" href="https://treadwill.org/landing" target="_blank" rel="noopener">Live App &rarr;</a>
+                <a class="ghost-link text-link" href="https://games.jmir.org/2023/1/e37105/" target="_blank" rel="noopener">Paper &rarr;</a>
+                <a class="ghost-link text-link" href="/talks/treadwill_poster.pptx" target="_blank" rel="noopener">Poster &rarr;</a>
+              </div>
+            </article>
+
           </div>
         </div>
-      </article>
+      </div>
+    </section>
 
-    </div>
-  </div>
-</section>
+    <!-- ABOUT / SKILLS STRIP -->
+    <section class="skills-strip" aria-label="Skills"><div class="skills-inner reveal depth-4" data-depth="4"><p class="skills-bio">From genomics to neuroimaging &mdash; building ML systems where biology meets clinical insight.</p><div class="ticker" id="skillsTicker" aria-hidden="true"></div></div></section>
 
-<!-- ── RESEARCH & ACADEMIC WORK ── -->
-<section class="research-section">
-  <div class="container">
-    <div class="section-header">
-      <span class="section-header-label">Research &amp; Academic Work</span>
-      <div class="section-header-line"></div>
-    </div>
-
-    <div class="research-grid">
-
-      <!-- Masters Thesis -->
-      <article class="research-card">
-        <p class="rcard-inst">
-          University of Western Australia · 2023–2025
-          <span class="rcard-grade">High Distinction · UWA Global Excellence Scholarship</span>
-        </p>
-        <h2 class="rcard-title">Effect of Alcohol Hangover on Driving-Related Cognition</h2>
-        <p class="rcard-desc">Within-subjects crossover study (n=24) quantifying state-dependent changes in decision-making and psychomotor performance. Decomposed 2,000+ reaction-time trials into latent cognitive parameters using hierarchical Bayesian Drift Diffusion Models, revealing impairment signatures masked by mean reaction time.</p>
-        <a href="/talks/thesis_slide.html" target="_blank" rel="noopener">
-          <img class="rcard-preview" src="/assets/thesis_preview.png" alt="Thesis slide — UWA hangover cognition project" loading="lazy">
-        </a>
-        <div class="rcard-tags">
-          <span class="rcard-tag">Hierarchical Bayesian</span>
-          <span class="rcard-tag">DDM</span>
-          <span class="rcard-tag">R</span>
-          <span class="rcard-tag">MCMC</span>
-          <span class="rcard-tag">Crossover Study</span>
+    <!-- HIRE / CTA -->
+    <section class="cta-frame" id="hire" data-scene="hire">
+      <div class="cta-inner">
+        <p class="cta-label reveal">Work with me</p>
+        <h2 class="cta-intro reveal">If you're building something at the intersection of <em style="font-family:var(--font-display);font-style:italic;color:var(--accent);">biology, data, and clinical impact</em> — here's how I can help.</h2>
+        <div class="cta-grid">
+          <div class="cta-card reveal">
+            <span class="cta-card-number">01</span>
+            <h3 class="cta-card-title">ML Pipelines for Biological Data</h3>
+            <p class="cta-card-desc">Genomics, proteomics, imaging — I turn high-dimensional, noisy biological datasets into production-ready predictive models. From WGS variant calling to protein language model embeddings, I've built end-to-end pipelines that deliver real metrics.</p>
+          </div>
+          <div class="cta-card reveal">
+            <span class="cta-card-number">02</span>
+            <h3 class="cta-card-title">Neuroimaging &amp; Brain-Based Biomarkers</h3>
+            <p class="cta-card-desc">fMRI, EEG, cognitive paradigms — I can help you extract clinically meaningful signal from brain data. Whether it's functional connectivity matrices, ERP components, or drift-diffusion parameters, I know how to get from raw signal to interpretable science.</p>
+          </div>
+          <div class="cta-card reveal">
+            <span class="cta-card-number">03</span>
+            <h3 class="cta-card-title">Bayesian &amp; Computational Modelling</h3>
+            <p class="cta-card-desc">When the question is deeper than prediction — when you need to understand <em>why</em> — hierarchical Bayesian models and mechanistic cognitive models are the right tool. I've applied them across pharmacology, psychiatry, and decision science.</p>
+          </div>
         </div>
-        <div class="rcard-actions">
-          <a class="btn btn-ghost" href="/talks/thesis_slide.html" target="_blank" rel="noopener">🖼 View Slide</a>
-          <a class="btn btn-ghost" href="/talks/masters_thesis_2025.pdf" target="_blank" rel="noopener">📄 Thesis PDF</a>
-          <a class="btn btn-ghost" href="/talks/uwa_expo_2025.pdf" target="_blank" rel="noopener">🎤 Expo Talk</a>
+        <div style="text-align:center;">
+          <a class="cta-cv text-link reveal" href="/assets/Yatin_IITK_UWA_CompNeuro.pdf" target="_blank" rel="noopener">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Download CV &rarr;
+          </a>
         </div>
-      </article>
+      </div>
+    </section>
 
-      <!-- Computational Psychiatry -->
-      <article class="research-card">
-        <p class="rcard-inst">IIT Kanpur · 2022–2023</p>
-        <h2 class="rcard-title">Hierarchical Bayesian Modelling of Human Decision-Making</h2>
-        <p class="rcard-desc">Inferred trial-by-trial learning states across 10,000+ decisions from 105 participants using hierarchical Bayesian RL models. Identified learning rate variability as a significant driver of between-subject differences in reward sensitivity and choice behaviour.</p>
-        <a href="/talks/iitk_slide.html" target="_blank" rel="noopener">
-          <img class="rcard-preview" src="/assets/iitk_preview.png" alt="IITK decision-making study slide" loading="lazy">
-        </a>
-        <div class="rcard-tags">
-          <span class="rcard-tag">Bayesian RL</span>
-          <span class="rcard-tag">hBayesDM</span>
-          <span class="rcard-tag">R</span>
-          <span class="rcard-tag">NLME</span>
-          <span class="rcard-tag">Cognitive Science</span>
-        </div>
-        <div class="rcard-actions">
-          <a class="btn btn-ghost" href="/talks/iitk_slide.html" target="_blank" rel="noopener">🖼 View Slide</a>
-          <a class="btn btn-ghost" href="/talks/iitd_conclave_2023.pdf" target="_blank" rel="noopener">🎤 IIT Delhi Research Conclave 2023</a>
-          <a class="btn btn-ghost" href="/talks/cogsci_poster.pdf" target="_blank" rel="noopener">📋 CogSci Poster 2022</a>
-        </div>
-      </article>
+    <!-- CONTACT / FOOTER -->
+    <section class="contact-frame" id="contact" data-scene="contact"><div class="contact-inner depth-4" data-depth="4"><h2 class="contact-heading reveal">Let's connect.</h2><div class="contact-links reveal"><a class="contact-link text-link" href="mailto:yatinazadk1@gmail.com">yatinazadk1@gmail.com</a><a class="contact-link text-link" href="https://github.com/yatinaz" target="_blank" rel="noopener">GitHub</a><a class="contact-link text-link" href="https://linkedin.com/in/yatin-azad" target="_blank" rel="noopener">LinkedIn</a></div><footer class="footer"><span>Yatin Azad &middot; 2026</span><span>Computational Biologist &middot; ML Scientist</span></footer></div></section>
+  </main>
 
-    </div>
-  </div>
-</section>
+  <script>
+    (function () {
+      "use strict";
 
-<!-- ── SKILLS ── -->
-<section class="skills-section">
-  <div class="container">
-    <div class="skills-strip">
-      <span class="skill-pill">Python</span>
-      <span class="skill-pill">R</span>
-      <span class="skill-pill">PyTorch</span>
-      <span class="skill-pill">XGBoost</span>
-      <span class="skill-pill">scikit-learn</span>
-      <span class="skill-pill">Bayesian Inference</span>
-      <span class="skill-pill">fMRI</span>
-      <span class="skill-pill">Genomics</span>
-      <span class="skill-pill">FastAPI</span>
-      <span class="skill-pill">Docker</span>
-    </div>
-  </div>
-</section>
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const finePointer = window.matchMedia("(pointer: fine)").matches;
+      const touchPointer = window.matchMedia("(pointer: coarse)").matches;
+      const skills = ["Python", "R", "PyTorch", "XGBoost", "scikit-learn", "Bayesian Inference", "fMRI", "Genomics", "FastAPI", "Docker", "ESM-2", "nilearn", "GSAP"];
+      const ticker = document.getElementById("skillsTicker");
+      [...skills, ...skills, ...skills, ...skills].forEach((skill) => {
+        const item = document.createElement("span");
+        item.className = "ticker-item";
+        item.textContent = skill;
+        ticker.appendChild(item);
+      });
 
-<!-- ── FOOTER ── -->
-<footer>
-  <div class="container">
-    <p class="footer-bio">Computational biologist with a research background in cognitive neuroscience and a track record of building production ML systems for genomics and clinical data.</p>
-    <a class="footer-email" href="mailto:yatinazadk1@gmail.com">yatinazadk1@gmail.com</a>
-    <div class="footer-divider"></div>
-    <p class="footer-copy">Yatin Azad · 2026</p>
-  </div>
-</footer>
+      const nav = document.querySelector(".nav-shell");
+      const navLinks = document.querySelectorAll(".nav-links a[data-section]");
+      const cursor = document.getElementById("cursor");
+      const setNavState = () => nav.classList.toggle("is-scrolled", window.scrollY > window.innerHeight * 0.7);
+      setNavState();
+      window.addEventListener("scroll", setNavState, { passive: true });
 
+      const activeObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          navLinks.forEach((link) => link.classList.toggle("is-active", link.dataset.section === entry.target.id));
+        });
+      }, { rootMargin: "-40% 0px -45% 0px", threshold: 0 });
+      document.querySelectorAll("#work, #research, #hire, #contact").forEach((section) => activeObserver.observe(section));
+
+      const showStaticContent = () => {
+        document.querySelectorAll(".reveal, .section-frame, .skills-strip, .contact-frame, .hero-kicker, .hero-title span, .hero-subtitle, .hero-bottom").forEach((el) => {
+          el.style.opacity = "1";
+          el.style.transform = "none";
+        });
+        cursor.style.display = "none";
+        document.body.style.cursor = "auto";
+      };
+
+      if (window.gsap && window.ScrollTrigger) {
+        gsap.registerPlugin(ScrollTrigger);
+        if (!reducedMotion) {
+          gsap.timeline({ delay: 0.15, defaults: { ease: "power3.out" } })
+            .to(".hero-kicker", { opacity: 1, y: 0, duration: 0.7 })
+            .to(".hero-title span", { opacity: 1, y: 0, duration: 1, stagger: 0.15 }, "-=0.35")
+            .to(".hero-subtitle", { opacity: 1, y: 0, duration: 0.8 }, "-=0.55")
+            .to(".hero-bottom", { opacity: 1, y: 0, duration: 0.75 }, "-=0.45");
+
+          if (!touchPointer) {
+            gsap.to(".grain-field", { yPercent: 8, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
+          }
+
+          gsap.utils.toArray(".section-frame, .skills-strip, .contact-frame").forEach((section) => {
+            gsap.to(section, { opacity: 1, y: 0, duration: 0.9, ease: "power3.out", scrollTrigger: { trigger: section, start: "top 86%", once: true } });
+          });
+
+          gsap.utils.toArray(".reveal").forEach((item) => {
+            gsap.to(item, { opacity: 1, y: 0, duration: 0.85, ease: "power3.out", scrollTrigger: { trigger: item, start: "top 88%", once: true } });
+          });
+
+          gsap.fromTo(".work-card", { opacity: 0, y: 56 }, { opacity: 1, y: 0, duration: 0.85, stagger: 0.12, ease: "power3.out", scrollTrigger: { trigger: ".work-grid", start: "top 82%", once: true } });
+        } else {
+          showStaticContent();
+        }
+
+        if (finePointer && !reducedMotion) {
+          const cursorX = gsap.quickTo(cursor, "x", { duration: 0.32, ease: "power3" });
+          const cursorY = gsap.quickTo(cursor, "y", { duration: 0.32, ease: "power3" });
+          window.addEventListener("mousemove", (event) => { cursor.classList.add("is-visible"); cursorX(event.clientX); cursorY(event.clientY); }, { passive: true });
+          document.querySelectorAll("a, button, .work-card").forEach((target) => {
+            target.addEventListener("mouseenter", () => cursor.classList.add("is-hovering"));
+            target.addEventListener("mouseleave", () => cursor.classList.remove("is-hovering"));
+          });
+        } else {
+          cursor.style.display = "none";
+        }
+      } else {
+        showStaticContent();
+      }
+
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", (event) => {
+          const target = document.querySelector(anchor.getAttribute("href"));
+          if (!target) return;
+          event.preventDefault();
+          target.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth" });
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
