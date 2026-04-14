@@ -125,7 +125,7 @@ ax1.set_ylabel('Score', fontsize=11)
 ax1.legend(loc='upper left', fontsize=10)
 
 ax1.annotate(
-    'PCA leakage fix\n(+0.099 CLS, largest single gain)',
+    'L2 LogisticRegression switch\n(+0.105 CLS, largest single gain)',
     xy=(3, cls_vals[3]), xytext=(3.35, 0.71),
     arrowprops=dict(arrowstyle='->', color='#d62728', lw=2),
     fontsize=9, color='#d62728',
