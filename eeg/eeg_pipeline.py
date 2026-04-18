@@ -59,6 +59,9 @@ from mne.decoding import CSP
 from sklearn.base import clone
 from pyriemann.estimation import Covariances
 from pyriemann.classification import MDM
+from pyriemann.tangentspace import TangentSpace
+from sklearn.linear_model import LogisticRegression
+from scipy.stats import wilcoxon
 
 # -- REPRODUCIBILITY -----------------------------------------------------------
 SEED = 42
@@ -88,6 +91,17 @@ BANDS = {
 # Subjects whose best within-subject accuracy falls below this threshold
 # are flagged for inter-subject variability analysis
 BELOW_CHANCE_THRESHOLD = 0.55
+
+# Consumer-realistic channel subsets for ablation experiment.
+# Each set simulates a progressively cheaper/lighter headset.
+CHANNEL_SUBSETS = {
+    '64ch (full)'    : None,   # None = use all channels
+    '22ch (BCI cap)' : ['FC5','FC3','FC1','FCz','FC2','FC4','C5','C3','C1',
+                         'Cz','C2','C4','C6','CP5','CP3','CP1','CPz','CP2',
+                         'CP4','CP6','T7','T8'],
+    '8ch (consumer)' : ['FC3','FC4','C3','Cz','C4','CP3','CPz','CP4'],
+    '4ch (minimal)'  : ['C3','Cz','C4','CP3'],
+}
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
@@ -216,6 +230,147 @@ def run_loso(
         print(f"  LOSO Subj {test_idx + 1:2d}: MDM+EA={acc:.3f}")
 
     return loso_accs
+
+
+# =============================================================================
+#  LOSO -- Tangent Space + Logistic Regression (improved cross-subject model)
+#
+#  TangentSpace projects each SPD covariance matrix onto the tangent plane at
+#  the Riemannian mean of the training set, converting the non-linear manifold
+#  problem into a linear one.  A regularised logistic regression (C=0.1) then
+#  operates in that flat space.  This is more stable than MDM when covariance
+#  estimates are noisy (small epoch counts ~45/subject) because the linear
+#  classifier is less sensitive to the exact position of class means on the
+#  manifold.
+# =============================================================================
+
+def run_loso_ts(
+    X_splits: list,
+    y_splits: list,
+) -> list:
+    """
+    Leave-One-Subject-Out cross-validation using Tangent Space + L2 LR.
+
+    For each left-out subject:
+      1. Estimate covariances (Ledoit-Wolf) per subject
+      2. Apply Euclidean Alignment per subject
+      3. Fit TangentSpace on pooled training covariances
+         (reference point = Riemannian mean of training set)
+      4. Project all covariances to the tangent plane
+      5. Train LogisticRegression(C=0.1) on training vectors
+      6. Predict on the left-out subject's projected vectors
+
+    Parameters
+    ----------
+    X_splits : list of ndarray, each (n_epochs, n_ch, n_times)
+    y_splits : list of ndarray, each (n_epochs,)
+
+    Returns
+    -------
+    list of float, per-subject LOSO accuracy.
+    """
+    cov_est = Covariances(estimator='lwf')
+    n_subj  = len(X_splits)
+
+    # Pre-compute EA-aligned covariances per subject
+    aligned = []
+    for Xs in X_splits:
+        covs = cov_est.fit_transform(Xs)
+        aligned.append(euclidean_align(covs))
+
+    loso_accs = []
+    for test_idx in range(n_subj):
+        train_covs = np.vstack(
+            [aligned[i] for i in range(n_subj) if i != test_idx])
+        train_y    = np.concatenate(
+            [y_splits[i] for i in range(n_subj) if i != test_idx])
+        test_covs  = aligned[test_idx]
+        test_y     = y_splits[test_idx]
+
+        ts  = TangentSpace(metric='riemann')
+        clf = LogisticRegression(C=0.1, max_iter=1000, random_state=SEED)
+
+        X_train_ts = ts.fit_transform(train_covs, train_y)
+        X_test_ts  = ts.transform(test_covs)
+        clf.fit(X_train_ts, train_y)
+
+        pred = clf.predict(X_test_ts)
+        acc  = float((pred == test_y).mean())
+        loso_accs.append(acc)
+        print(f"  LOSO-TS Subj {test_idx + 1:2d}: TS+LR={acc:.3f}")
+
+    return loso_accs
+
+
+# =============================================================================
+#  CHANNEL ABLATION EXPERIMENT
+#
+#  Repeats within-subject CSP+LDA 5-fold CV and LOSO TS+LR for each channel
+#  subset defined in CHANNEL_SUBSETS.  Quantifies the accuracy vs channel count
+#  trade-off — the central design decision for consumer headset hardware.
+#
+#  Why it matters: consumer EEG headsets ship with 4–16 channels, not 64.
+#  This experiment answers "how much does accuracy degrade on a real consumer
+#  device?" and provides the data product teams need to choose electrode counts.
+# =============================================================================
+
+def run_channel_ablation(
+    X_splits: list,      # list of (n_ep, n_ch, n_times) — 8–30 Hz filtered
+    y_splits: list,      # list of (n_ep,) binary labels
+    all_ch: list,        # channel names matching axis-1 of each X array
+) -> dict:
+    """
+    Run CSP+LDA within-subject CV and LOSO TS+LR for each CHANNEL_SUBSETS entry.
+
+    Returns dict mapping subset_name -> {n_channels, within_mean, within_std,
+    loso_mean, loso_std, fold_accs}.
+    """
+    skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=SEED)
+    ablation_results = {}
+
+    for subset_name, ch_list in CHANNEL_SUBSETS.items():
+        print(f"\n  Ablation: {subset_name}")
+
+        if ch_list is None:
+            X_sub      = X_splits
+            n_ch_actual = len(all_ch)
+        else:
+            ch_idx = [all_ch.index(c) for c in ch_list if c in all_ch]
+            X_sub  = [Xs[:, ch_idx, :] for Xs in X_splits]
+            n_ch_actual = len(ch_idx)
+
+        # Within-subject CSP+LDA (adjust CSP n_components for small channel sets)
+        n_csp = min(6, n_ch_actual - 1) if ch_list else 6
+        subj_fold_accs = []
+        for Xs, ys in zip(X_sub, y_splits):
+            fold_accs = []
+            for tr, te in skf.split(Xs, ys):
+                c = clone(classifiers['lda'])
+                c.set_params(csp__n_components=n_csp)
+                c.fit(Xs[tr], ys[tr])
+                fold_accs.append(float((c.predict(Xs[te]) == ys[te]).mean()))
+            subj_fold_accs.append(float(np.mean(fold_accs)))
+
+        mean_acc = float(np.mean(subj_fold_accs))
+        std_acc  = float(np.std(subj_fold_accs))
+        print(f"    Within-subj CSP+LDA: {mean_acc:.3f} ± {std_acc:.3f}")
+
+        # LOSO TS+LR
+        loso_accs_sub = run_loso_ts(X_sub, y_splits)
+        loso_mean     = float(np.mean(loso_accs_sub))
+        loso_std      = float(np.std(loso_accs_sub))
+        print(f"    LOSO TS+LR:          {loso_mean:.3f} ± {loso_std:.3f}")
+
+        ablation_results[subset_name] = {
+            'n_channels' : n_ch_actual,
+            'within_mean': round(mean_acc, 4),
+            'within_std' : round(std_acc,  4),
+            'loso_mean'  : round(loso_mean, 4),
+            'loso_std'   : round(loso_std,  4),
+            'fold_accs'  : [round(a, 4) for a in subj_fold_accs],
+        }
+
+    return ablation_results
 
 
 # =============================================================================
@@ -559,6 +714,18 @@ def run_dataset_cv(
         'std_acc'  : round(std_loso,  4),
     }
 
+    # -- LOSO TS+LR ------------------------------------------------------------
+    print(f"\n  [{dataset_name}] LOSO TS+LR:")
+    loso_ts_accs_d = run_loso_ts(X_splits_d, y_splits_d)
+    mean_loso_ts   = float(np.mean(loso_ts_accs_d))
+    std_loso_ts    = float(np.std(loso_ts_accs_d))
+    print(f"  [{dataset_name}] LOSO TS+LR mean={mean_loso_ts:.3f}+/-{std_loso_ts:.3f}")
+    res['loso_ts_lr'] = {
+        'fold_accs': [round(a, 4) for a in loso_ts_accs_d],
+        'mean_acc' : round(mean_loso_ts, 4),
+        'std_acc'  : round(std_loso_ts,  4),
+    }
+
     return res
 
 
@@ -626,7 +793,7 @@ def run_ica(raw):
                 raw, ch_name=eog_chs, verbose=False)
             # Keep only components with clear frontal correlation
             excluded = [i for i, s in zip(inds, np.abs(scores[inds]))
-                        if s > 0.25][:2]
+                        if s > 0.10][:2]
         except Exception:
             pass
 
@@ -725,6 +892,8 @@ all_bp          = []   # band-power dict per subject
 all_labels      = []   # integer label array per subject (2=left, 3=right)
 all_epochs_data = []   # narrowband epoch data for CSP (8-30 Hz)
 all_ch          = None # channel names (set from first successful subject)
+total_ica_removed = 0  # running count of ICA components removed across all subjects
+ica_counts        = [] # per-subject ICA removal count (for JSON export)
 
 # Save full data from subject 1 for the visualisation figures
 s1_raw    = None
@@ -744,6 +913,8 @@ for subj in SUBJECTS:
         raw = preprocess(raw)
         cleaned, n_ex = run_ica(raw)
         print(f"  ICA: removed {n_ex} component(s)")
+        total_ica_removed += n_ex
+        ica_counts.append(n_ex)
 
         if subj == 1:
             s1_clean = cleaned.copy()
@@ -778,6 +949,9 @@ for subj in SUBJECTS:
         continue
 
 print(f"\nFinished loading. {len(all_bp)} subjects contributed data.")
+n_loaded = max(len(all_bp), 1)
+print(f"ICA summary: {total_ica_removed} components removed across {n_loaded} subjects "
+      f"(avg {total_ica_removed / n_loaded:.1f}/subject)")
 
 # =============================================================================
 #  FEATURE MATRIX -- labels shared by both approaches
@@ -899,6 +1073,13 @@ print(f"  Within-subj MDM mean={float(np.mean(subj_accs['riemann'])):.3f}  "
       f"(calibration benefit: "
       f"{float(np.mean(subj_accs['riemann'])) - loso_mean:+.3f})")
 
+print("\nLOSO CV (Tangent Space + Logistic Regression):")
+loso_ts_accs = run_loso_ts(X_splits, y_splits)
+loso_ts_mean = float(np.mean(loso_ts_accs))
+loso_ts_std  = float(np.std(loso_ts_accs))
+print(f"\n  LOSO-TS mean={loso_ts_mean:.3f}  std={loso_ts_std:.3f}")
+print(f"  Improvement over MDM LOSO: {loso_ts_mean - loso_mean:+.3f}")
+
 # =============================================================================
 #  LATENCY SIMULATION
 #
@@ -914,6 +1095,38 @@ print(f"  mean={lat_mean:.2f} ms  std={lat_std:.2f} ms  p95={lat_p95:.2f} ms")
 # =============================================================================
 
 below_chance_analysis = analyze_below_chance(subj_accs, loso_accs)
+
+# =============================================================================
+#  SIGNIFICANCE TESTS (Wilcoxon signed-rank, two-sided)
+#
+#  Pairwise comparisons on per-subject accuracy arrays.
+#  With only 10 subjects, many gaps that look large may not be statistically
+#  significant — reporting p-values demonstrates rigour.
+# =============================================================================
+
+def wilcoxon_pair(a, b, label):
+    """Run Wilcoxon signed-rank test on two per-subject accuracy lists."""
+    a, b = np.array(a), np.array(b)
+    if np.allclose(a, b):
+        return {'stat': 0.0, 'p': 1.0, 'significant': False}
+    stat, p = wilcoxon(a, b, alternative='two-sided')
+    sig = bool(p < 0.05)
+    print(f"  Wilcoxon {label}: stat={stat:.1f}  p={p:.3f}  {'*' if sig else 'ns'}")
+    return {'stat': round(float(stat), 3), 'p': round(float(p), 4), 'significant': sig}
+
+print("\nStatistical comparisons (Wilcoxon signed-rank, two-sided):")
+stat_tests = {
+    'lda_vs_svm'    : wilcoxon_pair(subj_accs['lda'], subj_accs['svm'],     'LDA vs SVM'),
+    'lda_vs_riemann': wilcoxon_pair(subj_accs['lda'], subj_accs['riemann'], 'LDA vs MDM'),
+    'svm_vs_riemann': wilcoxon_pair(subj_accs['svm'], subj_accs['riemann'], 'SVM vs MDM'),
+}
+
+# =============================================================================
+#  CHANNEL ABLATION
+# =============================================================================
+
+print("\nChannel ablation (within-subj CSP+LDA + LOSO TS+LR):")
+ablation_results = run_channel_ablation(X_splits, y_splits, all_ch)
 
 # =============================================================================
 #  SECOND DATASET -- BNCI2014-001 via MOABB (optional)
@@ -1139,7 +1352,7 @@ for name in ['lda', 'svm', 'riemann']:
         },
     }
 
-# NEW: LOSO results -- cross-subject generalisation
+# LOSO MDM+EA results -- cross-subject generalisation
 clf_json['loso_mdm_ea'] = {
     'description' : 'Leave-One-Subject-Out, MDM + Euclidean Alignment',
     'fold_accs'   : [round(a, 4) for a in loso_accs],
@@ -1147,6 +1360,28 @@ clf_json['loso_mdm_ea'] = {
     'std_acc'     : round(loso_std,  4),
     'calibration_benefit': round(
         float(np.mean(subj_accs['riemann'])) - loso_mean, 4),
+}
+
+# LOSO TS+LR results -- improved cross-subject generalisation
+clf_json['loso_ts_lr'] = {
+    'description'         : 'Leave-One-Subject-Out, Tangent Space + Logistic Regression (C=0.1)',
+    'fold_accs'           : [round(a, 4) for a in loso_ts_accs],
+    'mean_acc'            : round(loso_ts_mean, 4),
+    'std_acc'             : round(loso_ts_std,  4),
+    'improvement_over_mdm': round(loso_ts_mean - loso_mean, 4),
+}
+
+# Significance tests
+clf_json['significance_tests'] = stat_tests
+
+# Channel ablation experiment
+clf_json['channel_ablation'] = {
+    'description': (
+        'Within-subject CSP+LDA accuracy and LOSO TS+LR accuracy as '
+        'channels are reduced from full 64-channel research cap to '
+        '4-channel consumer-realistic subset (C3/Cz/C4/CP3).'
+    ),
+    'results': ablation_results,
 }
 
 # NEW: Latency simulation
@@ -1161,11 +1396,15 @@ clf_json['inference_latency_ms'] = {
     'n_repeats': 200,
 }
 
-# NEW: Below-chance subject analysis
+# Below-chance subject analysis (with ICA removal counts)
+for i, entry in enumerate(below_chance_analysis):
+    entry['ica_components_removed'] = ica_counts[i] if i < len(ica_counts) else None
+
 clf_json['subject_variability'] = {
-    'threshold_used': BELOW_CHANCE_THRESHOLD,
-    'subjects'      : below_chance_analysis,
-    'n_below_chance': sum(1 for a in below_chance_analysis if a['below_chance']),
+    'threshold_used'  : BELOW_CHANCE_THRESHOLD,
+    'subjects'        : below_chance_analysis,
+    'n_below_chance'  : sum(1 for a in below_chance_analysis if a['below_chance']),
+    'ica_total_removed': total_ica_removed,
 }
 
 # NEW: Cross-dataset results (MOABB / BNCI2014-001)

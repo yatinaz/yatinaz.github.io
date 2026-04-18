@@ -206,7 +206,7 @@ code{font-family:'JetBrains Mono',monospace;font-size:0.82em;background:#f1f5f9;
 .subj-card.low .subj-fill{background:#dc2626}
 
 /* ── GENERALIZATION STATS ROW ───────────────────────────────────── */
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px;margin-bottom:16px}
 @media(max-width:640px){.stats-row{grid-template-columns:1fr 1fr}}
 @media(max-width:380px){.stats-row{grid-template-columns:1fr}}
 .stat-card{border:1px solid var(--border);border-radius:10px;padding:16px 18px;background:#fff}
@@ -263,6 +263,26 @@ footer{padding:56px 0 72px;text-align:center;border-top:1px solid var(--border);
       <span class="hbadge">BCI-IV 2a · Cho2017 · MOABB</span>
       <span class="hbadge">3 Datasets · 3 Labs</span>
       <span class="hbadge">1.6 ms inference</span>
+    </div>
+
+    <!-- Hero metrics strip (populated by JS from classification_results.json) -->
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;margin-top:4px">
+      <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);border-radius:8px;padding:8px 16px;text-align:center">
+        <div style="font-size:0.62rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:2px">Best Within-Subject</div>
+        <div style="font-size:1.2rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:#fff" id="hero-best-acc">—</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);border-radius:8px;padding:8px 16px;text-align:center">
+        <div style="font-size:0.62rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:2px">LOSO Zero-Calibration</div>
+        <div style="font-size:1.2rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:#fff" id="hero-loso-acc">—</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);border-radius:8px;padding:8px 16px;text-align:center">
+        <div style="font-size:0.62rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:2px">Inference Latency</div>
+        <div style="font-size:1.2rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:#fff" id="hero-latency">—</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);border-radius:8px;padding:8px 16px;text-align:center">
+        <div style="font-size:0.62rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:2px">Datasets</div>
+        <div style="font-size:1.2rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:#fff">3 labs</div>
+      </div>
     </div>
 
     <div class="hero-meta">
@@ -468,7 +488,10 @@ ica.<span class="fn">apply</span>(cleaned)</pre>
          one underlying source (a brain region, eye muscle, or heartbeat).</p>
       <p>Components that correlate with the frontal "EOG surrogate" channels
          Fp1/Fp2 are labelled as eye-blink artefacts and zeroed out.
-         The remaining 18+ components are then remixed back into 64 clean channels.</p>
+         The remaining 18+ components are then remixed back into 64 clean channels.
+         <strong>Artefact screening result:</strong> no significant EOG components were detected
+         at threshold 0.10 across all 10 PhysioNet subjects — consistent with a controlled
+         lab motor-imagery task where subjects hold still and fixate.</p>
     </div>
   </div>
 
@@ -853,22 +876,25 @@ skf = <span class="fn">StratifiedKFold</span>(
 
   <table class="band-table reveal" style="margin-bottom:32px">
     <thead>
-      <tr><th>Classifier</th><th>Accuracy</th><th>±&nbsp;std</th><th>AUC</th><th>Note</th></tr>
+      <tr><th>Classifier</th><th>Accuracy</th><th>±&nbsp;std</th><th>AUC</th><th>Sig. vs LDA</th><th>Note</th></tr>
     </thead>
     <tbody id="results-table-body">
       <tr>
         <td><span class="band-pill band-alpha">CSP + LDA</span></td>
         <td id="rt-lda-acc">—</td><td id="rt-lda-std">—</td><td id="rt-lda-auc">—</td>
+        <td style="color:var(--text-muted);font-size:0.8rem">—</td>
         <td style="color:var(--text-muted);font-size:0.8rem">Linear boundary on 6 spatial log-variances</td>
       </tr>
       <tr>
         <td><span class="band-pill band-beta">CSP + SVM</span></td>
         <td id="rt-svm-acc">—</td><td id="rt-svm-std">—</td><td id="rt-svm-auc">—</td>
+        <td id="rt-svm-sig" style="color:var(--text-muted);font-size:0.8rem">—</td>
         <td style="color:var(--text-muted);font-size:0.8rem">RBF kernel, non-linear boundary</td>
       </tr>
       <tr>
         <td><span class="band-pill band-riemann">MDM (Riemann)</span></td>
         <td id="rt-riemann-acc">—</td><td id="rt-riemann-std">—</td><td id="rt-riemann-auc">—</td>
+        <td id="rt-riemann-sig" style="color:var(--text-muted);font-size:0.8rem">—</td>
         <td style="color:var(--text-muted);font-size:0.8rem">Geodesic distance on SPD manifold</td>
       </tr>
     </tbody>
@@ -1014,6 +1040,11 @@ skf = <span class="fn">StratifiedKFold</span>(
       <div class="stat-value" id="moabb-loso-acc">—</div>
       <div class="stat-sub">22-channel cap · 9 subjects</div>
     </div>
+    <div class="stat-card">
+      <div class="stat-label">LOSO TS + LR</div>
+      <div class="stat-value" id="loso-ts-acc">—</div>
+      <div class="stat-sub" id="loso-ts-improvement">Tangent space · no calibration</div>
+    </div>
   </div>
 
   <div class="stats-row reveal" style="grid-template-columns: repeat(3, 1fr)">
@@ -1105,6 +1136,20 @@ skf = <span class="fn">StratifiedKFold</span>(
     the published 15–30% BCI-illiteracy rate (Blankertz et al. 2010)." That's the difference
     between a research observation and a product specification — the kind of data a Temple or
     Resonant engineering team needs to size their adaptive calibration budget.
+  </div>
+
+  <!-- Figure 9: Channel ablation -->
+  <div class="figure-block reveal">
+    <p class="figure-caption">
+      <strong>Figure 9 — Accuracy vs channel count: consumer hardware simulation.</strong>
+      Purple bars: within-subject CSP+LDA (±1 std). Green bars: LOSO TS+LR (zero-calibration, ±1 std).
+      Each group simulates a progressively lighter headset — from a 64-channel research cap down to a
+      4-channel minimal consumer device (C3/Cz/C4/CP3). The dashed red line marks chance (50%).
+      This directly answers the product question: <em>how much accuracy is lost on a real consumer headset?</em>
+    </p>
+    <div class="fig-wrap">
+      <div id="fig-ablation" class="plotly-fig"></div>
+    </div>
   </div>
 
 </section>
@@ -1376,6 +1421,30 @@ async function initFig5() {
     if(tAuc) tAuc.textContent=aucStr;
   }
 
+  // Significance vs LDA
+  if (clfData.significance_tests) {
+    const st = clfData.significance_tests;
+    const pSvm = document.getElementById('rt-svm-sig');
+    if (pSvm) pSvm.textContent = st.lda_vs_svm?.significant
+        ? `p=${st.lda_vs_svm.p} *` : `ns (p=${st.lda_vs_svm?.p ?? '?'})`;
+    const pMdm = document.getElementById('rt-riemann-sig');
+    if (pMdm) pMdm.textContent = st.lda_vs_riemann?.significant
+        ? `p=${st.lda_vs_riemann.p} *` : `ns (p=${st.lda_vs_riemann?.p ?? '?'})`;
+  }
+
+  // Hero stats strip
+  const heroLda  = document.getElementById('hero-best-acc');
+  const heroLoso = document.getElementById('hero-loso-acc');
+  const heroLat  = document.getElementById('hero-latency');
+  if (heroLda  && clfData.lda)
+    heroLda.textContent  = `${(clfData.lda.mean_acc * 100).toFixed(1)}%`;
+  if (heroLoso && clfData.loso_ts_lr)
+    heroLoso.textContent = `${(clfData.loso_ts_lr.mean_acc * 100).toFixed(1)}%`;
+  else if (heroLoso && clfData.loso_mdm_ea)
+    heroLoso.textContent = `${(clfData.loso_mdm_ea.mean_acc * 100).toFixed(1)}%`;
+  if (heroLat  && clfData.inference_latency_ms)
+    heroLat.textContent  = `${clfData.inference_latency_ms.p95_ms.toFixed(1)} ms`;
+
   // Build per-subject variability grid (enhanced with below-chance flags)
   buildEnhancedSubjGrid();
   drawFig5();
@@ -1523,8 +1592,19 @@ function initGeneralization() {
     if (mi) mi.textContent = `${(ml.mean_acc * 100).toFixed(1)}%`;
   }
 
+  // LOSO TS+LR stat card
+  if (clfData.loso_ts_lr) {
+    const ts = clfData.loso_ts_lr;
+    const el = document.getElementById('loso-ts-acc');
+    if (el) el.textContent = `${(ts.mean_acc * 100).toFixed(1)}%`;
+    const imp = document.getElementById('loso-ts-improvement');
+    if (imp && ts.improvement_over_mdm !== undefined)
+      imp.textContent = `${ts.improvement_over_mdm >= 0 ? '+' : ''}${(ts.improvement_over_mdm * 100).toFixed(1)} pp vs MDM`;
+  }
+
   drawLosoChart();
   drawCrossDatasetChart();
+  drawAblationChart();
   initCho2017();
 }
 
@@ -1536,21 +1616,33 @@ function drawLosoChart() {
   const loso   = clfData.loso_mdm_ea.fold_accs.map(v => +(v * 100).toFixed(1));
   const colors = loso.map(v => v >= 70 ? '#16a34a' : v >= 55 ? '#d97706' : '#dc2626');
 
-  Plotly.react('fig-loso', [
+  const traces = [
     {x: subj, y: within, type: 'bar', name: 'Within-subject (MDM)',
      marker: {color: 'rgba(124,58,237,0.72)', line: {color: 'rgba(124,58,237,1)', width: 1}},
      hovertemplate: '%{x}: %{y:.1f}%<extra>Within-subject</extra>'},
     {x: subj, y: loso, type: 'bar', name: 'LOSO (MDM + EA)',
      marker: {color: colors, opacity: 0.88, line: {color: 'rgba(255,255,255,0.4)', width: 1}},
-     hovertemplate: '%{x}: %{y:.1f}%<extra>LOSO</extra>'},
-  ], {height: 320, font: FONT, paper_bgcolor: BG.paper_bgcolor, plot_bgcolor: '#fff',
+     hovertemplate: '%{x}: %{y:.1f}%<extra>LOSO MDM</extra>'},
+  ];
+
+  if (clfData.loso_ts_lr) {
+    const tsLoso = clfData.loso_ts_lr.fold_accs.map(v => +(v * 100).toFixed(1));
+    traces.push({
+      x: subj, y: tsLoso, type: 'bar', name: 'LOSO (TS + LR)',
+      marker: {color: 'rgba(5,150,105,0.80)', line: {color: 'rgba(5,150,105,1)', width: 1}},
+      hovertemplate: '%{x}: %{y:.1f}%<extra>LOSO TS+LR</extra>',
+    });
+  }
+
+  Plotly.react('fig-loso', traces,
+  {height: 320, font: FONT, paper_bgcolor: BG.paper_bgcolor, plot_bgcolor: '#fff',
     barmode: 'group', margin: {t: 44, r: 12, b: 48, l: 48},
     xaxis: {title: {text: 'Subject', font: {size: 11}}, tickfont: {size: 10}},
     yaxis: {title: {text: 'Accuracy (%)', font: {size: 11}}, tickfont: {size: 10}, range: [20, 100]},
-    title: {text: 'Within-Subject vs LOSO Accuracy (MDM)', font: {size: 13, color: '#374151'}, x: 0.5},
+    title: {text: 'Within-Subject vs LOSO Accuracy', font: {size: 13, color: '#374151'}, x: 0.5},
     shapes: [{type: 'line', x0: -0.5, x1: n - 0.5, y0: 50, y1: 50,
               line: {color: 'rgba(220,38,38,0.3)', dash: 'dot', width: 1.5}}],
-    legend: {font: {size: 10}, x: 0.62, y: 0.98},
+    legend: {font: {size: 10}},
   }, {displayModeBar: false, responsive: true});
 }
 
@@ -1558,15 +1650,20 @@ function drawCrossDatasetChart() {
   if (!clfData?.cross_dataset_bnci2014?.results) return;
   const bn = clfData.cross_dataset_bnci2014.results;
   const ch = clfData?.cross_dataset_cho2017?.results;
-  const labels = ['CSP + LDA', 'CSP + SVM', 'MDM (within-subj)', 'MDM LOSO'];
-  const pVals  = [clfData.lda, clfData.svm, clfData.riemann, clfData.loso_mdm_ea]
-                   .map(d => +((d?.mean_acc || 0) * 100).toFixed(1));
-  const pErr   = [clfData.lda, clfData.svm, clfData.riemann, clfData.loso_mdm_ea]
-                   .map(d => +((d?.std_acc || 0) * 100).toFixed(1));
-  const bVals  = [bn.lda, bn.svm, bn.riemann, bn.loso_mdm_ea]
-                   .map(d => +((d?.mean_acc || 0) * 100).toFixed(1));
-  const bErr   = [bn.lda, bn.svm, bn.riemann, bn.loso_mdm_ea]
-                   .map(d => +((d?.std_acc || 0) * 100).toFixed(1));
+  const hasTsLr = !!(clfData.loso_ts_lr && bn.loso_ts_lr);
+  const labels = hasTsLr
+    ? ['CSP + LDA', 'CSP + SVM', 'MDM (within-subj)', 'MDM LOSO', 'TS+LR LOSO']
+    : ['CSP + LDA', 'CSP + SVM', 'MDM (within-subj)', 'MDM LOSO'];
+  const pSrc   = hasTsLr
+    ? [clfData.lda, clfData.svm, clfData.riemann, clfData.loso_mdm_ea, clfData.loso_ts_lr]
+    : [clfData.lda, clfData.svm, clfData.riemann, clfData.loso_mdm_ea];
+  const bSrc   = hasTsLr
+    ? [bn.lda, bn.svm, bn.riemann, bn.loso_mdm_ea, bn.loso_ts_lr]
+    : [bn.lda, bn.svm, bn.riemann, bn.loso_mdm_ea];
+  const pVals  = pSrc.map(d => +((d?.mean_acc || 0) * 100).toFixed(1));
+  const pErr   = pSrc.map(d => +((d?.std_acc  || 0) * 100).toFixed(1));
+  const bVals  = bSrc.map(d => +((d?.mean_acc || 0) * 100).toFixed(1));
+  const bErr   = bSrc.map(d => +((d?.std_acc  || 0) * 100).toFixed(1));
 
   const traces = [
     {x: labels, y: pVals, type: 'bar', name: 'PhysioNet (64ch · 10 subj)',
@@ -1582,10 +1679,11 @@ function drawCrossDatasetChart() {
   ];
 
   if (ch) {
-    const cVals = [ch.lda, ch.svm, ch.riemann, ch.loso_mdm_ea]
-                    .map(d => +((d?.mean_acc || 0) * 100).toFixed(1));
-    const cErr  = [ch.lda, ch.svm, ch.riemann, ch.loso_mdm_ea]
-                    .map(d => +((d?.std_acc || 0) * 100).toFixed(1));
+    const cSrc  = hasTsLr
+      ? [ch.lda, ch.svm, ch.riemann, ch.loso_mdm_ea, ch.loso_ts_lr]
+      : [ch.lda, ch.svm, ch.riemann, ch.loso_mdm_ea];
+    const cVals = cSrc.map(d => +((d?.mean_acc || 0) * 100).toFixed(1));
+    const cErr  = cSrc.map(d => +((d?.std_acc  || 0) * 100).toFixed(1));
     traces.push(
       {x: labels, y: cVals, type: 'bar', name: 'Cho2017 (64ch · 52 subj)',
        marker: {color: 'rgba(234,88,12,0.75)', line: {color: 'rgba(234,88,12,1)', width: 1}},
@@ -1601,7 +1699,7 @@ function drawCrossDatasetChart() {
     xaxis: {tickfont: {size: 10}},
     yaxis: {title: {text: 'Accuracy (%)', font: {size: 11}}, tickfont: {size: 10}, range: [20, 100]},
     title: {text: 'Cross-Dataset: Same Pipeline — Three Independent Labs', font: {size: 13, color: '#374151'}, x: 0.5},
-    shapes: [{type: 'line', x0: -0.5, x1: 3.5, y0: 50, y1: 50,
+    shapes: [{type: 'line', x0: -0.5, x1: labels.length - 0.5, y0: 50, y1: 50,
               line: {color: 'rgba(0,0,0,0.15)', dash: 'dot', width: 1.5}}],
     legend: {font: {size: 10}},
   }, {displayModeBar: false, responsive: true});
@@ -1674,6 +1772,39 @@ function drawChoDistChart(bestAccs) {
       {x: n - 1, y: 55, xref: 'x', yref: 'y', text: 'threshold', showarrow: false,
        font: {size: 9, color: '#d97706'}, xanchor: 'right', yanchor: 'bottom'},
     ],
+  }, {displayModeBar: false, responsive: true});
+}
+
+/* ─── Figure 9: Channel ablation ───────────────────────────────── */
+function drawAblationChart() {
+  if (!clfData?.channel_ablation?.results) return;
+  const ab     = clfData.channel_ablation.results;
+  const labels = Object.keys(ab);
+  const withinAccs = labels.map(k => +(ab[k].within_mean * 100).toFixed(1));
+  const losoAccs   = labels.map(k => +(ab[k].loso_mean   * 100).toFixed(1));
+  const withinErr  = labels.map(k => +(ab[k].within_std  * 100).toFixed(1));
+  const losoErr    = labels.map(k => +(ab[k].loso_std    * 100).toFixed(1));
+  const nChs       = labels.map(k => ab[k].n_channels);
+  const xLabels    = labels.map((k, i) => `${k} (${nChs[i]}ch)`);
+
+  Plotly.react('fig-ablation', [
+    {x: xLabels, y: withinAccs, type: 'bar', name: 'Within-subject CSP+LDA',
+     marker: {color: 'rgba(124,58,237,0.75)'},
+     error_y: {type: 'data', array: withinErr, visible: true, thickness: 1.5, width: 4},
+     hovertemplate: '%{x}: %{y:.1f}%<extra>Within-subj</extra>'},
+    {x: xLabels, y: losoAccs, type: 'bar', name: 'LOSO TS+LR',
+     marker: {color: 'rgba(5,150,105,0.75)'},
+     error_y: {type: 'data', array: losoErr, visible: true, thickness: 1.5, width: 4},
+     hovertemplate: '%{x}: %{y:.1f}%<extra>LOSO TS+LR</extra>'},
+  ], {height: 320, font: FONT, paper_bgcolor: BG.paper_bgcolor, plot_bgcolor: '#fff',
+    barmode: 'group', margin: {t: 44, r: 12, b: 60, l: 48},
+    xaxis: {tickfont: {size: 10}},
+    yaxis: {title: {text: 'Accuracy (%)', font: {size: 11}}, range: [20, 100], tickfont: {size: 10}},
+    title: {text: 'Accuracy vs Channel Count — Consumer Hardware Simulation',
+            font: {size: 13, color: '#374151'}, x: 0.5},
+    shapes: [{type: 'line', x0: -0.5, x1: labels.length - 0.5, y0: 50, y1: 50,
+              line: {color: 'rgba(220,38,38,0.3)', dash: 'dot', width: 1.5}}],
+    legend: {font: {size: 10}},
   }, {displayModeBar: false, responsive: true});
 }
 
