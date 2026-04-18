@@ -18,7 +18,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
 
     /* Techniques: editorial hero, grain layer, staggered text reveal, sticky nav state, active nav observer, card hover lift, image zoom, scroll-triggered reveals, custom cursor, infinite ticker. */
     :root {
@@ -29,8 +29,34 @@
       --text-muted: #6b6b6b;
       --accent: #c8b89a;
       --accent-bright: #e8d5b0;
+      --accent-cool: #7eb8c0;
       --font-display: "Playfair Display", Georgia, serif;
       --font-body: "DM Sans", Arial, sans-serif;
+      --font-mono: "JetBrains Mono", "Courier New", monospace;
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f5f0e8;
+        --surface: #ede8df;
+        --border: #d4ccc0;
+        --text-primary: #1a1714;
+        --text-muted: #6b6258;
+        --accent: #8a6f4e;
+        --accent-bright: #6b5035;
+        --accent-cool: #5a9aa2;
+      }
+      body::before { opacity: 0.18; }
+      .hero::after { background: linear-gradient(to top, var(--bg), rgba(245,240,232,0)); }
+      .nav-shell.is-scrolled { background: rgba(245,240,232,0.82); }
+      .hero-bg-graph .soma { fill: rgba(26,23,20,0.15); }
+      .hero-bg-graph .dend, .hero-bg-graph .axon, .hero-bg-graph .axon-conn { stroke: rgba(26,23,20,0.09); }
+      .hero-bg-graph .knob { fill: rgba(26,23,20,0.09); }
+      .contact-heading { background: linear-gradient(135deg, var(--accent-bright) 0%, var(--text-primary) 60%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+      .skills-tile:hover { background: #d9d1c5; }
+      .section-frame { background: rgba(245,240,232,0.78); }
+      .skills-strip { background: rgba(237,232,223,0.82); }
+      .contact-frame { background: rgba(245,240,232,0.78); }
     }
 
     *, *::before, *::after { box-sizing: border-box; }
@@ -44,7 +70,7 @@
       margin: 0;
       min-height: 100vh;
       overflow-x: hidden;
-      background: var(--bg);
+      background: transparent;
       color: var(--text-primary);
       font-family: var(--font-body);
       font-size: 1rem;
@@ -97,8 +123,8 @@
     .text-link::after { content: ""; position: absolute; left: 0; right: 0; bottom: -0.18rem; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform 300ms ease; }
     .text-link:hover::after { transform: scaleX(1); }
 
-    .section-frame { position: relative; border-top: 1px solid var(--border); content-visibility: auto; contain-intrinsic-size: 900px; }
-    .section-inner { width: min(1200px, calc(100% - 48px)); margin: 0 auto; padding: 160px 0; }
+    .section-frame { position: relative; border-top: 1px solid var(--border); content-visibility: auto; contain-intrinsic-size: 900px; background: rgba(10,10,10,0.72); pointer-events: none; }
+    .section-inner { width: min(1200px, calc(100% - 48px)); margin: 0 auto; padding: 160px 0; pointer-events: auto; }
     .section-label { margin: 0 0 64px; color: var(--text-muted); font-family: var(--font-body); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.2em; line-height: 1; text-transform: uppercase; }
 
     .nav-shell { position: fixed; top: 0; left: 0; right: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; padding: 24px 48px; border-bottom: 1px solid transparent; color: var(--text-primary); transition: background 300ms ease, border-color 300ms ease, padding 300ms ease, backdrop-filter 300ms ease; }
@@ -111,14 +137,14 @@
     .nav-links a::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--accent-bright); opacity: 0; transform: scale(0.4); transition: opacity 220ms ease, transform 220ms ease; }
     .nav-links a.is-active::before { opacity: 1; transform: scale(1); }
 
-    .hero { position: relative; min-height: 100vh; min-height: 100svh; display: grid; align-items: center; overflow: hidden; padding: 128px 48px 96px; }
+    .hero { position: relative; min-height: 100vh; min-height: 100svh; display: grid; align-items: center; overflow: hidden; padding: 128px 48px 96px; background: transparent; pointer-events: none; }
     .hero::after { content: ""; position: absolute; inset: auto 0 0; height: 35vh; pointer-events: none; background: linear-gradient(to top, var(--bg), rgba(10, 10, 10, 0)); }
-    .hero-inner { position: relative; z-index: 2; width: min(1200px, 100%); margin: 0 auto; }
+    .hero-inner { position: relative; z-index: 2; width: min(1200px, 100%); margin: 0 auto; pointer-events: auto; }
     .hero-kicker { margin: 0 0 28px; color: var(--text-muted); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.2em; line-height: 1; text-transform: uppercase; opacity: 0; }
     .hero-title { margin: 0; color: var(--text-primary); font-family: var(--font-display); font-size: clamp(4rem, 10vw, 9rem); font-weight: 400; line-height: 0.9; }
     .hero-title span { display: block; opacity: 0; transform: translateY(48px); }
     .hero-subtitle { max-width: 760px; margin: 40px 0 0; color: var(--text-muted); font-size: clamp(1rem, 2vw, 1.2rem); font-weight: 400; line-height: 1.7; opacity: 0; }
-    .hero-bottom { position: absolute; z-index: 3; left: 48px; right: 48px; bottom: 42px; display: flex; align-items: flex-end; justify-content: space-between; opacity: 0; }
+    .hero-bottom { position: absolute; z-index: 3; left: 48px; right: 48px; bottom: 42px; display: flex; align-items: flex-end; justify-content: space-between; opacity: 0; pointer-events: auto; }
     .hero-social { display: flex; align-items: center; gap: 22px; }
     .hero-social a { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; transition: color 220ms ease; }
     .hero-social a:hover { color: var(--accent-bright); }
@@ -169,17 +195,17 @@
     @media (max-width: 900px) { .cta-grid { grid-template-columns: 1fr; } }
     @media (max-width: 640px) { .cta-card { padding: 32px 24px; } }
 
-    .skills-strip { overflow: hidden; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--surface); content-visibility: auto; contain-intrinsic-size: 360px; }
-    .skills-inner { padding: 100px 0; }
+    .skills-strip { overflow: hidden; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: rgba(17,17,17,0.78); content-visibility: auto; contain-intrinsic-size: 360px; pointer-events: none; }
+    .skills-inner { padding: 100px 0; pointer-events: auto; }
     .skills-bio { width: min(1000px, calc(100% - 48px)); margin: 0 auto 52px; color: var(--text-primary); font-family: var(--font-display); font-size: clamp(1.8rem, 4vw, 3.5rem); font-style: italic; font-weight: 400; line-height: 1.2; text-align: center; }
     .ticker { display: flex; width: max-content; gap: 28px; animation: tickerMove 42s linear infinite; will-change: transform; }
     .ticker-item { display: inline-flex; align-items: center; gap: 28px; color: var(--text-muted); font-size: clamp(1rem, 2vw, 1.35rem); white-space: nowrap; }
     .ticker-item::after { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); opacity: 0.7; }
     @keyframes tickerMove { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-    .contact-frame { min-height: 86vh; display: grid; align-items: center; border-top: 1px solid var(--border); content-visibility: auto; contain-intrinsic-size: 760px; }
-    .contact-inner { width: min(1200px, calc(100% - 48px)); margin: 0 auto; padding: 160px 0 64px; text-align: center; }
-    .contact-heading { margin: 0 0 48px; color: var(--text-primary); font-family: var(--font-display); font-size: clamp(4rem, 12vw, 10rem); font-weight: 400; line-height: 0.9; }
+    .contact-frame { min-height: 86vh; display: grid; align-items: center; border-top: 1px solid var(--border); content-visibility: auto; contain-intrinsic-size: 760px; background: rgba(10,10,10,0.72); pointer-events: none; }
+    .contact-inner { width: min(1200px, calc(100% - 48px)); margin: 0 auto; padding: 160px 0 64px; text-align: center; pointer-events: auto; }
+    .contact-heading { margin: 0 0 48px; font-family: var(--font-display); font-size: clamp(4rem, 12vw, 10rem); font-weight: 400; line-height: 0.9; }
     .contact-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 26px; }
     .contact-link { display: inline-flex; align-items: center; gap: 9px; color: var(--text-muted); font-size: 0.9rem; font-weight: 500; transition: color 220ms ease; }
     .contact-link:hover { color: var(--accent-bright); }
@@ -216,36 +242,129 @@
       #cursor { display: none; }
       .reveal, .section-frame, .skills-strip, .contact-frame, .hero-kicker, .hero-title span, .hero-subtitle, .hero-bottom { opacity: 1 !important; transform: none !important; }
     }
+
+    /* ── P1: Neural graph background ── */
+    .hero-bg-graph { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+    .hero-bg-graph svg { pointer-events: auto; }
+    .hero-bg-graph .soma { fill: rgba(200,184,154,0.18); stroke: none; cursor: pointer; }
+    .hero-bg-graph .soma:hover { fill: rgba(200,184,154,0.35); }
+    .hero-bg-graph .nucleus { fill: rgba(200,184,154,0.28); }
+    .hero-bg-graph .dend-tree { stroke: rgba(200,184,154,0.18); stroke-width: 1; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .hero-bg-graph .hillock { stroke: rgba(200,184,154,0.22); stroke-width: 2.2; fill: none; stroke-linecap: round; }
+    .hero-bg-graph .axon { stroke: rgba(200,184,154,0.16); stroke-width: 1; fill: none; stroke-linecap: round; }
+    .hero-bg-graph .bouton { fill: rgba(200,184,154,0.2); }
+    .hero-bg-graph .axon-conn { stroke: rgba(200,184,154,1); stroke-width: 0.5; fill: none; opacity: 0.12; }
+
+    /* ── P1: Hero avatar ── */
+    .hero-avatar { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border); overflow: hidden; background: var(--surface); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 0.85rem; color: var(--text-muted); margin-right: 16px; flex-shrink: 0; }
+    .hero-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* ── P2: Card overlay ── */
+    .card-overlay { position: absolute; inset: 0; z-index: 3; background: rgba(10,10,10,0.82); display: flex; flex-direction: column; justify-content: center; padding: 24px; opacity: 0; transition: opacity 300ms ease; }
+    .work-card:hover .card-overlay { opacity: 1; }
+    .card-overlay p { margin: 0 0 8px; font-size: 0.8rem; line-height: 1.6; }
+    .card-overlay p:last-child { margin-bottom: 0; }
+
+    /* ── P2: Per-card accent ── */
+    [data-accent="cool"] { --card-accent: #7eb8c0; }
+    [data-accent="violet"] { --card-accent: #a89ac8; }
+    [data-accent="warm"] { --card-accent: var(--accent); }
+    .work-card:hover::after { border-color: var(--card-accent, var(--accent)); }
+    .metric-badge { color: var(--card-accent, var(--accent-bright)); border-color: rgba(232,213,176,0.32); }
+    [data-accent="cool"] .metric-badge { border-color: rgba(126,184,192,0.32); }
+    [data-accent="cool"]:hover::after { border-color: var(--accent-cool); }
+
+    /* ── P3: Typewriter kicker cursor ── */
+    .hero-kicker .cursor { display: inline-block; width: 2px; height: 1em; background: var(--accent-bright); margin-left: 2px; animation: blink 1s step-end infinite; vertical-align: middle; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* ── P3: Section number labels ── */
+    .section-num { font-family: 'Courier New', monospace; color: var(--accent); margin-right: 0.5em; font-size: inherit; letter-spacing: 0.08em; }
+
+    /* ── P3: Drop caps ── */
+    .has-dropcap::first-letter { font-family: var(--font-display); font-size: 2.8em; float: left; line-height: 0.75; margin: 0.08em 0.08em 0 0; color: var(--accent); font-style: italic; }
+
+    /* ── P4: Contact heading gradient ── */
+    .contact-heading { background: linear-gradient(135deg, var(--accent-bright) 0%, #ffffff 60%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .contact-inner { position: relative; }
+    .contact-inner::before { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 40% at 50% 30%, rgba(200,184,154,0.04) 0%, transparent 70%); pointer-events: none; z-index: 0; }
+
+    /* ── P5: Skills bento ── */
+    .skills-bento { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; background: var(--border); width: min(1000px, calc(100% - 48px)); margin: 0 auto; }
+    .skills-tile { background: var(--surface); padding: 28px 24px; transition: background 250ms ease; }
+    .skills-tile--wide { grid-column: span 2; }
+    .skills-tile:hover { background: #1a1a1a; }
+    .tile-label { margin: 0 0 8px; color: var(--accent); font-size: 0.68rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; }
+    .tile-cluster { margin: 0 0 10px; color: var(--text-primary); font-size: 0.88rem; font-weight: 500; line-height: 1.5; }
+    .tile-outcome { margin: 0; color: var(--text-muted); font-size: 0.75rem; line-height: 1.5; }
+    @media (max-width: 900px) { .skills-bento { grid-template-columns: repeat(2, 1fr); } .skills-tile--wide { grid-column: span 2; } }
+    @media (max-width: 480px) { .skills-bento { grid-template-columns: 1fr; } .skills-tile--wide { grid-column: span 1; } }
+
+    /* ── P6: Sliding nav indicator ── */
+    .nav-indicator { position: absolute; bottom: -1px; left: 0; height: 1px; background: var(--accent-bright); transition: left 280ms ease, width 280ms ease; pointer-events: none; width: 0; }
+
+    /* ── P7: Story teaser ── */
+    .story-teaser-grid { display: grid; grid-template-columns: minmax(0, 0.4fr) minmax(0, 0.6fr); gap: clamp(48px, 8vw, 112px); align-items: start; }
+    .pull-quote-inline { margin: 0; color: var(--text-primary); font-family: var(--font-display); font-size: clamp(1.8rem, 4vw, 3rem); font-style: italic; font-weight: 400; line-height: 1.2; }
+    .story-teaser-body { padding-top: 8px; }
+    .story-teaser-desc { margin: 0 0 28px; color: var(--text-muted); font-size: 1rem; line-height: 1.75; }
+    @media (max-width: 900px) { .story-teaser-grid { grid-template-columns: 1fr; } }
+
+    /* ── P8: Blur-up lazy load ── */
+    .img-wrap { position: relative; overflow: hidden; }
+    .img-wrap img { transition: filter 600ms ease; filter: blur(12px); }
+    .img-wrap img.is-loaded { filter: blur(0); }
+
+    /* ── CTA inner glow ── */
+    .cta-inner { position: relative; }
+    .cta-inner::before { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 40% at 50% 30%, rgba(200,184,154,0.04) 0%, transparent 70%); pointer-events: none; z-index: 0; }
+    .cta-label, .cta-intro, .cta-grid, .cta-cv { position: relative; z-index: 1; }
   </style>
 </head>
 
 <body>
   <div id="cursor" aria-hidden="true"></div>
+  <svg class="hero-bg-graph" aria-hidden="true"></svg>
 
   <!-- NAVIGATION -->
   <nav class="nav-shell depth-5" data-depth="5" aria-label="Primary navigation">
-    <a class="nav-logo text-link" href="#top" aria-label="Yatin Azad home">YA</a>
-    <ul class="nav-links">
+    <a class="nav-logo text-link" href="#top" aria-label="Yatin Azad home">
+      <svg viewBox="0 0 32 24" width="32" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <!-- Y: fork from top-left and top-right meeting at centre, then stem down -->
+        <path d="M4 3 L16 13 M28 3 L16 13 M16 13 L16 21"/>
+        <!-- A: left leg, right leg, crossbar — sharing Y's right stem area -->
+        <path d="M10 21 L18 5 M18 5 L26 21"/>
+        <path d="M12.5 15 L23.5 15"/>
+      </svg>
+    </a>
+    <ul class="nav-links" style="position:relative;">
       <li><a href="#work" data-section="work">Work</a></li>
       <li><a href="story.html">Story</a></li>
       <li><a href="#hire" data-section="hire">Hire</a></li>
       <li><a href="#contact" data-section="contact">Contact</a></li>
+      <span class="nav-indicator" aria-hidden="true"></span>
     </ul>
   </nav>
 
   <!-- HERO -->
   <header class="hero" id="top" data-scene="hero">
-    <div class="grain-field depth-0" data-depth="0" aria-hidden="true"></div>
     <div class="hero-inner depth-4" data-depth="4">
-      <p class="hero-kicker">Computational Biologist &middot; ML Researcher &middot; Dehradun, India &middot; Open to relocation</p>
+      <p class="hero-kicker" id="heroKicker"></p>
       <h1 class="hero-title" aria-label="Yatin Azad"><span>Yatin</span><span>Azad</span></h1>
-      <p class="hero-subtitle"><em style="font-family:var(--font-display);font-style:italic;font-size:clamp(1.05rem,2.2vw,1.35rem);color:var(--accent);">Turning messy biological data into clinical and scientific insight.</em></p>
+      <p class="hero-subtitle"><em style="font-family:var(--font-display);font-style:italic;font-size:clamp(1.05rem,2.2vw,1.35rem);color:var(--accent);">Derive meaningful insights from messy data.</em></p>
+
     </div>
 
     <div class="hero-bottom depth-5" data-depth="5">
-      <div class="hero-social" aria-label="Social links">
-        <a class="text-link" href="https://github.com/yatinaz" target="_blank" rel="noopener"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>GitHub</a>
-        <a class="text-link" href="https://linkedin.com/in/yatin-azad" target="_blank" rel="noopener"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h14m-.5 15.5v-5.3a3.26 3.26 0 00-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 011.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 001.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 00-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>LinkedIn</a>
+      <div style="display:flex;align-items:center;gap:0;">
+        <!-- TODO: replace src with your headshot path -->
+        <div class="hero-avatar">
+          <img src="" alt="Yatin Azad" onerror="this.style.display='none';">YA
+        </div>
+        <div class="hero-social" aria-label="Social links">
+          <a class="text-link" href="https://github.com/yatinaz" target="_blank" rel="noopener"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>GitHub</a>
+          <a class="text-link" href="https://linkedin.com/in/yatin-azad" target="_blank" rel="noopener"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h14m-.5 15.5v-5.3a3.26 3.26 0 00-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 011.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 001.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 00-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>LinkedIn</a>
+        </div>
       </div>
       <div class="scroll-cue" aria-hidden="true"><span>Scroll &darr;</span><span class="scroll-line"></span></div>
     </div>
@@ -255,12 +374,12 @@
     <!-- WORK -->
     <section class="section-frame" id="work" data-scene="work">
       <div class="section-inner depth-4" data-depth="4">
-        <p class="section-label reveal">Key Projects</p>
+        <p class="section-label reveal"><span class="section-num">01 /</span>KEY PROJECTS</p>
         <!-- WORK GRID -->
         <div class="work-grid">
 
           <!-- ── TB Drug Resistance ── -->
-          <article class="work-card" data-depth="4">
+          <article class="work-card" data-depth="4" data-accent="warm">
             <div class="project-image depth-3" data-depth="3">
               <!-- TB: per-drug AUROC bar chart — horizontal bars, x-axis 0.90–1.00 -->
               <svg viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;display:block;position:absolute;inset:0" aria-hidden="true">
@@ -329,12 +448,17 @@
                 <text x="125" y="375" fill="#6b7280" font-size="10" font-family="monospace" text-anchor="end">MXF</text>
                 <text x="688" y="375" fill="#9a8878" font-size="9" font-family="monospace">0.992</text>
               </svg>
-              <span class="metric-badge">AUROC &gt;0.99</span>
+              <span class="metric-badge">Avg AUROC 0.984</span>
+              <div class="card-overlay">
+                <p>Ensemble ML across 3,393 M. tuberculosis isolates</p>
+                <p>Average AUROC 0.984 across 12 drugs, first and second line</p>
+                <p>WGS variant calling + XGBoost feature importance</p>
+              </div>
             </div>
             <div class="card-body">
               <div class="tag-row"><span class="tag">XGBoost</span><span class="tag">WGS</span><span class="tag">IIT Kanpur</span></div>
               <h2 class="card-title">TB Drug Resistance Prediction</h2>
-              <p class="card-desc">Ensemble ML predicting antibiotic resistance across 3,393 M. tuberculosis isolates.</p>
+              <p class="card-desc has-dropcap">Ensemble ML predicting antibiotic resistance across 3,393 M. tuberculosis isolates.</p>
               <div class="card-actions">
                 <a class="ghost-link text-link" href="https://github.com/yatinaz/Tuberculosis-Drug-Resistance-Prediction" target="_blank" rel="noopener">Code &rarr;</a>
                 <a class="ghost-link text-link" href="https://yatinaz.github.io/tb/" target="_blank" rel="noopener">Figures &rarr;</a>
@@ -342,11 +466,32 @@
             </div>
           </article>
 
-          <!-- ── RT Activity / Prime Editing (unchanged) ── -->
-          <article class="work-card" data-depth="4"><div class="project-image depth-3" data-depth="3"><img src="https://yatinaz.github.io/assets/mandrake_preview.png" alt="Prime editing reverse transcriptase activity prediction figures" loading="lazy"><span class="metric-badge">CLS 0.803</span></div><div class="card-body"><div class="tag-row"><span class="tag">ESM-2</span><span class="tag">LightGBM</span><span class="tag">Mandrake Bioworks</span></div><h2 class="card-title">RT Activity Prediction for Prime Editing</h2><p class="card-desc">Predicting which reverse transcriptases enable prime editing from protein language models and structural features.</p><div class="card-actions"><a class="ghost-link text-link" href="https://github.com/yatinaz/opensrc-retroviral-problem" target="_blank" rel="noopener">Code &rarr;</a><a class="ghost-link text-link" href="https://yatinaz.github.io/mandrake/" target="_blank" rel="noopener">Figures &rarr;</a></div></div></article>
+          <!-- ── RT Activity / Prime Editing ── -->
+          <article class="work-card" data-depth="4" data-accent="warm">
+            <div class="project-image depth-3" data-depth="3">
+              <div class="img-wrap">
+                <img src="https://yatinaz.github.io/assets/mandrake_preview.png" alt="Prime editing reverse transcriptase activity prediction figures" loading="lazy">
+              </div>
+              <span class="metric-badge">CLS 0.803</span>
+              <div class="card-overlay">
+                <p>Protein language model embeddings (ESM-2) + structural features</p>
+                <p>Predicting RT activity for prime editing applications</p>
+                <p>Concordance index 0.803 on held-out test set</p>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="tag-row"><span class="tag">ESM-2</span><span class="tag">LightGBM</span><span class="tag">Mandrake Bioworks</span></div>
+              <h2 class="card-title">RT Activity Prediction for Prime Editing</h2>
+              <p class="card-desc has-dropcap">Predicting which reverse transcriptases enable prime editing from protein language models and structural features.</p>
+              <div class="card-actions">
+                <a class="ghost-link text-link" href="https://github.com/yatinaz/opensrc-retroviral-problem" target="_blank" rel="noopener">Code &rarr;</a>
+                <a class="ghost-link text-link" href="https://yatinaz.github.io/mandrake/" target="_blank" rel="noopener">Figures &rarr;</a>
+              </div>
+            </div>
+          </article>
 
           <!-- ── fMRI Biomarker ── -->
-          <article class="work-card" data-depth="4">
+          <article class="work-card" data-depth="4" data-accent="cool">
             <div class="project-image depth-3" data-depth="3">
               <!-- fMRI: brain connectivity — DMN disruption in schizophrenia -->
               <svg viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;display:block;position:absolute;inset:0" aria-hidden="true">
@@ -440,11 +585,17 @@
                 <!-- Bottom label -->
                 <text x="390" y="438" fill="#3a3630" font-size="8.5" font-family="monospace" text-anchor="middle">resting-state fMRI · functional connectivity · 542 subjects</text>
               </svg>
-                          </div>
+              <span class="metric-badge">AUC 0.72</span>
+              <div class="card-overlay">
+                <p>Deep learning for schizophrenia &amp; Parkinson's detection</p>
+                <p>Functional connectivity from resting-state fMRI, 542 subjects</p>
+                <p>DMN hypoconnectivity as disease biomarker</p>
+              </div>
+            </div>
             <div class="card-body">
               <div class="tag-row"><span class="tag">nilearn</span><span class="tag">FastAPI</span><span class="tag">Docker</span><span class="tag">UWA</span></div>
               <h2 class="card-title">Multi-Disease fMRI Biomarker Detection</h2>
-              <p class="card-desc">Deep learning framework for schizophrenia &amp; Parkinson's detection from resting-state fMRI functional connectivity.</p>
+              <p class="card-desc has-dropcap">Deep learning framework for schizophrenia &amp; Parkinson's detection from resting-state fMRI functional connectivity.</p>
               <div class="card-actions">
                 <a class="ghost-link text-link" href="https://github.com/yatinaz/schizo-detect-biomarkerv2" target="_blank" rel="noopener">Code &rarr;</a>
                 <a class="ghost-link text-link" href="https://yatinaz.github.io/fmri/" target="_blank" rel="noopener">Figures &rarr;</a>
@@ -452,9 +603,44 @@
             </div>
           </article>
 
-          <!-- ── EEG (unchanged) ── -->
-          <article class="work-card" data-depth="4"><div class="project-image depth-3" data-depth="3"><img src="https://yatinaz.github.io/assets/eeg_preview.png" alt="EEG motor imagery topomap and classification results" loading="lazy"></div><div class="card-body"><div class="tag-row"><span class="tag">CSP</span><span class="tag">Riemannian</span><span class="tag">MNE-Python</span></div><h2 class="card-title">EEG Motor Imagery Classification</h2><p class="card-desc">End-to-end BCI pipeline on PhysioNet EEGBCI - ICA artefact removal, CSP, and Riemannian geometry across 10 subjects.</p><div class="card-actions"><a class="ghost-link text-link" href="https://github.com/yatinaz/yatinaz.github.io/tree/main/eeg" target="_blank" rel="noopener">Code &rarr;</a><a class="ghost-link text-link" href="https://yatinaz.github.io/eeg/" target="_blank" rel="noopener">Figures &rarr;</a></div></div></article>
+          <!-- EEG Motor Imagery -->
+          <article class="work-card" data-depth="4" data-accent="cool">
+            <div class="project-image depth-3" data-depth="3">
+              <img src="https://yatinaz.github.io/assets/eeg_preview.png" alt="EEG motor imagery topomap and classification results" loading="lazy" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">
+              <div class="card-overlay">
+                <p>Motor imagery classification across 10 subjects</p>
+                <p>ICA artefact removal + CSP + Riemannian geometry</p>
+                <p>End-to-end BCI pipeline on PhysioNet EEGBCI</p>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="tag-row"><span class="tag">CSP</span><span class="tag">Riemannian</span><span class="tag">MNE-Python</span></div>
+              <h2 class="card-title">EEG Motor Imagery Classification</h2>
+              <p class="card-desc has-dropcap">End-to-end BCI pipeline on PhysioNet EEGBCI - ICA artefact removal, CSP, and Riemannian geometry across 10 subjects.</p>
+              <div class="card-actions">
+                <a class="ghost-link text-link" href="https://github.com/yatinaz/yatinaz.github.io/tree/main/eeg" target="_blank" rel="noopener">Code &rarr;</a>
+                <a class="ghost-link text-link" href="https://yatinaz.github.io/eeg/" target="_blank" rel="noopener">Figures &rarr;</a>
+              </div>
+            </div>
+          </article>
 
+        </div>
+      </div>
+    </section>
+
+    <!-- STORY TEASER -->
+    <section class="section-frame reveal" id="story-teaser" data-scene="story-teaser">
+      <div class="section-inner depth-4" data-depth="4">
+        <p class="section-label reveal"><span class="section-num">02 /</span>STORY</p>
+        <div class="story-teaser-grid reveal">
+          <div>
+            <blockquote class="pull-quote-inline">"I grew up watching my parents practise medicine. I saw, firsthand, how a single advance in science could change what was possible for a patient."</blockquote>
+          </div>
+          <div class="story-teaser-body">
+            <p class="story-teaser-desc">Both my parents are doctors. Growing up, the clinic was not an abstraction. I watched diagnoses get made, treatments fail, and occasionally, a new tool or a new understanding arrive that genuinely shifted outcomes. That proximity to medicine planted a question I have been trying to answer ever since: what does it take to move the needle?</p>
+            <p class="story-teaser-desc">Data, I came to believe, is the most honest instrument we have. It does not speculate. It does not have a prior. It reflects what actually happened. My work across genomics, neuroimaging, protein engineering, and cognitive science is unified by that conviction: if you ask the right question and build the right model, the data will tell you something true about biology, and truth is where new therapeutics begin.</p>
+            <a class="ghost-link text-link" href="story.html">Read the full story &rarr;</a>
+          </div>
         </div>
       </div>
     </section>
@@ -462,11 +648,11 @@
     <!-- RESEARCH WORK -->
     <section class="section-frame" id="research" data-scene="research">
       <div class="section-inner depth-4" data-depth="4">
-        <p class="section-label reveal">Research Work</p>
+        <p class="section-label reveal"><span class="section-num">03 /</span>RESEARCH</p>
         <div class="story-grid">
           <div class="pull-quote reveal">
             <p style="font-family:var(--font-display);font-size:clamp(1.55rem,3.2vw,2.55rem);font-style:italic;font-weight:400;line-height:1.25;color:var(--text-primary);margin:0 0 36px;">Mental health technology. Computational psychiatry. Behavioural neuroscience.</p>
-            <p style="font-size:0.93rem;line-height:1.85;color:var(--text-muted);margin:0 0 28px;">Three threads of research — from building CBT-based games to combat depression, to modelling how 105 people learn under uncertainty, to quantifying what alcohol hangover does to the hidden parameters of human cognition.</p>
+            <p style="font-size:0.93rem;line-height:1.85;color:var(--text-muted);margin:0 0 28px;">Three threads of research: building CBT-based games to combat depression, modelling how 105 people learn under uncertainty, and quantifying what alcohol hangover does to the hidden parameters of human cognition.</p>
             <a class="ghost-link text-link" href="story.html" style="font-size:0.82rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);">Full story &rarr;</a>
           </div>
           <div class="research-list">
@@ -475,9 +661,11 @@
             <article class="research-entry reveal">
               <p class="entry-meta"><strong>University of Western Australia</strong> &middot; 2023–2025</p>
               <h3 class="entry-title">Effect of Alcohol Hangover on Driving-Related Cognition</h3>
-              <p class="entry-desc">Within-subjects crossover (n=24) decomposing 2,000+ reaction-time trials into latent cognitive parameters via hierarchical Bayesian DDM. Revealed impairment signatures masked by mean reaction time.</p>
+              <p class="entry-desc has-dropcap">Within-subjects crossover (n=24) decomposing 2,000+ reaction-time trials into latent cognitive parameters via hierarchical Bayesian DDM. Revealed impairment signatures masked by mean reaction time.</p>
               <a href="https://yatinaz.github.io/talks/thesis_slide.html" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
-                <img class="entry-thumb" src="https://yatinaz.github.io/assets/thesis_preview.png" alt="Thesis slide preview — UWA hangover cognition study" loading="lazy">
+                <div class="img-wrap">
+                  <img class="entry-thumb" src="https://yatinaz.github.io/assets/thesis_preview.png" alt="Thesis slide preview — UWA hangover cognition study" loading="lazy">
+                </div>
               </a>
               <div class="tag-row"><span class="tag">Hierarchical Bayesian</span><span class="tag">DDM</span><span class="tag">R</span><span class="tag">MCMC</span><span class="tag">Crossover RCT</span></div>
               <div class="entry-links">
@@ -491,9 +679,11 @@
             <article class="research-entry reveal">
               <p class="entry-meta"><strong>IIT Kanpur · Dr. Arjun Ramakrishnan's Lab</strong> &middot; Research Assistant &middot; 2022–2023</p>
               <h3 class="entry-title">Hierarchical Bayesian Modelling of Human Decision-Making</h3>
-              <p class="entry-desc">Inferred trial-by-trial learning states across 10,000+ decisions from 105 participants using hierarchical Bayesian RL models. Identified learning rate variability as key driver of reward sensitivity differences.</p>
+              <p class="entry-desc has-dropcap">Inferred trial-by-trial learning states across 10,000+ decisions from 105 participants using hierarchical Bayesian RL models. Identified learning rate variability as key driver of reward sensitivity differences.</p>
               <a href="https://yatinaz.github.io/talks/iitk_slide.html" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
-                <img class="entry-thumb" src="https://yatinaz.github.io/assets/iitk_preview.png" alt="IIT Kanpur decision-making study slide preview" loading="lazy">
+                <div class="img-wrap">
+                  <img class="entry-thumb" src="https://yatinaz.github.io/assets/iitk_preview.png" alt="IIT Kanpur decision-making study slide preview" loading="lazy">
+                </div>
               </a>
               <div class="tag-row"><span class="tag">Bayesian RL</span><span class="tag">hBayesDM</span><span class="tag">R</span><span class="tag">NLME</span><span class="tag">Cognitive Science</span></div>
               <div class="entry-links">
@@ -506,8 +696,8 @@
             <!-- IIT Kanpur — TreadWill -->
             <article class="research-entry reveal">
               <p class="entry-meta"><strong>IIT Kanpur</strong> &middot; 2019 &nbsp;·&nbsp; Supervisor: Prof. Nitin Gupta</p>
-              <h3 class="entry-title">TreadWill — Gamified CBT Portal for Depression</h3>
-              <p class="entry-desc">Designed and developed a web portal delivering Cognitive Behavioural Therapy (CBT) through gamified mental imagery exercises targeting cognitive distortions. Based on the established principle that depressed individuals interpret ambiguous situations negatively; the game trains users to reframe this bias. Led front-end engineering for cross-browser compatibility across Chrome, Firefox, Safari and mobile WebKit. Research published in <em>JMIR Games</em> (2023).</p>
+              <h3 class="entry-title">TreadWill: Gamified CBT Portal for Depression</h3>
+              <p class="entry-desc has-dropcap">Designed and developed a web portal delivering Cognitive Behavioural Therapy (CBT) through gamified mental imagery exercises targeting cognitive distortions. Based on the established principle that depressed individuals interpret ambiguous situations negatively; the game trains users to reframe this bias. Led front-end engineering for cross-browser compatibility across Chrome, Firefox, Safari and mobile WebKit. Research published in <em>JMIR Games</em> (2023).</p>
               <div class="tag-row"><span class="tag">JavaScript</span><span class="tag">CSS</span><span class="tag">CBT</span><span class="tag">Mental Health</span><span class="tag">IIT Kanpur</span></div>
               <div class="entry-links">
                 <a class="ghost-link text-link" href="https://treadwill.org/landing" target="_blank" rel="noopener">Live App &rarr;</a>
@@ -522,28 +712,81 @@
     </section>
 
     <!-- ABOUT / SKILLS STRIP -->
-    <section class="skills-strip" aria-label="Skills"><div class="skills-inner reveal depth-4" data-depth="4"><p class="skills-bio">From genomics to neuroimaging &mdash; building ML systems where biology meets clinical insight.</p><div class="ticker" id="skillsTicker" aria-hidden="true"></div></div></section>
+    <section class="skills-strip" aria-label="Skills">
+      <div class="skills-inner reveal depth-4" data-depth="4">
+        <p class="skills-bio">From genomics to neuroimaging: building ML systems where biology meets clinical insight.</p>
+        <div class="skills-bento">
+
+          <!-- Row 1: Core technical domains -->
+          <div class="skills-tile skills-tile--wide">
+            <p class="tile-label">Languages &amp; Frameworks</p>
+            <p class="tile-cluster">Python · R · PyTorch · scikit-learn · XGBoost · LightGBM</p>
+            <p class="tile-outcome">Primary stack across all production and research projects</p>
+          </div>
+          <div class="skills-tile skills-tile--wide">
+            <p class="tile-label">ML &amp; Statistical Modelling</p>
+            <p class="tile-cluster">Ensemble methods · Bayesian inference · MCMC · DDM · Hierarchical models</p>
+            <p class="tile-outcome">Applied to genomics, cognition, neuroimaging, and protein function</p>
+          </div>
+
+          <!-- Row 2: Domain expertise -->
+          <div class="skills-tile">
+            <p class="tile-label">Genomics</p>
+            <p class="tile-cluster">WGS · Variant calling · Drug resistance prediction</p>
+            <p class="tile-outcome">AUROC &gt;0.99 across 7 drug classes, 3,393 isolates</p>
+          </div>
+          <div class="skills-tile">
+            <p class="tile-label">Neuroimaging</p>
+            <p class="tile-cluster">fMRI · nilearn · Functional connectivity · ROI analysis</p>
+            <p class="tile-outcome">Schizophrenia &amp; Parkinson's biomarker detection, AUC 0.72</p>
+          </div>
+          <div class="skills-tile">
+            <p class="tile-label">BCI &amp; EEG</p>
+            <p class="tile-cluster">MNE-Python · CSP · Riemannian geometry · ICA</p>
+            <p class="tile-outcome">Motor imagery decoding across 10 subjects, PhysioNet EEGBCI</p>
+          </div>
+          <div class="skills-tile">
+            <p class="tile-label">Protein Engineering</p>
+            <p class="tile-cluster">ESM-2 · Protein LMs · Structural features · LightGBM</p>
+            <p class="tile-outcome">RT activity prediction for prime editing, CLS 0.803</p>
+          </div>
+
+          <!-- Row 3: Infrastructure + soft signals -->
+          <div class="skills-tile">
+            <p class="tile-label">MLOps &amp; Deployment</p>
+            <p class="tile-cluster">Docker · FastAPI · Git · Reproducible pipelines</p>
+            <p class="tile-outcome">End-to-end from raw data to served model</p>
+          </div>
+          <div class="skills-tile">
+            <p class="tile-label">Research &amp; Communication</p>
+            <p class="tile-cluster">Published · Conference posters · Thesis · Cross-disciplinary</p>
+            <p class="tile-outcome">JMIR Games 2023 · IIT Delhi Conclave · UWA Expo 2025</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
 
     <!-- HIRE / CTA -->
     <section class="cta-frame" id="hire" data-scene="hire">
       <div class="cta-inner">
-        <p class="cta-label reveal">Work with me</p>
-        <h2 class="cta-intro reveal">If you're building something at the intersection of <em style="font-family:var(--font-display);font-style:italic;color:var(--accent);">biology, data, and clinical impact</em> — here's how I can help.</h2>
+        <p class="cta-label reveal"><span class="section-num">04 /</span>WORK WITH ME</p>
+        <h2 class="cta-intro reveal">If you're building something at the intersection of <em style="font-family:var(--font-display);font-style:italic;color:var(--accent);">biology, data, and clinical impact</em>, here's how I can help.</h2>
         <div class="cta-grid">
           <div class="cta-card reveal">
             <span class="cta-card-number">01</span>
             <h3 class="cta-card-title">ML Pipelines for Biological Data</h3>
-            <p class="cta-card-desc">Genomics, proteomics, imaging — I turn high-dimensional, noisy biological datasets into production-ready predictive models. From WGS variant calling to protein language model embeddings, I've built end-to-end pipelines that deliver real metrics.</p>
+            <p class="cta-card-desc">Genomics, proteomics, imaging: I turn high-dimensional, noisy biological datasets into production-ready predictive models. From WGS variant calling to protein language model embeddings, I've built end-to-end pipelines that deliver real metrics.</p>
           </div>
           <div class="cta-card reveal">
             <span class="cta-card-number">02</span>
             <h3 class="cta-card-title">Neuroimaging &amp; Brain-Based Biomarkers</h3>
-            <p class="cta-card-desc">fMRI, EEG, cognitive paradigms — I can help you extract clinically meaningful signal from brain data. Whether it's functional connectivity matrices, ERP components, or drift-diffusion parameters, I know how to get from raw signal to interpretable science.</p>
+            <p class="cta-card-desc">fMRI, EEG, cognitive paradigms: I can help you extract clinically meaningful signal from brain data. Whether it's functional connectivity matrices, ERP components, or drift-diffusion parameters, I know how to get from raw signal to interpretable science.</p>
           </div>
           <div class="cta-card reveal">
             <span class="cta-card-number">03</span>
             <h3 class="cta-card-title">Bayesian &amp; Computational Modelling</h3>
-            <p class="cta-card-desc">When the question is deeper than prediction — when you need to understand <em>why</em> — hierarchical Bayesian models and mechanistic cognitive models are the right tool. I've applied them across pharmacology, psychiatry, and decision science.</p>
+            <p class="cta-card-desc">When the question is deeper than prediction, when you need to understand <em>why</em>, hierarchical Bayesian models and mechanistic cognitive models are the right tool. I've applied them across pharmacology, psychiatry, and decision science.</p>
           </div>
         </div>
         <div style="text-align:center;">
@@ -556,7 +799,18 @@
     </section>
 
     <!-- CONTACT / FOOTER -->
-    <section class="contact-frame" id="contact" data-scene="contact"><div class="contact-inner depth-4" data-depth="4"><h2 class="contact-heading reveal">Let's connect.</h2><div class="contact-links reveal"><a class="contact-link text-link" href="mailto:yatinazadk1@gmail.com">yatinazadk1@gmail.com</a><a class="contact-link text-link" href="https://github.com/yatinaz" target="_blank" rel="noopener">GitHub</a><a class="contact-link text-link" href="https://linkedin.com/in/yatin-azad" target="_blank" rel="noopener">LinkedIn</a></div><footer class="footer"><span>Yatin Azad &middot; 2026</span><span>Computational Biologist &middot; ML Scientist</span></footer></div></section>
+    <section class="contact-frame" id="contact" data-scene="contact">
+      <div class="contact-inner depth-4" data-depth="4">
+        <p class="section-label reveal" style="text-align:center;margin-bottom:32px;"><span class="section-num">05 /</span>CONTACT</p>
+        <h2 class="contact-heading reveal">Let's connect.</h2>
+        <div class="contact-links reveal">
+          <a class="contact-link text-link" href="mailto:yatinazadk1@gmail.com">yatinazadk1@gmail.com</a>
+          <a class="contact-link text-link" href="https://github.com/yatinaz" target="_blank" rel="noopener">GitHub</a>
+          <a class="contact-link text-link" href="https://linkedin.com/in/yatin-azad" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+        <footer class="footer"><span>Yatin Azad &middot; 2026</span><span>Computational Biologist &middot; ML Scientist</span></footer>
+      </div>
+    </section>
   </main>
 
   <script>
@@ -566,35 +820,378 @@
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const finePointer = window.matchMedia("(pointer: fine)").matches;
       const touchPointer = window.matchMedia("(pointer: coarse)").matches;
-      const skills = ["Python", "R", "PyTorch", "XGBoost", "scikit-learn", "Bayesian Inference", "fMRI", "Genomics", "FastAPI", "Docker", "ESM-2", "nilearn", "GSAP"];
-      const ticker = document.getElementById("skillsTicker");
-      [...skills, ...skills, ...skills, ...skills].forEach((skill) => {
-        const item = document.createElement("span");
-        item.className = "ticker-item";
-        item.textContent = skill;
-        ticker.appendChild(item);
-      });
-
+      const cursor = document.getElementById("cursor");
       const nav = document.querySelector(".nav-shell");
       const navLinks = document.querySelectorAll(".nav-links a[data-section]");
-      const cursor = document.getElementById("cursor");
+      const navIndicator = document.querySelector(".nav-indicator");
+
+      // ── P1: Neural graph background ──
+      (function initNeuralGraph() {
+        const svg = document.querySelector(".hero-bg-graph");
+        if (!svg) return;
+        const W = window.innerWidth, H = window.innerHeight;
+        svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+        svg.setAttribute("width", W); svg.setAttribute("height", H);
+        const ns = "http://www.w3.org/2000/svg";
+
+        const NODE_COUNT = 20;
+        const MAX_DIST = 300;
+        const CONNECT_PROB = 0.15;
+
+        // ── Draw a recursive dendrite branch as an SVG path string ──
+        // origin: [x,y], angle: radians, length, depth (0=tip)
+        function dendritePath(ox, oy, angle, length, depth) {
+          const ex = ox + Math.cos(angle) * length;
+          const ey = oy + Math.sin(angle) * length;
+          // Slight curve via quadratic bezier control point
+          const cx = ox + Math.cos(angle - 0.3) * length * 0.55;
+          const cy = oy + Math.sin(angle - 0.3) * length * 0.55;
+          let d = `M${ox.toFixed(1)},${oy.toFixed(1)} Q${cx.toFixed(1)},${cy.toFixed(1)} ${ex.toFixed(1)},${ey.toFixed(1)}`;
+          if (depth > 0 && length > 5) {
+            const childLen = length * 0.62;
+            const spread = 0.45 + Math.random() * 0.25;
+            d += " " + dendritePath(ex, ey, angle - spread, childLen, depth - 1);
+            d += " " + dendritePath(ex, ey, angle + spread, childLen, depth - 1);
+          }
+          return d;
+        }
+
+        // ── Build one neuron <g> ──
+        function makeNeuron() {
+          const g = document.createElementNS(ns, "g");
+
+          // Soma — larger, visible cell body
+          const soma = document.createElementNS(ns, "circle");
+          soma.setAttribute("r", "7");
+          soma.setAttribute("cx", "0"); soma.setAttribute("cy", "0");
+          soma.classList.add("soma");
+          g.appendChild(soma);
+
+          // Nucleus hint — small inner circle
+          const nucleus = document.createElementNS(ns, "circle");
+          nucleus.setAttribute("r", "2.8");
+          nucleus.setAttribute("cx", "0"); nucleus.setAttribute("cy", "0");
+          nucleus.classList.add("nucleus");
+          g.appendChild(nucleus);
+
+          // Dendrite trees — 3 to 5 primary branches, each with 2 levels of sub-branches
+          const numTrees = 3 + Math.floor(Math.random() * 3);
+          for (let t = 0; t < numTrees; t++) {
+            const baseAngle = (t / numTrees) * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
+            const rootLen = 18 + Math.random() * 14;
+            const pathStr = dendritePath(0, 0, baseAngle, rootLen, 2);
+            const path = document.createElementNS(ns, "path");
+            path.setAttribute("d", pathStr);
+            path.classList.add("dend-tree");
+            g.appendChild(path);
+          }
+
+          // Axon hillock + axon — one long tapered branch
+          const axonAngle = Math.random() * Math.PI * 2;
+          const axonLen = 38 + Math.random() * 22; // 38–60px
+          const ax2 = Math.cos(axonAngle) * axonLen;
+          const ay2 = Math.sin(axonAngle) * axonLen;
+          // Hillock (thicker base segment)
+          const hillock = document.createElementNS(ns, "line");
+          hillock.setAttribute("x1", "0"); hillock.setAttribute("y1", "0");
+          hillock.setAttribute("x2", (Math.cos(axonAngle) * 10).toFixed(1));
+          hillock.setAttribute("y2", (Math.sin(axonAngle) * 10).toFixed(1));
+          hillock.classList.add("hillock");
+          g.appendChild(hillock);
+          // Axon body
+          const axon = document.createElementNS(ns, "line");
+          axon.setAttribute("x1", (Math.cos(axonAngle) * 10).toFixed(1));
+          axon.setAttribute("y1", (Math.sin(axonAngle) * 10).toFixed(1));
+          axon.setAttribute("x2", ax2.toFixed(1));
+          axon.setAttribute("y2", ay2.toFixed(1));
+          axon.classList.add("axon");
+          g.appendChild(axon);
+          // Axon terminal boutons — 2 small dots at tip
+          [-0.35, 0.35].forEach((offset) => {
+            const bx = ax2 + Math.cos(axonAngle + Math.PI / 2) * offset * 8;
+            const by = ay2 + Math.sin(axonAngle + Math.PI / 2) * offset * 8;
+            const bouton = document.createElementNS(ns, "circle");
+            bouton.setAttribute("r", "1.8");
+            bouton.setAttribute("cx", bx.toFixed(1));
+            bouton.setAttribute("cy", by.toFixed(1));
+            bouton.classList.add("bouton");
+            g.appendChild(bouton);
+          });
+
+          return g;
+        }
+
+        // ── Nodes ──
+        const nodes = Array.from({ length: NODE_COUNT }, () => ({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          vx: (Math.random() - 0.5) * 0.12,
+          vy: (Math.random() - 0.5) * 0.12,
+          phase: Math.random() * Math.PI * 2,
+          fire: 0,
+          refractory: 0,
+          el: null, soma: null, nucleus: null, dends: [], hillock: null, axon: null, boutons: []
+        }));
+
+        // Axon connections (long-range, behind neurons)
+        const edges = [];
+        for (let i = 0; i < nodes.length; i++) {
+          for (let j = i + 1; j < nodes.length; j++) {
+            if (Math.random() < CONNECT_PROB) {
+              const l = document.createElementNS(ns, "line");
+              l.classList.add("axon-conn");
+              svg.appendChild(l);
+              edges.push({ i, j, el: l });
+            }
+          }
+        }
+
+        // ── Firing — WCAG 2.3 safe: max ~1 flash/sec, slow fade, no hard strobe ──
+        const fireQueue = [];
+
+        function triggerFire(idx) {
+          const n = nodes[idx];
+          if (n.fire > 0.08 || n.refractory > 0) return;
+          n.fire = 1.0;
+          // Refractory: 120–200 frames (~2–3.3s at 60fps) — well under 3Hz
+          n.refractory = 120 + Math.floor(Math.random() * 80);
+
+          edges.forEach(({ i, j }) => {
+            const nb = i === idx ? j : j === idx ? i : -1;
+            if (nb === -1) return;
+            const dx = nodes[nb].x - n.x, dy = nodes[nb].y - n.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < MAX_DIST && Math.random() < 0.38) {
+              fireQueue.push({ idx: nb, delay: Math.round(14 + (dist / MAX_DIST) * 28) });
+            }
+          });
+        }
+
+        // Neuron groups (on top of connections)
+        nodes.forEach((n, idx) => {
+          const g = makeNeuron();
+          svg.appendChild(g);
+          n.el = g;
+          n.soma    = g.querySelector(".soma");
+          n.nucleus = g.querySelector(".nucleus");
+          n.dends   = Array.from(g.querySelectorAll(".dend-tree"));
+          n.hillock = g.querySelector(".hillock");
+          n.axon    = g.querySelector(".axon");
+          n.boutons = Array.from(g.querySelectorAll(".bouton"));
+
+          // Make neurons interactive — click/touch to fire
+          g.style.cursor = "pointer";
+          g.style.pointerEvents = "auto";
+          const fireOnClick = (e) => {
+            e.stopPropagation();
+            triggerFire(idx);
+          };
+          g.addEventListener("click", fireOnClick);
+          g.addEventListener("touchstart", fireOnClick, { passive: true });
+        });
+
+        if (reducedMotion) {
+          nodes.forEach((n) => {
+            if (n.el) n.el.setAttribute("transform", `translate(${n.x.toFixed(1)},${n.y.toFixed(1)})`);
+          });
+          return;
+        }
+
+        function tick(t) {
+          for (let k = fireQueue.length - 1; k >= 0; k--) {
+            if (--fireQueue[k].delay <= 0) {
+              triggerFire(fireQueue[k].idx);
+              fireQueue.splice(k, 1);
+            }
+          }
+
+          // Spontaneous: ~1–2 neurons fire per second total across the graph
+          nodes.forEach((n, i) => {
+            if (n.refractory === 0 && n.fire < 0.05 && Math.random() < 0.00055) {
+              triggerFire(i);
+            }
+          });
+
+          nodes.forEach((n) => {
+            n.x += n.vx + Math.sin(t * 0.0004 + n.phase) * 0.08;
+            n.y += n.vy + Math.cos(t * 0.0004 + n.phase) * 0.08;
+            if (n.x < 0 || n.x > W) n.vx *= -1;
+            if (n.y < 0 || n.y > H) n.vy *= -1;
+            n.x = Math.max(0, Math.min(W, n.x));
+            n.y = Math.max(0, Math.min(H, n.y));
+
+            // Slow smooth decay — never a hard cut
+            if (n.fire > 0) n.fire = Math.max(0, n.fire - 0.016);
+            if (n.refractory > 0) n.refractory--;
+
+            if (!n.el) return;
+            n.el.setAttribute("transform", `translate(${n.x.toFixed(1)},${n.y.toFixed(1)})`);
+
+            const f = n.fire;
+            const rc = Math.round(200 + f * 55);
+            const gc = Math.round(184 + f * 71);
+            const bc = Math.round(154 + f * 101);
+
+            // Soma
+            if (n.soma) {
+              n.soma.setAttribute("fill", `rgba(${rc},${gc},${bc},${(0.18 + f * 0.65).toFixed(3)})`);
+              n.soma.setAttribute("r", (7 + f * 3.5).toFixed(2));
+              n.soma.setAttribute("stroke", `rgba(${rc},${gc},${bc},${(f * 0.4).toFixed(3)})`);
+              n.soma.setAttribute("stroke-width", (f * 6).toFixed(1));
+            }
+            // Nucleus
+            if (n.nucleus) {
+              n.nucleus.setAttribute("fill", `rgba(${rc},${gc},${bc},${(0.25 + f * 0.5).toFixed(3)})`);
+            }
+            // Dendrite trees
+            const dAlpha = (0.18 + f * 0.55).toFixed(3);
+            n.dends.forEach((d) => {
+              d.setAttribute("stroke", `rgba(${rc},${gc},${bc},${dAlpha})`);
+              d.setAttribute("stroke-width", (1.0 + f * 1.2).toFixed(2));
+            });
+            // Hillock
+            if (n.hillock) {
+              n.hillock.setAttribute("stroke", `rgba(${rc},${gc},${bc},${(0.22 + f * 0.6).toFixed(3)})`);
+              n.hillock.setAttribute("stroke-width", (2.2 + f * 1.5).toFixed(2));
+            }
+            // Axon
+            if (n.axon) {
+              n.axon.setAttribute("stroke", `rgba(${rc},${gc},${bc},${(0.16 + f * 0.55).toFixed(3)})`);
+              n.axon.setAttribute("stroke-width", (1.0 + f * 1.0).toFixed(2));
+            }
+            // Boutons
+            n.boutons.forEach((b) => {
+              b.setAttribute("fill", `rgba(${rc},${gc},${bc},${(0.2 + f * 0.65).toFixed(3)})`);
+              b.setAttribute("r", (1.8 + f * 1.4).toFixed(2));
+            });
+          });
+
+          // Long-range axon connections
+          edges.forEach(({ i, j, el }) => {
+            const dx = nodes[j].x - nodes[i].x, dy = nodes[j].y - nodes[i].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist >= MAX_DIST) { el.style.opacity = 0; return; }
+            el.setAttribute("x1", nodes[i].x.toFixed(1)); el.setAttribute("y1", nodes[i].y.toFixed(1));
+            el.setAttribute("x2", nodes[j].x.toFixed(1)); el.setAttribute("y2", nodes[j].y.toFixed(1));
+            const ef = Math.max(nodes[i].fire, nodes[j].fire);
+            const distFade = 1 - dist / MAX_DIST;
+            el.style.opacity = Math.min(1, distFade * 0.14 + ef * distFade * 0.65);
+            const rc = Math.round(200 + ef * 55), gc = Math.round(184 + ef * 71), bc = Math.round(154 + ef * 101);
+            el.setAttribute("stroke", `rgba(${rc},${gc},${bc},1)`);
+            el.setAttribute("stroke-width", (0.5 + ef * 1.0).toFixed(2));
+          });
+
+          requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      })();
+
+      // ── P8: Blur-up lazy load ──
+      document.querySelectorAll(".img-wrap img[loading='lazy']").forEach((img) => {
+        if (img.complete) { img.classList.add("is-loaded"); }
+        else { img.addEventListener("load", () => img.classList.add("is-loaded")); }
+      });
+
+      // ── Nav scroll state ──
       const setNavState = () => nav.classList.toggle("is-scrolled", window.scrollY > window.innerHeight * 0.7);
       setNavState();
       window.addEventListener("scroll", setNavState, { passive: true });
 
+      // ── P6: Sliding nav indicator ──
+      function updateNavIndicator(link) {
+        if (!navIndicator || !link) return;
+        const ul = nav.querySelector(".nav-links");
+        const rect = link.getBoundingClientRect();
+        const parentRect = ul.getBoundingClientRect();
+        navIndicator.style.left = (rect.left - parentRect.left) + "px";
+        navIndicator.style.width = rect.width + "px";
+      }
+
       const activeObserver = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return;
-          navLinks.forEach((link) => link.classList.toggle("is-active", link.dataset.section === entry.target.id));
+          navLinks.forEach((link) => {
+            const isActive = link.dataset.section === entry.target.id;
+            link.classList.toggle("is-active", isActive);
+            if (isActive) updateNavIndicator(link);
+          });
         });
       }, { rootMargin: "-40% 0px -45% 0px", threshold: 0 });
-      document.querySelectorAll("#work, #research, #hire, #contact").forEach((section) => activeObserver.observe(section));
+      document.querySelectorAll("#work, #research, #hire, #contact").forEach((s) => activeObserver.observe(s));
+
+      navLinks.forEach((link) => {
+        link.addEventListener("mouseenter", () => updateNavIndicator(link));
+      });
+      const navUl = document.querySelector(".nav-links");
+      if (navUl) {
+        navUl.addEventListener("mouseleave", () => {
+          const active = navUl.querySelector("a.is-active");
+          if (active) updateNavIndicator(active);
+        });
+      }
+
+      // ── P2: Metric badge count-up on scroll ──
+      if (!reducedMotion) {
+        const metricObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            const badge = entry.target.querySelector(".metric-badge");
+            if (!badge || badge.dataset.animated) return;
+            badge.dataset.animated = "true";
+            const text = badge.textContent;
+            const numMatch = text.match(/(\d+\.?\d*)/);
+            if (!numMatch) return;
+            const finalVal = parseFloat(numMatch[1]);
+            const prefix = text.slice(0, numMatch.index);
+            const suffix = text.slice(numMatch.index + numMatch[0].length);
+            const startVal = finalVal * 0.7;
+            const duration = 1200;
+            const startTime = performance.now();
+            const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+            const animate = (now) => {
+              const p = Math.min((now - startTime) / duration, 1);
+              const cur = startVal + (finalVal - startVal) * easeOut(p);
+              const disp = finalVal >= 1 ? Math.round(cur).toString() : cur.toFixed(3);
+              badge.textContent = prefix + disp + suffix;
+              if (p < 1) requestAnimationFrame(animate);
+            };
+            requestAnimationFrame(animate);
+          });
+        }, { threshold: 0.3 });
+        document.querySelectorAll(".work-card").forEach((c) => metricObserver.observe(c));
+      }
+
+      // ── P3: Typewriter kicker ──
+      const kickerText = "Computational Biologist \u00b7 ML Researcher \u00b7 Dehradun, India \u00b7 Open to relocation";
+      const kickerEl = document.getElementById("heroKicker");
+      let kickerDone = false;
+
+      function typeKicker() {
+        if (!kickerEl || kickerDone) return;
+        kickerEl.style.opacity = "1";
+        let idx = 0;
+        const cursorSpan = document.createElement("span");
+        cursorSpan.className = "cursor";
+        cursorSpan.textContent = "|";
+        function type() {
+          if (idx < kickerText.length) {
+            kickerEl.textContent = kickerText.slice(0, idx + 1);
+            kickerEl.appendChild(cursorSpan);
+            idx++;
+            setTimeout(type, 38);
+          } else {
+            kickerDone = true;
+            setTimeout(() => cursorSpan.remove(), 1200);
+          }
+        }
+        type();
+      }
 
       const showStaticContent = () => {
         document.querySelectorAll(".reveal, .section-frame, .skills-strip, .contact-frame, .hero-kicker, .hero-title span, .hero-subtitle, .hero-bottom").forEach((el) => {
-          el.style.opacity = "1";
-          el.style.transform = "none";
+          el.style.opacity = "1"; el.style.transform = "none";
         });
+        if (kickerEl) { kickerEl.style.opacity = "1"; kickerEl.textContent = kickerText; }
         cursor.style.display = "none";
         document.body.style.cursor = "auto";
       };
@@ -603,13 +1200,13 @@
         gsap.registerPlugin(ScrollTrigger);
         if (!reducedMotion) {
           gsap.timeline({ delay: 0.15, defaults: { ease: "power3.out" } })
-            .to(".hero-kicker", { opacity: 1, y: 0, duration: 0.7 })
-            .to(".hero-title span", { opacity: 1, y: 0, duration: 1, stagger: 0.15 }, "-=0.35")
+            .to(".hero-title span", { opacity: 1, y: 0, duration: 1, stagger: 0.15 })
             .to(".hero-subtitle", { opacity: 1, y: 0, duration: 0.8 }, "-=0.55")
-            .to(".hero-bottom", { opacity: 1, y: 0, duration: 0.75 }, "-=0.45");
+            .to(".hero-bottom", { opacity: 1, y: 0, duration: 0.75 }, "-=0.45")
+            .call(() => { typeKicker(); });
 
           if (!touchPointer) {
-            gsap.to(".grain-field", { yPercent: 8, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
+            gsap.to(".hero-bg-graph", { yPercent: 6, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
           }
 
           gsap.utils.toArray(".section-frame, .skills-strip, .contact-frame").forEach((section) => {
@@ -628,10 +1225,10 @@
         if (finePointer && !reducedMotion) {
           const cursorX = gsap.quickTo(cursor, "x", { duration: 0.32, ease: "power3" });
           const cursorY = gsap.quickTo(cursor, "y", { duration: 0.32, ease: "power3" });
-          window.addEventListener("mousemove", (event) => { cursor.classList.add("is-visible"); cursorX(event.clientX); cursorY(event.clientY); }, { passive: true });
-          document.querySelectorAll("a, button, .work-card").forEach((target) => {
-            target.addEventListener("mouseenter", () => cursor.classList.add("is-hovering"));
-            target.addEventListener("mouseleave", () => cursor.classList.remove("is-hovering"));
+          window.addEventListener("mousemove", (e) => { cursor.classList.add("is-visible"); cursorX(e.clientX); cursorY(e.clientY); }, { passive: true });
+          document.querySelectorAll("a, button, .work-card").forEach((t) => {
+            t.addEventListener("mouseenter", () => cursor.classList.add("is-hovering"));
+            t.addEventListener("mouseleave", () => cursor.classList.remove("is-hovering"));
           });
         } else {
           cursor.style.display = "none";
@@ -641,10 +1238,10 @@
       }
 
       document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-        anchor.addEventListener("click", (event) => {
+        anchor.addEventListener("click", (e) => {
           const target = document.querySelector(anchor.getAttribute("href"));
           if (!target) return;
-          event.preventDefault();
+          e.preventDefault();
           target.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth" });
         });
       });
