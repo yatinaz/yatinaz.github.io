@@ -519,36 +519,6 @@ epochs = mne.<span class="fn">Epochs</span>(
     </div>
   </div>
 
-  <!-- Quiz 1 -->
-  <div class="quiz-block reveal" id="quiz1">
-    <div class="quiz-header">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
-      <span>Quick Check — Preprocessing</span>
-    </div>
-    <div class="quiz-body">
-      <p class="quiz-q">Why do we bandpass filter at 1–40 Hz instead of keeping the full signal?</p>
-      <div class="quiz-options" id="q1-opts">
-        <div class="quiz-option" onclick="selectOpt('q1',0)" data-idx="0">
-          <span class="opt-letter">A</span>
-          <span>To reduce file size — high-frequency data takes more storage</span>
-        </div>
-        <div class="quiz-option" onclick="selectOpt('q1',1)" data-idx="1">
-          <span class="opt-letter">B</span>
-          <span>To remove EMG muscle noise and DC drift while keeping all relevant brain rhythms (delta to gamma)</span>
-        </div>
-        <div class="quiz-option" onclick="selectOpt('q1',2)" data-idx="2">
-          <span class="opt-letter">C</span>
-          <span>Because EEG amplifiers can't record above 40 Hz</span>
-        </div>
-        <div class="quiz-option" onclick="selectOpt('q1',3)" data-idx="3">
-          <span class="opt-letter">D</span>
-          <span>The alpha band is at exactly 40 Hz</span>
-        </div>
-      </div>
-      <button class="quiz-check" onclick="checkQuiz('q1',1)" id="q1-btn" disabled>Check Answer</button>
-      <div class="quiz-feedback" id="q1-feedback"></div>
-    </div>
-  </div>
 </section>
 
 <hr class="section-sep" style="margin:40px 0">
@@ -723,36 +693,6 @@ X_feat = csp.<span class="fn">fit_transform</span>(X_train, y_train)
     </div>
   </div>
 
-  <!-- Quiz 2 -->
-  <div class="quiz-block reveal" id="quiz2">
-    <div class="quiz-header">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
-      <span>Quick Check — Feature Engineering</span>
-    </div>
-    <div class="quiz-body">
-      <p class="quiz-q">If a participant imagines moving their right hand, which electrode should show the strongest alpha ERD?</p>
-      <div class="quiz-options" id="q2-opts">
-        <div class="quiz-option" onclick="selectOpt('q2',0)" data-idx="0">
-          <span class="opt-letter">A</span>
-          <span>Fp1 — frontal lobe handles all motor planning</span>
-        </div>
-        <div class="quiz-option" onclick="selectOpt('q2',1)" data-idx="1">
-          <span class="opt-letter">B</span>
-          <span>C4 — the right hemisphere (C4 electrode) controls the left hand</span>
-        </div>
-        <div class="quiz-option" onclick="selectOpt('q2',2)" data-idx="2">
-          <span class="opt-letter">C</span>
-          <span>C3 — the left hemisphere motor cortex controls the right hand (contralateral)</span>
-        </div>
-        <div class="quiz-option" onclick="selectOpt('q2',3)" data-idx="3">
-          <span class="opt-letter">D</span>
-          <span>Oz — the occipital lobe is responsible for motor output</span>
-        </div>
-      </div>
-      <button class="quiz-check" onclick="checkQuiz('q2',2)" id="q2-btn" disabled>Check Answer</button>
-      <div class="quiz-feedback" id="q2-feedback"></div>
-    </div>
-  </div>
 </section>
 
 <hr class="section-sep" style="margin:40px 0">
@@ -817,36 +757,6 @@ skf = <span class="fn">StratifiedKFold</span>(
     </tbody>
   </table>
 
-  <!-- Quiz 3 -->
-  <div class="quiz-block reveal" id="quiz3">
-    <div class="quiz-header">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
-      <span>Quick Check — Classification</span>
-    </div>
-    <div class="quiz-body">
-      <p class="quiz-q">What would happen if we fitted CSP on the entire dataset (all subjects, both train and test) before cross-validation?</p>
-      <div class="quiz-options" id="q3-opts">
-        <div class="quiz-option" onclick="selectOpt('q3',0)" data-idx="0">
-          <span class="opt-letter">A</span>
-          <span>The accuracy would go up — more data means better filters</span>
-        </div>
-        <div class="quiz-option" onclick="selectOpt('q3',1)" data-idx="1">
-          <span class="opt-letter">B</span>
-          <span>Nothing changes — CSP is a filter, not a classifier</span>
-        </div>
-        <div class="quiz-option" onclick="selectOpt('q3',2)" data-idx="2">
-          <span class="opt-letter">C</span>
-          <span>Data leakage: the filters would "see" test labels during training, making reported accuracy optimistically inflated</span>
-        </div>
-        <div class="quiz-option" onclick="selectOpt('q3',3)" data-idx="3">
-          <span class="opt-letter">D</span>
-          <span>The model would refuse to converge — CSP requires equal class sizes</span>
-        </div>
-      </div>
-      <button class="quiz-check" onclick="checkQuiz('q3',2)" id="q3-btn" disabled>Check Answer</button>
-      <div class="quiz-feedback" id="q3-feedback"></div>
-    </div>
-  </div>
 </section>
 
 <hr class="section-sep" style="margin:40px 0">
@@ -962,37 +872,6 @@ skf = <span class="fn">StratifiedKFold</span>(
     A system that works brilliantly for subject 1 (89% accuracy) is essentially useless for
     subject 6 (47%). This motivates personalised calibration protocols, adaptive classifiers,
     and neurofeedback training that teaches users to produce stronger ERD signals.
-  </div>
-
-  <!-- Quiz 4 -->
-  <div class="quiz-block reveal" id="quiz4">
-    <div class="quiz-header">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
-      <span>Final Check — Results</span>
-    </div>
-    <div class="quiz-body">
-      <p class="quiz-q">Subject 6 achieves ~47% accuracy — slightly below chance. What is the most likely explanation?</p>
-      <div class="quiz-options" id="q4-opts">
-        <div class="quiz-option" onclick="selectOpt('q4',0)" data-idx="0">
-          <span class="opt-letter">A</span>
-          <span>The classifier was not trained on enough data for that subject</span>
-        </div>
-        <div class="quiz-option" onclick="selectOpt('q4',1)" data-idx="1">
-          <span class="opt-letter">B</span>
-          <span>Subject 6's EEG signal does not produce a clearly separable ERD pattern for left vs right — the signal is below the detection threshold of scalp EEG</span>
-        </div>
-        <div class="quiz-option" onclick="selectOpt('q4',2)" data-idx="2">
-          <span class="opt-letter">C</span>
-          <span>The ICA step removed too many components and erased the signal</span>
-        </div>
-        <div class="quiz-option" onclick="selectOpt('q4',3)" data-idx="3">
-          <span class="opt-letter">D</span>
-          <span>A 47% accuracy definitively proves the classifier is broken</span>
-        </div>
-      </div>
-      <button class="quiz-check" onclick="checkQuiz('q4',1)" id="q4-btn" disabled>Check Answer</button>
-      <div class="quiz-feedback" id="q4-feedback"></div>
-    </div>
   </div>
 
   <p class="prose reveal" style="margin-top:32px">
