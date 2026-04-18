@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EEG Motor Imagery — Interactive Course · Yatin Azad</title>
+<title>EEG Motor Imagery Classification · Yatin Azad</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -58,7 +58,7 @@ code{font-family:'JetBrains Mono',monospace;font-size:0.82em;background:#f1f5f9;
 #progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--accent);width:0%;z-index:999;transition:width .1s linear}
 
 /* ── NAV PILLS ──────────────────────────────────────────────────── */
-#course-nav{
+#page-nav{
   position:sticky;top:0;z-index:100;background:rgba(250,250,249,0.92);
   backdrop-filter:blur(8px);border-bottom:1px solid var(--border);
   padding:0;overflow-x:auto;
@@ -80,8 +80,6 @@ code{font-family:'JetBrains Mono',monospace;font-size:0.82em;background:#f1f5f9;
 .hbadge{display:inline-block;background:var(--hero-badge-bg);border:1px solid var(--hero-badge-border);color:rgba(255,255,255,0.92);font-size:0.72rem;font-weight:600;padding:4px 11px;border-radius:20px;font-family:'JetBrains Mono',monospace;letter-spacing:0.02em}
 .hero-meta{font-size:0.8rem;color:var(--hero-sub);display:flex;gap:20px;flex-wrap:wrap}
 .hero-meta span{display:flex;align-items:center;gap:5px}
-.course-label{display:inline-flex;align-items:center;gap:6px;font-size:0.7rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:10px}
-.course-label::before{content:'';display:inline-block;width:18px;height:2px;background:rgba(255,255,255,0.35);border-radius:2px}
 
 /* ── CONTENT LAYOUT ─────────────────────────────────────────────── */
 .content{background:var(--bg);padding-bottom:0}
@@ -167,27 +165,6 @@ code{font-family:'JetBrains Mono',monospace;font-size:0.82em;background:#f1f5f9;
 .result-value{font-size:1.5rem;font-weight:700;color:var(--text);font-family:'JetBrains Mono',monospace;letter-spacing:-0.02em}
 .result-sub{font-size:0.78rem;color:var(--text-muted);margin-top:2px}
 
-/* ── QUIZ ───────────────────────────────────────────────────────── */
-.quiz-block{border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:28px 0 36px;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
-.quiz-header{background:#1D4ED8;padding:14px 20px;display:flex;align-items:center;gap:10px}
-.quiz-header span{font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.8)}
-.quiz-header svg{flex-shrink:0;opacity:.8}
-.quiz-body{padding:20px 22px;background:#fff}
-.quiz-q{font-size:0.92rem;font-weight:600;color:var(--text);margin-bottom:14px;line-height:1.5}
-.quiz-options{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
-.quiz-option{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-radius:8px;border:1.5px solid var(--border);cursor:pointer;font-size:0.85rem;color:var(--text-muted);line-height:1.45;transition:all .15s;user-select:none}
-.quiz-option:hover{border-color:var(--accent);color:var(--text)}
-.quiz-option.selected{border-color:var(--accent);background:var(--badge-bg);color:var(--accent)}
-.quiz-option.correct{border-color:#16a34a;background:#f0fdf4;color:#15803d}
-.quiz-option.wrong{border-color:#dc2626;background:#fff1f2;color:#b91c1c}
-.quiz-option .opt-letter{flex-shrink:0;width:20px;height:20px;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;font-family:'JetBrains Mono',monospace;margin-top:1px}
-.quiz-check{padding:7px 18px;border-radius:6px;border:none;background:var(--accent);color:#fff;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s}
-.quiz-check:hover{background:#1e40af}
-.quiz-check:disabled{background:#9CA3AF;cursor:not-allowed}
-.quiz-feedback{margin-top:12px;padding:10px 14px;border-radius:8px;font-size:0.83rem;line-height:1.55;display:none}
-.quiz-feedback.correct{background:#f0fdf4;color:#15803d;border:1px solid #86efac}
-.quiz-feedback.wrong{background:#fff1f2;color:#b91c1c;border:1px solid #fca5a5}
-.quiz-feedback.show{display:block}
 
 /* ── INTER-SUBJECT GRID ─────────────────────────────────────────── */
 .subj-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:16px 0 24px}
@@ -245,11 +222,11 @@ footer{padding:56px 0 72px;text-align:center;border-top:1px solid var(--border);
       Back to portfolio
     </a>
 
-    <div class="course-label">Interactive Course</div>
     <h1>EEG Motor Imagery Classification</h1>
     <p class="hero-sub">
-      A step-by-step walkthrough of how a computer can read your mind — or at least
-      tell which hand you're imagining moving — using brainwave signals and machine learning.
+      A complete pipeline for decoding left vs right hand motor imagery from scalp EEG:
+      artifact removal, spatial filtering, and multi-classifier evaluation across three
+      independent datasets and 34 subjects.
     </p>
 
     <div class="hero-badges">
@@ -303,7 +280,7 @@ footer{padding:56px 0 72px;text-align:center;border-top:1px solid var(--border);
 </section>
 
 <!-- ══════════ STICKY NAV ════════════════════════════════════════ -->
-<nav id="course-nav">
+<nav id="page-nav">
   <ul class="nav-pills">
     <li><a href="#overview"    class="active" data-sec="overview">Overview</a></li>
     <li><a href="#the-signal"  data-sec="the-signal">The Signal</a></li>
@@ -324,31 +301,23 @@ footer{padding:56px 0 72px;text-align:center;border-top:1px solid var(--border);
   <p class="section-label reveal">Overview</p>
 
   <p class="prose reveal reveal-delay-1">
-    When you imagine moving your left hand — without actually moving it — your brain generates
-    measurable electrical patterns that are detectably different from imagining moving your right hand.
-    This sounds almost like science fiction, but it's the basis of real <strong>brain-computer interfaces
-    (BCIs)</strong> used today to help people with paralysis communicate or control prosthetics.
+    When you imagine moving your left hand, your brain generates measurable electrical patterns
+    that are detectably different from imagining moving your right hand. This is the basis of
+    real <strong>brain-computer interfaces (BCIs)</strong> used today to help people with paralysis
+    communicate or control prosthetics.
   </p>
 
   <p class="prose reveal reveal-delay-2">
-    This project builds a complete pipeline to do exactly that: load raw brainwave recordings,
-    clean them, extract meaningful features, and train classifiers that can tell left-hand from
-    right-hand motor imagery with above-chance accuracy — all from a cap of 64 electrodes placed
-    on the scalp.
+    This project builds a complete pipeline: load raw brainwave recordings, clean them, extract
+    spatial features, and train classifiers that distinguish left from right hand motor imagery
+    with above-chance accuracy across 34 subjects from three independent labs.
   </p>
 
   <div class="insight reveal reveal-delay-3">
     <strong>The key phenomenon: Event-Related Desynchronisation (ERD).</strong>
-    When you imagine moving a limb, the brain's motor cortex <em>on the opposite side</em>
-    (contralateral) suppresses its alpha (8–13 Hz) and beta (13–30 Hz) rhythms.
-    This dip in oscillatory power is the signal we're hunting.
-  </div>
-
-  <div class="steps reveal">
-    <div class="step"><span class="step-num">1</span><span><strong>Load & clean EEG signals</strong> from 10 subjects using MNE-Python, removing eye-blink artifacts with ICA.</span></div>
-    <div class="step"><span class="step-num">2</span><span><strong>Extract frequency-band features</strong> (alpha, beta power at each electrode) using Welch's PSD.</span></div>
-    <div class="step"><span class="step-num">3</span><span><strong>Compare three classifiers:</strong> Flat Band Power, CSP+LDA, and Riemannian MDM — measuring accuracy and AUC.</span></div>
-    <div class="step"><span class="step-num">4</span><span><strong>Visualise everything:</strong> raw signals, spectrograms, scalp maps, and confusion matrices — all interactive.</span></div>
+    When you imagine moving a limb, the motor cortex on the opposite (contralateral) side
+    suppresses its alpha (8–13 Hz) and beta (13–30 Hz) rhythms. This dip in oscillatory
+    power is the discriminating signal.
   </div>
 </section>
 
@@ -361,12 +330,12 @@ footer{padding:56px 0 72px;text-align:center;border-top:1px solid var(--border);
   <p class="prose reveal reveal-delay-1">
     EEG (electroencephalography) measures the tiny electrical voltages produced by millions of
     neurons firing in synchrony beneath the scalp. We place 64 electrodes in a standard "10-20"
-    grid — named because electrodes sit at 10% or 20% intervals along the head. Each electrode
+    grid, named because electrodes sit at 10% or 20% intervals along the head. Each electrode
     captures a weighted sum of activity from the underlying cortex.
   </p>
 
   <p class="prose reveal reveal-delay-2">
-    The signal is measured in <strong>microvolts</strong> (µV) — about a millionth of a volt, or roughly
+    The signal is measured in <strong>microvolts</strong> (µV), about a millionth of a volt, or roughly
     one-thousandth the voltage of a typical AA battery. It is buried in noise: muscle movement (EMG),
     eye blinks, heartbeats, and 50/60 Hz power-line interference all contaminate the recording.
     The preprocessing steps exist to scrub all of this away.
@@ -375,7 +344,7 @@ footer{padding:56px 0 72px;text-align:center;border-top:1px solid var(--border);
   <!-- Figure 1: Raw vs Cleaned -->
   <div class="figure-block reveal">
     <p class="figure-caption">
-      <strong>Figure 1 — Raw vs ICA-cleaned EEG signal.</strong>
+      <strong>Figure 1: Raw vs ICA-cleaned EEG signal.</strong>
       The raw signal (grey) contains large slow deflections from eye blinks, most visible
       in frontal channels Fp1/Fp2. Toggle to <em>ICA Cleaned</em> to see these removed
       while the motor-cortex channels (C3, C4) remain virtually unchanged.
@@ -396,11 +365,11 @@ footer{padding:56px 0 72px;text-align:center;border-top:1px solid var(--border);
     <strong>Why do frontal channels show the biggest artifact?</strong>
     Eye muscles sit directly beneath Fp1 and Fp2. When you blink, a large dipole sweeps
     across the frontal electrodes. ICA decomposes the signal into 20 independent components
-    and discards those that correlate strongly with the frontal channels — leaving the rest intact.
+    and discards those that correlate strongly with the frontal channels, leaving the rest intact.
   </div>
 
   <p class="prose reveal">
-    The data comes from the <strong>PhysioNet EEGBCI dataset</strong> — a publicly available
+    The data comes from the <strong>PhysioNet EEGBCI dataset</strong>, a publicly available
     benchmark containing 64-channel EEG from 109 subjects performing motor-imagery tasks.
     We use subjects 1–10 and runs 6, 10, and 14 (motor imagery only, no actual movement).
     Each run contains trials where participants were shown an arrow and asked to imagine
@@ -433,12 +402,10 @@ raw.<span class="fn">filter</span>(
     </div>
     <div class="ce-explain">
       <h4>Bandpass filter 1–40 Hz</h4>
-      <p>Think of this like an audio equaliser that cuts the very low rumble
-         (slow drift from sweat/electrode movement) and the very high hiss
-         (muscle noise, power-line interference above 40 Hz).</p>
-      <p>We use a <strong>Hamming-windowed FIR filter</strong> — a standard choice
-         that minimises ringing artefacts at band edges. This preserves the
-         delta through gamma brain rhythms we care about.</p>
+      <p>Removes slow drift below 1 Hz (sweat, electrode movement) and high-frequency
+         noise above 40 Hz (muscle artifacts, power-line interference).</p>
+      <p>A <strong>Hamming-windowed FIR filter</strong> minimises ringing at band edges,
+         preserving delta through gamma brain rhythms.</p>
     </div>
   </div>
 
@@ -484,13 +451,13 @@ ica.<span class="fn">apply</span>(cleaned)</pre>
     <div class="ce-explain">
       <h4>ICA artifact removal</h4>
       <p><strong>Independent Component Analysis</strong> mathematically unmixes
-         the 64 EEG channels into 20 "source" components — each ideally reflecting
+         the 64 EEG channels into 20 "source" components, each ideally reflecting
          one underlying source (a brain region, eye muscle, or heartbeat).</p>
       <p>Components that correlate with the frontal "EOG surrogate" channels
          Fp1/Fp2 are labelled as eye-blink artefacts and zeroed out.
          The remaining 18+ components are then remixed back into 64 clean channels.
          <strong>Artefact screening result:</strong> no significant EOG components were detected
-         at threshold 0.10 across all 10 PhysioNet subjects — consistent with a controlled
+         at threshold 0.10 across all 10 PhysioNet subjects, consistent with a controlled
          lab motor-imagery task where subjects hold still and fixate.</p>
     </div>
   </div>
@@ -510,11 +477,10 @@ epochs = mne.<span class="fn">Epochs</span>(
     </div>
     <div class="ce-explain">
       <h4>Epoching (−1 to +4 s)</h4>
-      <p>Rather than analysing a continuous hour-long stream, we cut out
-         5-second <strong>epochs</strong> around each experimental cue.
-         The −1 s pre-cue period serves as a <strong>baseline</strong>:
-         we subtract its mean to correct for any residual slow drift.</p>
-      <p>Event code T1 marks left-hand cues; T2 marks right-hand cues.
+      <p>5-second <strong>epochs</strong> are extracted around each cue event.
+         The −1 s pre-cue window serves as a <strong>baseline</strong>
+         for mean subtraction, correcting residual slow drift.</p>
+      <p>T1 marks left-hand cues; T2 marks right-hand cues.
          Each subject contributes roughly 45 trials per condition.</p>
     </div>
   </div>
@@ -554,7 +520,7 @@ epochs = mne.<span class="fn">Epochs</span>(
       <tr>
         <td><span class="band-pill band-alpha">Alpha</span>&nbsp;µ-rhythm</td>
         <td>8–13 Hz</td>
-        <td>Primary ERD band — <strong>suppressed contralateral</strong> to imagined movement</td>
+        <td>Primary ERD band, <strong>suppressed contralateral</strong> to imagined movement</td>
       </tr>
       <tr>
         <td><span class="band-pill band-beta">Beta</span></td>
@@ -584,14 +550,14 @@ alpha_power = psds.<span class="fn">mean</span>(axis=<span class="num">-1</span>
 <span class="cm"># Shape: (n_epochs, n_channels)</span></pre>
     </div>
     <div class="ce-explain">
-      <h4>Approach 1 — Band Power Features</h4>
+      <h4>Approach 1: Band Power Features</h4>
       <p>For each epoch, we run <strong>Welch's PSD</strong> (power spectral density)
          on every channel: split the epoch into overlapping 2-second windows,
          compute the FFT of each, and average the squared magnitudes.</p>
-      <p>The result is a single number per channel per frequency band — the mean
+      <p>The result is a single number per channel per frequency band: the mean
          oscillatory power in that band. We use alpha and beta, giving
          <strong>64 × 2 = 128 features</strong> per epoch.</p>
-      <p>Simple, interpretable, but spatially naïve — it treats all 64 channels
+      <p>Simple and interpretable, but spatially naïve: it treats all 64 channels
          equally rather than finding the optimal spatial combination.</p>
     </div>
   </div>
@@ -612,10 +578,10 @@ X_feat = csp.<span class="fn">fit_transform</span>(X_train, y_train)
 <span class="cm"># Shape: (n_epochs, 6) — compact!</span></pre>
     </div>
     <div class="ce-explain">
-      <h4>Approach 2 — Common Spatial Patterns (CSP)</h4>
+      <h4>Approach 2: Common Spatial Patterns (CSP)</h4>
       <p>CSP is the gold standard for motor imagery EEG. It finds <strong>6 spatial
          filters</strong> (weighted combinations of the 64 electrodes) that maximise
-         the ratio of left-trial variance to right-trial variance — and vice versa.</p>
+         the ratio of left-trial variance to right-trial variance, and vice versa.</p>
       <p>The log-variance of each filtered signal becomes one feature. Just 6 numbers
          per epoch, yet far more discriminative than 128 raw band-power values
          because the filters are optimally tuned to the left/right difference.</p>
@@ -627,11 +593,11 @@ X_feat = csp.<span class="fn">fit_transform</span>(X_train, y_train)
   <!-- Figure 2: PSD -->
   <div class="figure-block reveal">
     <p class="figure-caption">
-      <strong>Figure 2 — Power spectral density: left vs right hand imagery (Subject 1).</strong>
+      <strong>Figure 2: Power spectral density, left vs right hand imagery (Subject 1).</strong>
       The blue/red curves show mean Welch PSD across all epochs of each condition.
       The shaded region marks the alpha band. Switch to channel <em>C4</em> (right motor
       cortex → controls left hand) and watch the right-hand (red) curve dip below
-      the left-hand curve in the alpha range — this is the ERD signature.
+      the left-hand curve in the alpha range: the ERD signature.
     </p>
     <div class="fig-wrap">
       <div class="fig-controls">
@@ -645,11 +611,11 @@ X_feat = csp.<span class="fn">fit_transform</span>(X_train, y_train)
   <!-- Figure 3: Topomap -->
   <div class="figure-block reveal">
     <p class="figure-caption">
-      <strong>Figure 3 — Alpha power scalp map across all 10 subjects.</strong>
+      <strong>Figure 3: Alpha power scalp map across all 10 subjects.</strong>
       Average alpha power pooled across 450+ epochs per condition.
       Switch to <em>ERD %</em> to see the contralateral suppression pattern:
       right-hand imagery suppresses alpha over C4 (left side of map = right hemisphere
-      in the azimuthal projection — hover to confirm electrode names).
+      in the azimuthal projection; hover to confirm electrode names).
     </p>
     <div class="fig-wrap">
       <div class="fig-controls">
@@ -673,11 +639,11 @@ X_feat = csp.<span class="fn">fit_transform</span>(X_train, y_train)
   <!-- Figure 4: Time-frequency -->
   <div class="figure-block reveal">
     <p class="figure-caption">
-      <strong>Figure 4 — Event-related desynchronisation (ERD) spectrogram.</strong>
+      <strong>Figure 4: Event-related desynchronisation (ERD) spectrogram.</strong>
       Morlet wavelet power in decibels relative to the pre-cue baseline.
       Blue regions = ERD (suppression); red = ERS (enhancement).
       Try <em>C4 + Left Hand</em>: after the cue at t=0, a broad blue band appears
-      in the alpha-beta range — the motor cortex suppressing oscillations in preparation
+      in the alpha-beta range: the motor cortex suppressing oscillations in preparation
       for the imagined movement.
     </p>
     <div class="fig-wrap">
@@ -729,7 +695,7 @@ skf = <span class="fn">StratifiedKFold</span>(
       <p>Instead: for each of 10 subjects, run 5 folds independently.
          Report mean accuracy per subject, then average across subjects.
          <strong>10 × 5 = 50 model fits in total.</strong></p>
-      <p>CSP is always fitted only on the training fold — never touching test data —
+      <p>CSP is always fitted only on the training fold, never touching test data,
          to prevent data leakage from optimistic filtering.</p>
     </div>
   </div>
@@ -813,8 +779,8 @@ skf = <span class="fn">StratifiedKFold</span>(
   <!-- Figure 5: Classification results -->
   <div class="figure-block reveal">
     <p class="figure-caption">
-      <strong>Figure 5 — Classification results.</strong>
-      ROC curves for all three classifiers (left) — higher and to the left is better,
+      <strong>Figure 5: Classification results.</strong>
+      ROC curves for all three classifiers (left); higher and to the left is better,
       with the dashed line representing chance (AUC = 0.5).
       Switch classifier to update the confusion matrix (centre) and per-subject accuracy bars (right).
       Notice how subjects 1 and 7 are decoded well, while subjects 6 and 9 hover near chance.
@@ -840,7 +806,7 @@ skf = <span class="fn">StratifiedKFold</span>(
   <p class="section-label reveal" style="margin-top:44px">The Hard Problem: Inter-Subject Variability</p>
 
   <p class="prose reveal reveal-delay-1">
-    The most striking finding is not the mean accuracy — it's the <em>variance</em>.
+    The most striking finding is not the mean accuracy; it's the <em>variance</em>.
     Some subjects are decoded with near-perfect accuracy; others perform no better than
     a coin flip. This is the central challenge of EEG-based BCIs and an open research problem.
   </p>
@@ -851,7 +817,7 @@ skf = <span class="fn">StratifiedKFold</span>(
 
   <div class="insight insight-red reveal">
     <strong>Subjects 6 and 9 are near chance level.</strong>
-    This is not a failure of the classifier — it reflects genuine differences in
+    This is not a failure of the classifier; it reflects genuine differences in
     how individuals modulate their alpha/beta rhythms during motor imagery. Some people
     produce strong, spatially focal ERD; others produce diffuse, weak signals that
     are essentially indistinguishable from noise at the scalp level.
@@ -862,7 +828,7 @@ skf = <span class="fn">StratifiedKFold</span>(
   </p>
   <div class="steps reveal">
     <div class="step"><span class="step-num">→</span><span><strong>Anatomical differences:</strong> skull thickness and conductivity vary, attenuating signals differently between individuals.</span></div>
-    <div class="step"><span class="step-num">→</span><span><strong>Mental strategy:</strong> some subjects use vivid kinaesthetic imagery; others use purely visual mental imagery — producing different neural patterns.</span></div>
+    <div class="step"><span class="step-num">→</span><span><strong>Mental strategy:</strong> some subjects use vivid kinaesthetic imagery; others use purely visual mental imagery, producing different neural patterns.</span></div>
     <div class="step"><span class="step-num">→</span><span><strong>Fatigue and habituation:</strong> the effect of imagining the same movement 90 times can diminish the response in some subjects.</span></div>
     <div class="step"><span class="step-num">→</span><span><strong>Neural noise floor:</strong> individuals differ in how much spontaneous alpha power they generate at rest, making the ERD harder or easier to detect.</span></div>
   </div>
@@ -876,7 +842,7 @@ skf = <span class="fn">StratifiedKFold</span>(
 
   <p class="prose reveal" style="margin-top:32px">
     Despite the inter-subject variability, this pipeline demonstrates the full spectrum
-    from raw signal to working classifier — and surfaces exactly the kind of scientific
+    from raw signal to working classifier, surfacing exactly the kind of scientific
     insight that drives BCI research forward. The code is fully reproducible: run
     <code>python eeg_pipeline.py</code> to regenerate all data and figures from scratch.
   </p>
@@ -950,16 +916,16 @@ skf = <span class="fn">StratifiedKFold</span>(
     and baseline alpha power. EA whitens every subject's covariance distribution by its own mean,
     mapping the subject-specific Riemannian centre toward the identity matrix. Without it, cross-subject
     pooling would mix apples and oranges. With it, the LOSO classifier trains on 9 aligned distributions
-    and tests on a 10th — exactly what a zero-calibration headset does at first boot.
+    and tests on a 10th, exactly what a zero-calibration headset does at first boot.
   </div>
 
   <!-- Figure 6: LOSO vs Within-subject per subject -->
   <div class="figure-block reveal">
     <p class="figure-caption">
-      <strong>Figure 6 — Within-subject vs LOSO accuracy per subject (MDM).</strong>
+      <strong>Figure 6: Within-subject vs LOSO accuracy per subject (MDM).</strong>
       Purple bars are within-subject 5-fold CV; coloured bars are LOSO (green ≥ 70 %, amber 55–70 %, red &lt; 55 %).
       The dashed line marks chance (50 %). The gap between the two bars for each subject is the
-      <em>calibration benefit</em> — how much a short recording session would gain you.
+      <em>calibration benefit</em>: how much a short recording session would gain you.
     </p>
     <div class="fig-wrap">
       <div id="fig-loso" class="plotly-fig"></div>
@@ -969,7 +935,7 @@ skf = <span class="fn">StratifiedKFold</span>(
   <!-- Figure 7: Cross-dataset comparison -->
   <div class="figure-block reveal">
     <p class="figure-caption">
-      <strong>Figure 7 — Cross-dataset comparison: same pipeline, three independent labs.</strong>
+      <strong>Figure 7: Cross-dataset comparison, same pipeline across three independent labs.</strong>
       Blue bars: PhysioNet EEGBCI (64 channels, research cap, 10 subjects).
       Green bars: BCI Competition IV Dataset 2a loaded via MOABB (22 channels, consumer-style cap, 9 subjects).
       Orange bars: Cho2017 GigaDB (64 channels, BrainAmp, 15 subjects from the 52-subject cohort).
@@ -988,7 +954,7 @@ skf = <span class="fn">StratifiedKFold</span>(
     <span id="cho-loso-inline">—</span> on Cho2017 (15 subjects).
     The 3 below-chance subjects on PhysioNet (S3, S6, S9) are consistent
     with published BCI-illiteracy rates (~15–30% of the population).
-    <strong>The Cho2017 dataset — with 52 subjects — provides the statistical power to
+    <strong>The Cho2017 dataset (52 subjects) provides the statistical power to
     estimate this rate with confidence intervals</strong>, which is the critical metric
     for any consumer headset company evaluating "what fraction of customers will this work for?"
     The full 52-subject dataset is available; this analysis uses 15 for pipeline efficiency.
@@ -997,10 +963,10 @@ skf = <span class="fn">StratifiedKFold</span>(
   <!-- Figure 8: BCI-Illiteracy distribution (Cho2017) -->
   <div class="figure-block reveal">
     <p class="figure-caption">
-      <strong>Figure 8 — BCI-Illiteracy distribution: per-subject accuracy across 15 users (Cho2017).</strong>
+      <strong>Figure 8: BCI-Illiteracy distribution, per-subject accuracy across 15 users (Cho2017).</strong>
       Each bar represents one of 52 subjects. Green ≥ 70%, amber 55–70%, red &lt; 55%.
-      Subjects below the dashed chance line (50%) produce no detectable ERD lateralisation —
-      they are "BCI-illiterate" for this task. The fraction of red bars is the empirical
+      Subjects below the dashed chance line (50%) produce no detectable ERD lateralisation
+      and are "BCI-illiterate" for this task. The fraction of red bars is the empirical
       BCI-illiteracy rate, a key product metric for consumer headsets.
     </p>
     <div class="fig-wrap">
@@ -1013,16 +979,16 @@ skf = <span class="fn">StratifiedKFold</span>(
     With 10 subjects you can say "some people can't use BCI." With 15+ subjects you can say
     "<span id="cho-illiteracy-inline">—</span> of users scored below chance, consistent with
     the published 15–30% BCI-illiteracy rate (Blankertz et al. 2010)." That's the difference
-    between a research observation and a product specification — the kind of data a Temple or
+    between a research observation and a product specification: the kind of data a Temple or
     Resonant engineering team needs to size their adaptive calibration budget.
   </div>
 
   <!-- Figure 9: Channel ablation -->
   <div class="figure-block reveal">
     <p class="figure-caption">
-      <strong>Figure 9 — Accuracy vs channel count: consumer hardware simulation.</strong>
+      <strong>Figure 9: Accuracy vs channel count, consumer hardware simulation.</strong>
       Purple bars: within-subject CSP+LDA (±1 std). Green bars: LOSO TS+LR (zero-calibration, ±1 std).
-      Each group simulates a progressively lighter headset — from a 64-channel research cap down to a
+      Each group simulates a progressively lighter headset, from a 64-channel research cap down to a
       4-channel minimal consumer device (C3/Cz/C4/CP3). The dashed red line marks chance (50%).
       This directly answers the product question: <em>how much accuracy is lost on a real consumer headset?</em>
     </p>
@@ -1721,63 +1687,7 @@ const secObserver = new IntersectionObserver((entries) => {
 }, {rootMargin:'-30% 0px -60% 0px'});
 sections.forEach(s => { const el=document.getElementById(s); if(el) secObserver.observe(el); });
 
-/* ─── Quiz Logic ────────────────────────────────────────────────── */
-const quizState = {};
 
-function selectOpt(quizId, idx) {
-  if (quizState[quizId]?.answered) return;
-  if (!quizState[quizId]) quizState[quizId] = {};
-  quizState[quizId].selected = idx;
-  document.querySelectorAll(`#${quizId} .quiz-option`).forEach((opt,i) => {
-    opt.classList.toggle('selected', i===idx);
-  });
-  document.getElementById(`${quizId}-btn`).disabled = false;
-}
-
-function checkQuiz(quizId, correctIdx) {
-  if (quizState[quizId]?.answered) return;
-  if (quizState[quizId]?.selected === undefined) return;
-  quizState[quizId].answered = true;
-
-  const selected = quizState[quizId].selected;
-  const correct  = selected === correctIdx;
-
-  document.querySelectorAll(`#${quizId} .quiz-option`).forEach((opt,i) => {
-    opt.classList.remove('selected');
-    if (i===correctIdx) opt.classList.add('correct');
-    else if (i===selected && !correct) opt.classList.add('wrong');
-    opt.style.cursor='default';
-  });
-
-  const feedback = document.getElementById(`${quizId}-feedback`);
-  feedback.className = 'quiz-feedback show ' + (correct?'correct':'wrong');
-  feedback.innerHTML = correct
-    ? '&#10003; Correct! ' + getFeedbackText(quizId, true)
-    : '&#10007; Not quite. ' + getFeedbackText(quizId, false);
-  document.getElementById(`${quizId}-btn`).disabled = true;
-}
-
-function getFeedbackText(qid, correct) {
-  const texts = {
-    q1: {
-      t: 'Exactly. The 1–40 Hz range preserves all five brain rhythm bands (delta through gamma) while removing slow DC drift and high-frequency muscle contamination.',
-      f: 'The correct answer is B. The filter preserves brain rhythms (delta through gamma) while removing slow drift and EMG noise. File size and amplifier limits are not the reason.',
-    },
-    q2: {
-      t: 'Right — the nervous system is crossed (contralateral control). Right-hand imagery activates the left motor cortex, which sits under electrode C3. So we expect ERD at C3 for right-hand trials.',
-      f: 'The correct answer is C. Motor control is contralateral: the left hemisphere (C3) controls the right hand. Alpha ERD during right-hand imagery appears at C3, not C4.',
-    },
-    q3: {
-      t: 'Exactly — this is classic data leakage. The CSP filter would have "seen" the test labels during its fitting, making the reported performance look better than it would on genuinely unseen data.',
-      f: 'The correct answer is C. Fitting CSP on all data before cross-validation introduces data leakage: the filter learns from test-set labels, making reported accuracy overoptimistic.',
-    },
-    q4: {
-      t: 'Correct. A 47% accuracy means the classifier is essentially flipping a coin, suggesting the underlying EEG signal for this subject does not contain a cleanly separable ERD pattern between left and right conditions.',
-      f: 'The correct answer is B. Below-chance performance reflects a weak or absent ERD signal for this subject — a genuine neuroscientific finding, not a data or algorithm failure.',
-    },
-  };
-  return texts[qid]?.[correct?'t':'f'] || '';
-}
 </script>
 
 </body>
