@@ -50,8 +50,7 @@
       .hero::after { background: linear-gradient(to top, var(--bg), rgba(245,240,232,0)); }
       .nav-shell.is-scrolled { background: rgba(245,240,232,0.82); }
       .hero-bg-graph .soma { fill: rgba(26,23,20,0.15); }
-      .hero-bg-graph .dend, .hero-bg-graph .axon, .hero-bg-graph .axon-conn { stroke: rgba(26,23,20,0.09); }
-      .hero-bg-graph .knob { fill: rgba(26,23,20,0.09); }
+      .hero-bg-graph .dend-tree, .hero-bg-graph .axon, .hero-bg-graph .axon-conn { stroke: rgba(26,23,20,0.09); }
       .contact-heading { background: linear-gradient(135deg, var(--accent-bright) 0%, var(--text-primary) 60%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
       .skills-tile:hover { background: #d9d1c5; }
       .section-frame { background: rgba(245,240,232,0.78); }
@@ -123,8 +122,8 @@
     .text-link::after { content: ""; position: absolute; left: 0; right: 0; bottom: -0.18rem; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform 300ms ease; }
     .text-link:hover::after { transform: scaleX(1); }
 
-    .section-frame { position: relative; border-top: 1px solid var(--border); content-visibility: auto; contain-intrinsic-size: 900px; background: rgba(10,10,10,0.72); pointer-events: none; }
-    .section-inner { width: min(1200px, calc(100% - 48px)); margin: 0 auto; padding: 160px 0; pointer-events: auto; }
+    .section-frame { position: relative; border-top: 1px solid var(--border); content-visibility: auto; contain-intrinsic-size: 900px; background: rgba(10,10,10,0.72); }
+    .section-inner { width: min(1200px, calc(100% - 48px)); margin: 0 auto; padding: 160px 0; }
     .section-label { margin: 0 0 64px; color: var(--text-muted); font-family: var(--font-body); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.2em; line-height: 1; text-transform: uppercase; }
 
     .nav-shell { position: fixed; top: 0; left: 0; right: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; padding: 24px 48px; border-bottom: 1px solid transparent; color: var(--text-primary); transition: background 300ms ease, border-color 300ms ease, padding 300ms ease, backdrop-filter 300ms ease; }
@@ -137,14 +136,14 @@
     .nav-links a::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--accent-bright); opacity: 0; transform: scale(0.4); transition: opacity 220ms ease, transform 220ms ease; }
     .nav-links a.is-active::before { opacity: 1; transform: scale(1); }
 
-    .hero { position: relative; min-height: 100vh; min-height: 100svh; display: grid; align-items: center; overflow: hidden; padding: 128px 48px 96px; background: transparent; pointer-events: none; }
+    .hero { position: relative; min-height: 100vh; min-height: 100svh; display: grid; align-items: center; overflow: hidden; padding: 128px 48px 96px; background: transparent; }
     .hero::after { content: ""; position: absolute; inset: auto 0 0; height: 35vh; pointer-events: none; background: linear-gradient(to top, var(--bg), rgba(10, 10, 10, 0)); }
-    .hero-inner { position: relative; z-index: 2; width: min(1200px, 100%); margin: 0 auto; pointer-events: auto; }
+    .hero-inner { position: relative; z-index: 2; width: min(1200px, 100%); margin: 0 auto; }
     .hero-kicker { margin: 0 0 28px; color: var(--text-muted); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.2em; line-height: 1; text-transform: uppercase; opacity: 0; }
     .hero-title { margin: 0; color: var(--text-primary); font-family: var(--font-display); font-size: clamp(4rem, 10vw, 9rem); font-weight: 400; line-height: 0.9; }
     .hero-title span { display: block; opacity: 0; transform: translateY(48px); }
     .hero-subtitle { max-width: 760px; margin: 40px 0 0; color: var(--text-muted); font-size: clamp(1rem, 2vw, 1.2rem); font-weight: 400; line-height: 1.7; opacity: 0; }
-    .hero-bottom { position: absolute; z-index: 3; left: 48px; right: 48px; bottom: 42px; display: flex; align-items: flex-end; justify-content: space-between; opacity: 0; pointer-events: auto; }
+    .hero-bottom { position: absolute; z-index: 3; left: 48px; right: 48px; bottom: 42px; display: flex; align-items: flex-end; justify-content: space-between; opacity: 0; }
     .hero-social { display: flex; align-items: center; gap: 22px; }
     .hero-social a { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; transition: color 220ms ease; }
     .hero-social a:hover { color: var(--accent-bright); }
@@ -195,16 +194,16 @@
     @media (max-width: 900px) { .cta-grid { grid-template-columns: 1fr; } }
     @media (max-width: 640px) { .cta-card { padding: 32px 24px; } }
 
-    .skills-strip { overflow: hidden; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: rgba(17,17,17,0.78); content-visibility: auto; contain-intrinsic-size: 360px; pointer-events: none; }
-    .skills-inner { padding: 100px 0; pointer-events: auto; }
+    .skills-strip { overflow: hidden; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: rgba(17,17,17,0.78); content-visibility: auto; contain-intrinsic-size: 360px; }
+    .skills-inner { padding: 100px 0; }
     .skills-bio { width: min(1000px, calc(100% - 48px)); margin: 0 auto 52px; color: var(--text-primary); font-family: var(--font-display); font-size: clamp(1.8rem, 4vw, 3.5rem); font-style: italic; font-weight: 400; line-height: 1.2; text-align: center; }
     .ticker { display: flex; width: max-content; gap: 28px; animation: tickerMove 42s linear infinite; will-change: transform; }
     .ticker-item { display: inline-flex; align-items: center; gap: 28px; color: var(--text-muted); font-size: clamp(1rem, 2vw, 1.35rem); white-space: nowrap; }
     .ticker-item::after { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); opacity: 0.7; }
     @keyframes tickerMove { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-    .contact-frame { min-height: 86vh; display: grid; align-items: center; border-top: 1px solid var(--border); content-visibility: auto; contain-intrinsic-size: 760px; background: rgba(10,10,10,0.72); pointer-events: none; }
-    .contact-inner { width: min(1200px, calc(100% - 48px)); margin: 0 auto; padding: 160px 0 64px; text-align: center; pointer-events: auto; }
+    .contact-frame { min-height: 86vh; display: grid; align-items: center; border-top: 1px solid var(--border); content-visibility: auto; contain-intrinsic-size: 760px; background: rgba(10,10,10,0.72); }
+    .contact-inner { width: min(1200px, calc(100% - 48px)); margin: 0 auto; padding: 160px 0 64px; text-align: center; }
     .contact-heading { margin: 0 0 48px; font-family: var(--font-display); font-size: clamp(4rem, 12vw, 10rem); font-weight: 400; line-height: 0.9; }
     .contact-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 26px; }
     .contact-link { display: inline-flex; align-items: center; gap: 9px; color: var(--text-muted); font-size: 0.9rem; font-weight: 500; transition: color 220ms ease; }
@@ -245,15 +244,19 @@
 
     /* ── P1: Neural graph background ── */
     .hero-bg-graph { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
-    .hero-bg-graph svg { pointer-events: auto; }
-    .hero-bg-graph .soma { fill: rgba(200,184,154,0.18); stroke: none; cursor: pointer; }
-    .hero-bg-graph .soma:hover { fill: rgba(200,184,154,0.35); }
-    .hero-bg-graph .nucleus { fill: rgba(200,184,154,0.28); }
-    .hero-bg-graph .dend-tree { stroke: rgba(200,184,154,0.18); stroke-width: 1; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .hero-bg-graph .soma { fill: rgba(200,184,154,0.18); stroke: rgba(200,184,154,0); stroke-width: 0; transition: none; }
+    .hero-bg-graph .nucleus { fill: rgba(200,184,154,0.25); }
+    .hero-bg-graph .dend-tree { fill: none; stroke: rgba(200,184,154,0.18); stroke-width: 1; stroke-linecap: round; stroke-linejoin: round; }
     .hero-bg-graph .hillock { stroke: rgba(200,184,154,0.22); stroke-width: 2.2; fill: none; stroke-linecap: round; }
     .hero-bg-graph .axon { stroke: rgba(200,184,154,0.16); stroke-width: 1; fill: none; stroke-linecap: round; }
-    .hero-bg-graph .bouton { fill: rgba(200,184,154,0.2); }
-    .hero-bg-graph .axon-conn { stroke: rgba(200,184,154,1); stroke-width: 0.5; fill: none; opacity: 0.12; }
+    .hero-bg-graph .bouton { fill: rgba(200,184,154,0.20); }
+    .hero-bg-graph .axon-conn { stroke: rgba(200,184,154,0.07); stroke-width: 0.5; fill: none; opacity: 0.12; stroke-dasharray: 3 5; }
+    .hero-bg-graph .ap-pulse { fill: rgba(255,245,220,0.9); pointer-events: none; display: none; }
+    .hero-bg-graph .neuron-label { display: none; }
+    .hero-bg-graph g[data-type="I"] .soma { fill: rgba(126,184,192,0.15); }
+    .hero-bg-graph g[data-type="I"] .dend-tree { stroke: rgba(126,184,192,0.15); }
+    .hero-bg-graph g[data-type="I"] .axon { stroke: rgba(126,184,192,0.12); }
+    .hero-bg-graph g[data-type="I"] .bouton { fill: rgba(126,184,192,0.15); }
 
     /* ── P1: Hero avatar ── */
     .hero-avatar { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border); overflow: hidden; background: var(--surface); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 0.85rem; color: var(--text-muted); margin-right: 16px; flex-shrink: 0; }
@@ -838,235 +841,296 @@
         const MAX_DIST = 300;
         const CONNECT_PROB = 0.15;
 
-        // ── Draw a recursive dendrite branch as an SVG path string ──
-        // origin: [x,y], angle: radians, length, depth (0=tip)
+        // Handle window resize
+        function handleResize() {
+          const newW = window.innerWidth, newH = window.innerHeight;
+          svg.setAttribute("viewBox", `0 0 ${newW} ${newH}`);
+          svg.setAttribute("width", newW);
+          svg.setAttribute("height", newH);
+        }
+        window.addEventListener("resize", handleResize);
+
+        // Piecewise AP waveform: returns soma colour/size for given apFrame (0 = resting)
+        function apWaveform(type, apFrame) {
+          const isI = type === "I";
+          const baseR = isI ? 126 : 200, baseG = 184, baseB = isI ? 192 : 154;
+          const baseA = 0.18, baseRadius = isI ? 5 : 7;
+          if (apFrame === 0) return { r: baseR, g: baseG, b: baseB, a: baseA, radius: baseRadius };
+          let r, g, b, a, radius, t;
+          if (apFrame <= 4) {
+            t = apFrame / 4;
+            r = Math.round(baseR + t * (255 - baseR)); g = Math.round(baseG + t * (245 - baseG)); b = Math.round(baseB + t * (220 - baseB));
+            a = baseA + t * (0.75 - baseA); radius = baseRadius + t * 4;
+          } else if (apFrame <= 6) {
+            r = 255; g = 245; b = 220; a = 0.75; radius = baseRadius + 4;
+          } else if (apFrame <= 14) {
+            t = (apFrame - 6) / 8;
+            r = Math.round(255 - t * (255 - baseR)); g = Math.round(245 - t * (245 - baseG)); b = Math.round(220 - t * (220 - baseB));
+            a = 0.75 - t * (0.75 - baseA); radius = (baseRadius + 4) - t * 4;
+          } else if (apFrame <= 28) {
+            const dR = 80, dG = 100, dB = 120, dA = 0.35;
+            if (apFrame <= 21) {
+              t = (apFrame - 14) / 7;
+              r = Math.round(baseR + (dR - baseR) * t); g = Math.round(baseG + (dG - baseG) * t); b = Math.round(baseB + (dB - baseB) * t); a = baseA + (dA - baseA) * t;
+            } else {
+              t = (apFrame - 21) / 7;
+              r = Math.round(dR + (baseR - dR) * t); g = Math.round(dG + (baseG - dG) * t); b = Math.round(dB + (baseB - dB) * t); a = dA + (baseA - dA) * t;
+            }
+            radius = baseRadius;
+          } else {
+            r = baseR; g = baseG; b = baseB; a = baseA; radius = baseRadius;
+          }
+          return { r, g, b, a, radius };
+        }
+
         function dendritePath(ox, oy, angle, length, depth) {
-          const ex = ox + Math.cos(angle) * length;
-          const ey = oy + Math.sin(angle) * length;
-          // Slight curve via quadratic bezier control point
-          const cx = ox + Math.cos(angle - 0.3) * length * 0.55;
-          const cy = oy + Math.sin(angle - 0.3) * length * 0.55;
+          const ex = ox + Math.cos(angle) * length, ey = oy + Math.sin(angle) * length;
+          const cx = ox + Math.cos(angle - 0.3) * length * 0.55, cy = oy + Math.sin(angle - 0.3) * length * 0.55;
           let d = `M${ox.toFixed(1)},${oy.toFixed(1)} Q${cx.toFixed(1)},${cy.toFixed(1)} ${ex.toFixed(1)},${ey.toFixed(1)}`;
           if (depth > 0 && length > 5) {
-            const childLen = length * 0.62;
-            const spread = 0.45 + Math.random() * 0.25;
+            const childLen = length * 0.62, spread = 0.45 + Math.random() * 0.25;
             d += " " + dendritePath(ex, ey, angle - spread, childLen, depth - 1);
             d += " " + dendritePath(ex, ey, angle + spread, childLen, depth - 1);
           }
           return d;
         }
 
-        // ── Build one neuron <g> ──
-        function makeNeuron() {
+        function makeNeuron(type) {
           const g = document.createElementNS(ns, "g");
+          g.dataset.type = type;
+          const isI = type === "I";
 
-          // Soma — larger, visible cell body
           const soma = document.createElementNS(ns, "circle");
-          soma.setAttribute("r", "7");
-          soma.setAttribute("cx", "0"); soma.setAttribute("cy", "0");
-          soma.classList.add("soma");
-          g.appendChild(soma);
+          soma.setAttribute("r", isI ? "5" : "7"); soma.setAttribute("cx", "0"); soma.setAttribute("cy", "0");
+          soma.classList.add("soma"); g.appendChild(soma);
 
-          // Nucleus hint — small inner circle
           const nucleus = document.createElementNS(ns, "circle");
-          nucleus.setAttribute("r", "2.8");
-          nucleus.setAttribute("cx", "0"); nucleus.setAttribute("cy", "0");
-          nucleus.classList.add("nucleus");
-          g.appendChild(nucleus);
+          nucleus.setAttribute("r", isI ? "2" : "2.8"); nucleus.setAttribute("cx", "0"); nucleus.setAttribute("cy", "0");
+          nucleus.classList.add("nucleus"); g.appendChild(nucleus);
 
-          // Dendrite trees — 3 to 5 primary branches, each with 2 levels of sub-branches
-          const numTrees = 3 + Math.floor(Math.random() * 3);
-          for (let t = 0; t < numTrees; t++) {
-            const baseAngle = (t / numTrees) * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
-            const rootLen = 18 + Math.random() * 14;
-            const pathStr = dendritePath(0, 0, baseAngle, rootLen, 2);
+          const numTrees = isI ? (2 + Math.floor(Math.random() * 2)) : (4 + Math.floor(Math.random() * 3));
+          for (let tt = 0; tt < numTrees; tt++) {
+            const baseAngle = (tt / numTrees) * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
             const path = document.createElementNS(ns, "path");
-            path.setAttribute("d", pathStr);
-            path.classList.add("dend-tree");
-            g.appendChild(path);
+            path.setAttribute("d", dendritePath(0, 0, baseAngle, 18 + Math.random() * 14, 2));
+            path.classList.add("dend-tree"); g.appendChild(path);
           }
 
-          // Axon hillock + axon — one long tapered branch
           const axonAngle = Math.random() * Math.PI * 2;
-          const axonLen = 38 + Math.random() * 22; // 38–60px
-          const ax2 = Math.cos(axonAngle) * axonLen;
-          const ay2 = Math.sin(axonAngle) * axonLen;
-          // Hillock (thicker base segment)
+          const axonLen = isI ? (20 + Math.random() * 15) : (45 + Math.random() * 25);
+          const ax2 = Math.cos(axonAngle) * axonLen, ay2 = Math.sin(axonAngle) * axonLen;
+
           const hillock = document.createElementNS(ns, "line");
           hillock.setAttribute("x1", "0"); hillock.setAttribute("y1", "0");
-          hillock.setAttribute("x2", (Math.cos(axonAngle) * 10).toFixed(1));
-          hillock.setAttribute("y2", (Math.sin(axonAngle) * 10).toFixed(1));
-          hillock.classList.add("hillock");
-          g.appendChild(hillock);
-          // Axon body
+          hillock.setAttribute("x2", (Math.cos(axonAngle) * 10).toFixed(1)); hillock.setAttribute("y2", (Math.sin(axonAngle) * 10).toFixed(1));
+          hillock.classList.add("hillock"); g.appendChild(hillock);
+
           const axon = document.createElementNS(ns, "line");
-          axon.setAttribute("x1", (Math.cos(axonAngle) * 10).toFixed(1));
-          axon.setAttribute("y1", (Math.sin(axonAngle) * 10).toFixed(1));
-          axon.setAttribute("x2", ax2.toFixed(1));
-          axon.setAttribute("y2", ay2.toFixed(1));
-          axon.classList.add("axon");
-          g.appendChild(axon);
-          // Axon terminal boutons — 2 small dots at tip
-          [-0.35, 0.35].forEach((offset) => {
-            const bx = ax2 + Math.cos(axonAngle + Math.PI / 2) * offset * 8;
-            const by = ay2 + Math.sin(axonAngle + Math.PI / 2) * offset * 8;
+          axon.setAttribute("x1", (Math.cos(axonAngle) * 10).toFixed(1)); axon.setAttribute("y1", (Math.sin(axonAngle) * 10).toFixed(1));
+          axon.setAttribute("x2", ax2.toFixed(1)); axon.setAttribute("y2", ay2.toFixed(1));
+          axon.classList.add("axon"); g.appendChild(axon);
+
+          [-0.35, 0.35].forEach((off) => {
+            const bx = ax2 + Math.cos(axonAngle + Math.PI / 2) * off * 8;
+            const by = ay2 + Math.sin(axonAngle + Math.PI / 2) * off * 8;
             const bouton = document.createElementNS(ns, "circle");
-            bouton.setAttribute("r", "1.8");
-            bouton.setAttribute("cx", bx.toFixed(1));
-            bouton.setAttribute("cy", by.toFixed(1));
-            bouton.classList.add("bouton");
-            g.appendChild(bouton);
+            bouton.setAttribute("r", "1.8"); bouton.setAttribute("cx", bx.toFixed(1)); bouton.setAttribute("cy", by.toFixed(1));
+            bouton.classList.add("bouton"); g.appendChild(bouton);
           });
 
-          return g;
+          const pulseDot = document.createElementNS(ns, "circle");
+          pulseDot.setAttribute("r", "2.5"); pulseDot.classList.add("ap-pulse"); pulseDot.style.display = "none";
+          g.appendChild(pulseDot);
+
+          return { g, axonAngle, axonLen };
         }
 
-        // ── Nodes ──
-        const nodes = Array.from({ length: NODE_COUNT }, () => ({
-          x: Math.random() * W,
-          y: Math.random() * H,
-          vx: (Math.random() - 0.5) * 0.12,
-          vy: (Math.random() - 0.5) * 0.12,
-          phase: Math.random() * Math.PI * 2,
-          fire: 0,
-          refractory: 0,
-          el: null, soma: null, nucleus: null, dends: [], hillock: null, axon: null, boutons: []
-        }));
+        const nodes = Array.from({ length: NODE_COUNT }, () => {
+          const type = Math.random() < 0.8 ? "E" : "I";
+          return {
+            x: Math.random() * W, y: Math.random() * H,
+            vx: (Math.random() - 0.5) * 0.12, vy: (Math.random() - 0.5) * 0.12,
+            phase: Math.random() * Math.PI * 2,
+            fire: 0, refractory: 0,
+            apFrame: 0, apPhase: "resting", type,
+            axonAngle: 0, axonLen: 0, pulseProgress: -1,
+            dendEpspFrame: 0, inhibitExtra: 0,
+            el: null, soma: null, nucleus: null, dends: [], hillock: null, axon: null, boutons: [], pulseDot: null
+          };
+        });
 
-        // Axon connections (long-range, behind neurons)
         const edges = [];
         for (let i = 0; i < nodes.length; i++) {
           for (let j = i + 1; j < nodes.length; j++) {
             if (Math.random() < CONNECT_PROB) {
               const l = document.createElementNS(ns, "line");
-              l.classList.add("axon-conn");
-              svg.appendChild(l);
+              l.classList.add("axon-conn"); svg.appendChild(l);
               edges.push({ i, j, el: l });
             }
           }
         }
 
-        // ── Firing — WCAG 2.3 safe: max ~1 flash/sec, slow fade, no hard strobe ──
-        const fireQueue = [];
+        const fireQueue = [], pendingFires = [];
+        let vesicleEnabled = true;
+
+        function getActiveFlashCount() {
+          let c = 0;
+          for (let i = 0; i < NODE_COUNT; i++) if (nodes[i].apFrame >= 1 && nodes[i].apFrame <= 14) c++;
+          return c;
+        }
 
         function triggerFire(idx) {
           const n = nodes[idx];
-          if (n.fire > 0.08 || n.refractory > 0) return;
-          n.fire = 1.0;
-          // Refractory: 120–200 frames (~2–3.3s at 60fps) — well under 3Hz
+          if (n.apFrame > 0 || n.refractory > 0 || n.inhibitExtra > 0) return;
+          if (getActiveFlashCount() >= 3) { pendingFires.push(idx); return; }
+          n.apFrame = 1; n.apPhase = "depolarising"; n.fire = 1.0;
           n.refractory = 120 + Math.floor(Math.random() * 80);
+          n.pulseProgress = 0;
+          if (n.pulseDot) { n.pulseDot.setAttribute("cx", "0"); n.pulseDot.setAttribute("cy", "0"); n.pulseDot.style.display = "block"; }
+        }
 
+        function spawnVesicles(n) {
+          if (!vesicleEnabled) return;
+          const wx = n.x + Math.cos(n.axonAngle) * n.axonLen;
+          const wy = n.y + Math.sin(n.axonAngle) * n.axonLen;
+          for (let vi = 0; vi < 3; vi++) {
+            const ang = (vi / 3) * Math.PI * 2;
+            const vc = document.createElementNS(ns, "circle");
+            vc.setAttribute("r", "1"); vc.setAttribute("cx", wx.toFixed(1)); vc.setAttribute("cy", wy.toFixed(1));
+            vc.style.pointerEvents = "none"; svg.appendChild(vc);
+            let vf = 0;
+            const animV = () => {
+              vf++;
+              vc.setAttribute("cx", (wx + Math.cos(ang) * (vf / 12) * 8).toFixed(1));
+              vc.setAttribute("cy", (wy + Math.sin(ang) * (vf / 12) * 8).toFixed(1));
+              const op = vf < 6 ? (vf / 6) * 0.8 : (1 - (vf - 6) / 6) * 0.8;
+              vc.setAttribute("fill", n.type === "I" ? `rgba(126,184,192,${Math.max(0, op).toFixed(2)})` : `rgba(255,245,220,${Math.max(0, op).toFixed(2)})`);
+              if (vf < 12) requestAnimationFrame(animV);
+              else if (vc.parentNode) svg.removeChild(vc);
+            };
+            requestAnimationFrame(animV);
+          }
+        }
+
+        function queueNeighbourFires(idx) {
+          const n = nodes[idx];
           edges.forEach(({ i, j }) => {
             const nb = i === idx ? j : j === idx ? i : -1;
             if (nb === -1) return;
             const dx = nodes[nb].x - n.x, dy = nodes[nb].y - n.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
             if (dist < MAX_DIST && Math.random() < 0.38) {
-              fireQueue.push({ idx: nb, delay: Math.round(14 + (dist / MAX_DIST) * 28) });
+              if (n.type === "I") {
+                nodes[nb].inhibitExtra = Math.max(nodes[nb].inhibitExtra, 40);
+              } else {
+                nodes[nb].dendEpspFrame = 8;
+                fireQueue.push({ idx: nb, delay: Math.round(14 + (dist / MAX_DIST) * 28) });
+              }
             }
           });
         }
 
-        // Neuron groups (on top of connections)
         nodes.forEach((n, idx) => {
-          const g = makeNeuron();
+          const { g, axonAngle, axonLen } = makeNeuron(n.type);
           svg.appendChild(g);
-          n.el = g;
+          n.el = g; n.axonAngle = axonAngle; n.axonLen = axonLen;
           n.soma    = g.querySelector(".soma");
           n.nucleus = g.querySelector(".nucleus");
           n.dends   = Array.from(g.querySelectorAll(".dend-tree"));
           n.hillock = g.querySelector(".hillock");
           n.axon    = g.querySelector(".axon");
           n.boutons = Array.from(g.querySelectorAll(".bouton"));
-
-          // Make neurons interactive — click/touch to fire
-          g.style.cursor = "pointer";
-          g.style.pointerEvents = "auto";
-          const fireOnClick = (e) => {
-            e.stopPropagation();
-            triggerFire(idx);
-          };
-          g.addEventListener("click", fireOnClick);
-          g.addEventListener("touchstart", fireOnClick, { passive: true });
+          n.pulseDot = g.querySelector(".ap-pulse");
         });
 
         if (reducedMotion) {
-          nodes.forEach((n) => {
-            if (n.el) n.el.setAttribute("transform", `translate(${n.x.toFixed(1)},${n.y.toFixed(1)})`);
-          });
+          nodes.forEach((n) => { if (n.el) n.el.setAttribute("transform", `translate(${n.x.toFixed(1)},${n.y.toFixed(1)})`); });
           return;
         }
 
-        function tick(t) {
-          for (let k = fireQueue.length - 1; k >= 0; k--) {
-            if (--fireQueue[k].delay <= 0) {
-              triggerFire(fireQueue[k].idx);
-              fireQueue.splice(k, 1);
-            }
-          }
+        let lastTs = 0, slowCount = 0;
 
-          // Spontaneous: ~1–2 neurons fire per second total across the graph
+        function tick(t) {
+          if (lastTs > 0 && t - lastTs > 33.3) {
+            if (++slowCount > 10) { vesicleEnabled = false; }
+          } else { slowCount = 0; }
+          lastTs = t;
+
+          for (let k = fireQueue.length - 1; k >= 0; k--) {
+            if (--fireQueue[k].delay <= 0) { triggerFire(fireQueue[k].idx); fireQueue.splice(k, 1); }
+          }
+          if (pendingFires.length > 0 && getActiveFlashCount() < 3) triggerFire(pendingFires.shift());
+
+          const osc = 1 + 0.6 * Math.sin(t * 0.00018);
+          let firedThisFrame = 0;
           nodes.forEach((n, i) => {
-            if (n.refractory === 0 && n.fire < 0.05 && Math.random() < 0.00055) {
-              triggerFire(i);
-            }
+            if (n.refractory > 0 || n.apFrame > 0 || n.inhibitExtra > 0) return;
+            const baseFire = n.type === "I" ? 0.00110 : 0.00040;
+            if (Math.random() < baseFire * osc && firedThisFrame < 3) { triggerFire(i); firedThisFrame++; }
           });
 
-          nodes.forEach((n) => {
+          nodes.forEach((n, i) => {
             n.x += n.vx + Math.sin(t * 0.0004 + n.phase) * 0.08;
             n.y += n.vy + Math.cos(t * 0.0004 + n.phase) * 0.08;
             if (n.x < 0 || n.x > W) n.vx *= -1;
             if (n.y < 0 || n.y > H) n.vy *= -1;
-            n.x = Math.max(0, Math.min(W, n.x));
-            n.y = Math.max(0, Math.min(H, n.y));
+            n.x = Math.max(0, Math.min(W, n.x)); n.y = Math.max(0, Math.min(H, n.y));
 
-            // Slow smooth decay — never a hard cut
-            if (n.fire > 0) n.fire = Math.max(0, n.fire - 0.016);
+            if (n.apFrame > 0) {
+              n.apFrame++;
+              n.fire = n.apFrame <= 4 ? n.apFrame / 4 : n.apFrame <= 6 ? 1.0 : n.apFrame <= 14 ? 1 - (n.apFrame - 6) / 8 : 0;
+              if (n.apFrame > 80) { n.apFrame = 0; n.apPhase = "resting"; n.fire = 0; if (n.pulseDot) n.pulseDot.style.display = "none"; }
+            }
+
+            if (n.pulseProgress >= 0 && n.pulseProgress < 1) {
+              n.pulseProgress = Math.min(1, n.pulseProgress + 4 / n.axonLen);
+              if (n.pulseDot) {
+                n.pulseDot.setAttribute("cx", (Math.cos(n.axonAngle) * n.axonLen * n.pulseProgress).toFixed(1));
+                n.pulseDot.setAttribute("cy", (Math.sin(n.axonAngle) * n.axonLen * n.pulseProgress).toFixed(1));
+              }
+              if (n.pulseProgress >= 1) {
+                n.pulseProgress = -1;
+                if (n.pulseDot) n.pulseDot.style.display = "none";
+                spawnVesicles(n); queueNeighbourFires(i);
+              }
+            }
+
             if (n.refractory > 0) n.refractory--;
+            if (n.inhibitExtra > 0) n.inhibitExtra--;
+            if (n.dendEpspFrame > 0) n.dendEpspFrame--;
 
             if (!n.el) return;
             n.el.setAttribute("transform", `translate(${n.x.toFixed(1)},${n.y.toFixed(1)})`);
 
-            const f = n.fire;
-            const rc = Math.round(200 + f * 55);
-            const gc = Math.round(184 + f * 71);
-            const bc = Math.round(154 + f * 101);
+            const { r, g: gc, b, a, radius } = apWaveform(n.type, n.apFrame);
 
-            // Soma
             if (n.soma) {
-              n.soma.setAttribute("fill", `rgba(${rc},${gc},${bc},${(0.18 + f * 0.65).toFixed(3)})`);
-              n.soma.setAttribute("r", (7 + f * 3.5).toFixed(2));
-              n.soma.setAttribute("stroke", `rgba(${rc},${gc},${bc},${(f * 0.4).toFixed(3)})`);
-              n.soma.setAttribute("stroke-width", (f * 6).toFixed(1));
+              n.soma.setAttribute("fill", `rgba(${r},${gc},${b},${a.toFixed(3)})`);
+              n.soma.setAttribute("r", radius.toFixed(2));
+              n.soma.setAttribute("stroke", `rgba(${r},${gc},${b},${(n.fire * 0.4).toFixed(3)})`);
+              n.soma.setAttribute("stroke-width", (n.fire * 6).toFixed(1));
             }
-            // Nucleus
-            if (n.nucleus) {
-              n.nucleus.setAttribute("fill", `rgba(${rc},${gc},${bc},${(0.25 + f * 0.5).toFixed(3)})`);
-            }
-            // Dendrite trees
-            const dAlpha = (0.18 + f * 0.55).toFixed(3);
+            if (n.nucleus) n.nucleus.setAttribute("fill", `rgba(${r},${gc},${b},${Math.min(0.75, a + 0.07).toFixed(3)})`);
+
+            const epf = n.dendEpspFrame / 8;
             n.dends.forEach((d) => {
-              d.setAttribute("stroke", `rgba(${rc},${gc},${bc},${dAlpha})`);
-              d.setAttribute("stroke-width", (1.0 + f * 1.2).toFixed(2));
+              d.setAttribute("stroke", `rgba(${r},${gc},${b},${(0.18 + n.fire * 0.55 + epf * 0.37).toFixed(3)})`);
+              d.setAttribute("stroke-width", (1.0 + n.fire * 1.2 + epf * 0.5).toFixed(2));
             });
-            // Hillock
             if (n.hillock) {
-              n.hillock.setAttribute("stroke", `rgba(${rc},${gc},${bc},${(0.22 + f * 0.6).toFixed(3)})`);
-              n.hillock.setAttribute("stroke-width", (2.2 + f * 1.5).toFixed(2));
+              n.hillock.setAttribute("stroke", `rgba(${r},${gc},${b},${(0.22 + n.fire * 0.6).toFixed(3)})`);
+              n.hillock.setAttribute("stroke-width", (2.2 + n.fire * 1.5).toFixed(2));
             }
-            // Axon
             if (n.axon) {
-              n.axon.setAttribute("stroke", `rgba(${rc},${gc},${bc},${(0.16 + f * 0.55).toFixed(3)})`);
-              n.axon.setAttribute("stroke-width", (1.0 + f * 1.0).toFixed(2));
+              n.axon.setAttribute("stroke", `rgba(${r},${gc},${b},${(0.16 + n.fire * 0.55).toFixed(3)})`);
+              n.axon.setAttribute("stroke-width", (1.0 + n.fire * 1.0).toFixed(2));
             }
-            // Boutons
-            n.boutons.forEach((b) => {
-              b.setAttribute("fill", `rgba(${rc},${gc},${bc},${(0.2 + f * 0.65).toFixed(3)})`);
-              b.setAttribute("r", (1.8 + f * 1.4).toFixed(2));
+            n.boutons.forEach((bEl) => {
+              bEl.setAttribute("fill", `rgba(${r},${gc},${b},${(0.2 + n.fire * 0.65).toFixed(3)})`);
+              bEl.setAttribute("r", (1.8 + n.fire * 1.4).toFixed(2));
             });
           });
 
-          // Long-range axon connections
           edges.forEach(({ i, j, el }) => {
             const dx = nodes[j].x - nodes[i].x, dy = nodes[j].y - nodes[i].y;
             const dist = Math.sqrt(dx * dx + dy * dy);
