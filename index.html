@@ -204,10 +204,15 @@
 
     .contact-frame { min-height: 86vh; display: grid; align-items: center; border-top: 1px solid var(--border); content-visibility: auto; contain-intrinsic-size: 760px; background: rgba(10,10,10,0.72); }
     .contact-inner { width: min(1200px, calc(100% - 48px)); margin: 0 auto; padding: 160px 0 64px; text-align: center; }
-    .contact-heading { margin: 0 0 48px; font-family: var(--font-display); font-size: clamp(4rem, 12vw, 10rem); font-weight: 400; line-height: 0.9; }
-    .contact-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 26px; }
-    .contact-link { display: inline-flex; align-items: center; gap: 9px; color: var(--text-muted); font-size: 0.9rem; font-weight: 500; transition: color 220ms ease; }
-    .contact-link:hover { color: var(--accent-bright); }
+    .contact-heading { margin: 0 0 24px; font-family: var(--font-display); font-size: clamp(3rem, 10vw, 6rem); font-weight: 400; line-height: 0.9; }
+    .contact-subtitle { margin: 0 0 48px; color: var(--text-muted); font-size: 1.1rem; max-width: 500px; margin-left: auto; margin-right: auto; }
+    .contact-email { display: inline-flex; align-items: center; gap: 12px; padding: 16px 32px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 1.1rem; font-weight: 500; transition: all 250ms ease; margin-bottom: 32px; }
+    .contact-email:hover { background: var(--border); border-color: var(--accent); transform: translateY(-2px); }
+    .contact-email svg { width: 20px; height: 20px; }
+    .contact-icons { display: flex; justify-content: center; gap: 20px; }
+    .contact-icon { display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; background: var(--surface); border: 1px solid var(--border); border-radius: 50%; color: var(--text-muted); transition: all 250ms ease; }
+    .contact-icon:hover { background: var(--border); border-color: var(--accent); color: var(--text-primary); transform: translateY(-2px); }
+    .contact-icon svg { width: 22px; height: 22px; }
     .footer { display: flex; justify-content: space-between; gap: 24px; margin-top: 126px; color: var(--text-muted); font-size: 0.74rem; letter-spacing: 0.12em; text-transform: uppercase; }
 
     .reveal, .section-frame, .skills-strip, .contact-frame { opacity: 0; transform: translateY(40px); }
@@ -263,10 +268,14 @@
     .hero-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
     /* ── P2: Card overlay ── */
-    .card-overlay { position: absolute; inset: 0; z-index: 3; background: rgba(10,10,10,0.82); display: flex; flex-direction: column; justify-content: center; padding: 24px; opacity: 0; transition: opacity 300ms ease; }
+    .card-overlay { position: absolute; inset: 0; z-index: 3; background: rgba(10,10,10,0.92); display: flex; flex-direction: column; justify-content: center; padding: 28px; opacity: 0; transition: opacity 300ms ease; }
     .work-card:hover .card-overlay { opacity: 1; }
-    .card-overlay p { margin: 0 0 8px; font-size: 0.8rem; line-height: 1.6; }
-    .card-overlay p:last-child { margin-bottom: 0; }
+    .card-overlay-label { margin: 0 0 12px; color: var(--accent); font-size: 0.65rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; }
+    .card-overlay-title { margin: 0 0 16px; color: var(--text-primary); font-size: 1.1rem; font-weight: 500; line-height: 1.3; }
+    .card-overlay ul { margin: 0; padding: 0; list-style: none; }
+    .card-overlay li { position: relative; margin: 0 0 10px; padding-left: 16px; color: var(--text-muted); font-size: 0.85rem; line-height: 1.5; }
+    .card-overlay li::before { content: ""; position: absolute; left: 0; top: 8px; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+    .card-overlay li:last-child { margin-bottom: 0; }
 
     /* ── P2: Per-card accent ── */
     [data-accent="cool"] { --card-accent: #7eb8c0; }
@@ -294,12 +303,13 @@
 
     /* ── P5: Skills bento ── */
     .skills-bento { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; background: var(--border); width: min(1000px, calc(100% - 48px)); margin: 0 auto; }
-    .skills-tile { background: var(--surface); padding: 28px 24px; transition: background 250ms ease; }
+    .skills-tile { background: var(--surface); padding: 28px 24px; transition: all 250ms ease; }
     .skills-tile--wide { grid-column: span 2; }
-    .skills-tile:hover { background: #1a1a1a; }
-    .tile-label { margin: 0 0 8px; color: var(--accent); font-size: 0.68rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; }
-    .tile-cluster { margin: 0 0 10px; color: var(--text-primary); font-size: 0.88rem; font-weight: 500; line-height: 1.5; }
-    .tile-outcome { margin: 0; color: var(--text-muted); font-size: 0.75rem; line-height: 1.5; }
+    .skills-tile:hover { background: #1a1a1a; transform: translateY(-2px); }
+    .tile-label { margin: 0 0 12px; color: var(--accent); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+    .tile-label::before { content: ""; width: 8px; height: 8px; border-radius: 2px; background: var(--accent); }
+    .tile-cluster { margin: 0 0 12px; color: var(--text-primary); font-size: 0.92rem; font-weight: 500; line-height: 1.6; }
+    .tile-outcome { margin: 0; color: var(--text-muted); font-size: 0.78rem; line-height: 1.5; }
     @media (max-width: 900px) { .skills-bento { grid-template-columns: repeat(2, 1fr); } .skills-tile--wide { grid-column: span 2; } }
     @media (max-width: 480px) { .skills-bento { grid-template-columns: 1fr; } .skills-tile--wide { grid-column: span 1; } }
 
@@ -453,9 +463,13 @@
               </svg>
               <span class="metric-badge">Avg AUROC 0.984</span>
               <div class="card-overlay">
-                <p>Ensemble ML across 3,393 M. tuberculosis isolates</p>
-                <p>Average AUROC 0.984 across 12 drugs, first and second line</p>
-                <p>WGS variant calling + XGBoost feature importance</p>
+                <p class="card-overlay-label">Impact & Results</p>
+                <h3 class="card-overlay-title">TB Drug Resistance Prediction</h3>
+                <ul>
+                  <li>Ensemble ML across 3,393 M. tuberculosis isolates</li>
+                  <li>Average AUROC 0.984 across 12 drugs, first and second line</li>
+                  <li>WGS variant calling + XGBoost feature importance</li>
+                </ul>
               </div>
             </div>
             <div class="card-body">
@@ -477,9 +491,13 @@
               </div>
               <span class="metric-badge">CLS 0.803</span>
               <div class="card-overlay">
-                <p>Protein language model embeddings (ESM-2) + structural features</p>
-                <p>Predicting RT activity for prime editing applications</p>
-                <p>Concordance index 0.803 on held-out test set</p>
+                <p class="card-overlay-label">Impact & Results</p>
+                <h3 class="card-overlay-title">RT Activity Prediction</h3>
+                <ul>
+                  <li>Protein language model embeddings (ESM-2) + structural features</li>
+                  <li>Predicting RT activity for prime editing applications</li>
+                  <li>Concordance index 0.803 on held-out test set</li>
+                </ul>
               </div>
             </div>
             <div class="card-body">
@@ -590,9 +608,13 @@
               </svg>
               <span class="metric-badge">AUC 0.72</span>
               <div class="card-overlay">
-                <p>Ensemble ML for schizophrenia &amp; Parkinson's detection</p>
-                <p>Functional connectivity from resting-state fMRI, 326 subjects</p>
-                <p>DMN hypoconnectivity as disease biomarker</p>
+                <p class="card-overlay-label">Impact & Results</p>
+                <h3 class="card-overlay-title">fMRI Biomarker Detection</h3>
+                <ul>
+                  <li>Ensemble ML for schizophrenia &amp; Parkinson's detection</li>
+                  <li>Functional connectivity from resting-state fMRI, 326 subjects</li>
+                  <li>DMN hypoconnectivity as disease biomarker</li>
+                </ul>
               </div>
             </div>
             <div class="card-body">
@@ -611,9 +633,13 @@
             <div class="project-image depth-3" data-depth="3">
               <img src="https://yatinaz.github.io/assets/eeg_preview.png" alt="EEG motor imagery topomap and classification results" loading="lazy" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">
               <div class="card-overlay">
-                <p>Motor imagery classification across 10 subjects</p>
-                <p>ICA artefact removal + CSP + Riemannian geometry</p>
-                <p>End-to-end BCI pipeline on PhysioNet EEGBCI</p>
+                <p class="card-overlay-label">Impact & Results</p>
+                <h3 class="card-overlay-title">EEG Motor Imagery Classification</h3>
+                <ul>
+                  <li>Motor imagery classification across 10 subjects</li>
+                  <li>ICA artefact removal + CSP + Riemannian geometry</li>
+                  <li>End-to-end BCI pipeline on PhysioNet EEGBCI</li>
+                </ul>
               </div>
             </div>
             <div class="card-body">
@@ -806,10 +832,24 @@
       <div class="contact-inner depth-4" data-depth="4">
         <p class="section-label reveal" style="text-align:center;margin-bottom:32px;"><span class="section-num">05 /</span>CONTACT</p>
         <h2 class="contact-heading reveal">Let's connect.</h2>
-        <div class="contact-links reveal">
-          <a class="contact-link text-link" href="mailto:yatinazadk1@gmail.com">yatinazadk1@gmail.com</a>
-          <a class="contact-link text-link" href="https://github.com/yatinaz" target="_blank" rel="noopener">GitHub</a>
-          <a class="contact-link text-link" href="https://linkedin.com/in/yatin-azad" target="_blank" rel="noopener">LinkedIn</a>
+        <p class="contact-subtitle reveal">Open to discussions on computational biology, ML for health, and cognitive science.</p>
+        <a class="contact-email reveal" href="mailto:yatinazadk1@gmail.com">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+          yatinazadk1@gmail.com
+        </a>
+        <div class="contact-icons reveal">
+          <a class="contact-icon" href="https://github.com/yatinaz" target="_blank" rel="noopener" aria-label="GitHub">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+          </a>
+          <a class="contact-icon" href="https://linkedin.com/in/yatin-azad" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+          </a>
         </div>
         <footer class="footer"><span>Yatin Azad &middot; 2026</span><span>Computational Biologist &middot; ML Scientist</span></footer>
       </div>
