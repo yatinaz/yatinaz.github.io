@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scientific RAG Pipeline — Yatin Azad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#FAFAF9;--surface:#fff;--border:#E5E2DC;
+  --accent:#1D4ED8;--text:#111827;--text-muted:#6B7280;--text-light:#9CA3AF;
+  --badge-bg:#EFF6FF;--badge-text:#1D4ED8;
+  --green-bg:#F0FDF4;--green-text:#15803D;
+}
+html{font-size:16px}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+.container{max-width:800px;margin:0 auto;padding:0 24px}
+.back-nav{padding:24px 0 0}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:0.875rem;font-weight:500;color:var(--text-muted);text-decoration:none;transition:color 0.15s}
+.back-link:hover{color:var(--accent)}
+header{padding:40px 0 32px;border-bottom:1px solid var(--border)}
+h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-0.02em;line-height:1.2;margin-bottom:10px}
+.subtitle{font-size:0.95rem;color:var(--text-muted);line-height:1.65;max-width:600px;margin-bottom:16px}
+.badge{display:inline-block;background:var(--badge-bg);color:var(--badge-text);font-size:0.75rem;font-weight:600;padding:4px 10px;border-radius:20px;font-family:'JetBrains Mono',monospace;margin-right:8px;margin-bottom:6px}
+.badge-green{background:var(--green-bg);color:var(--green-text)}
+.repo-link{display:inline-flex;align-items:center;gap:5px;margin-top:16px;font-size:0.875rem;font-weight:500;color:var(--accent);text-decoration:none}
+.repo-link:hover{text-decoration:underline}
+.section-label{font-size:0.7rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-light);margin:44px 0 20px}
+.figure-block{margin-bottom:36px}
+.figure-caption{font-size:0.85rem;color:var(--text-muted);line-height:1.6;margin-bottom:10px}
+.figure-caption strong{color:var(--text);font-weight:600}
+.figure-img{width:100%;border-radius:10px;border:1px solid var(--border);display:block}
+.divider{border:none;border-top:1px solid var(--border);margin:8px 0 36px}
+
+/* Architecture SVG container */
+.arch-wrap{border-radius:10px;border:1px solid var(--border);overflow:hidden;background:#111111;margin-bottom:10px}
+.arch-wrap svg{display:block;width:100%;height:auto}
+
+/* Metric cards */
+.metric-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:32px}
+.metric-card{flex:1;min-width:140px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 24px}
+.metric-val{font-size:2rem;font-weight:700;letter-spacing:-0.02em;font-family:'JetBrains Mono',monospace;color:var(--text)}
+.metric-label{font-size:0.78rem;color:var(--text-muted);margin-top:4px;font-weight:500;letter-spacing:0.01em}
+.metric-sub{font-size:0.72rem;color:var(--text-light);margin-top:2px;font-family:'JetBrains Mono',monospace}
+
+/* By-type breakdown table */
+.breakdown-table{width:100%;border-collapse:collapse;font-size:0.85rem;margin-bottom:32px}
+.breakdown-table th{text-align:left;font-weight:600;font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-light);padding:8px 0;border-bottom:1px solid var(--border)}
+.breakdown-table td{padding:10px 0;border-bottom:1px solid var(--border);color:var(--text-muted)}
+.breakdown-table td:first-child{color:var(--text);font-weight:500;font-family:'JetBrains Mono',monospace;font-size:0.8rem}
+.mono{font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:var(--text)}
+
+/* How it works prose */
+.prose{font-size:0.9rem;color:var(--text-muted);line-height:1.75;margin-bottom:36px}
+.prose p{margin-bottom:1em}
+.prose strong{color:var(--text);font-weight:600}
+
+/* Demo link block */
+.demo-block{border:1px solid var(--border);border-radius:10px;padding:24px;margin-bottom:36px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.demo-label{font-size:0.78rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-light);margin-bottom:4px}
+.demo-title{font-size:1rem;font-weight:600;color:var(--text)}
+.demo-desc{font-size:0.85rem;color:var(--text-muted);margin-top:4px}
+.demo-link{display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:#fff;font-size:0.85rem;font-weight:600;padding:10px 18px;border-radius:8px;text-decoration:none;white-space:nowrap;transition:opacity 0.15s}
+.demo-link:hover{opacity:0.85}
+
+footer{padding:48px 0 64px;text-align:center}
+.footer-back{font-size:0.875rem;color:var(--text-muted);text-decoration:none}
+.footer-back:hover{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="back-nav">
+    <a class="back-link" href="/">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5m7-7-7 7 7 7"/></svg>
+      Back to portfolio
+    </a>
+  </div>
+
+  <header>
+    <h1>Scientific Paper RAG Pipeline</h1>
+    <p class="subtitle">End-to-end retrieval-augmented generation over six biomedical research papers — from PDF chunking to grounded, cited answers — with a precision-evaluated retriever and an interactive Streamlit UI.</p>
+    <span class="badge badge-green">P@5 0.611</span>
+    <span class="badge badge-green">P@3 0.444</span>
+    <span class="badge">sentence-transformers · ChromaDB · Groq</span>
+    <span class="badge">18-question eval set</span>
+    <br>
+    <a class="repo-link" href="https://github.com/yatinaz/RAG_Assignment" target="_blank" rel="noopener">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+      View source on GitHub →
+    </a>
+  </header>
+
+  <!-- INTERACTIVE DEMO LINK -->
+  <p class="section-label">Interactive Demo</p>
+  <div class="demo-block">
+    <div>
+      <div class="demo-label">Live explainer</div>
+      <div class="demo-title">RAG Pipeline Visualiser</div>
+      <div class="demo-desc">Step through chunk retrieval, embedding space, and answer generation interactively.</div>
+    </div>
+    <a class="demo-link" href="../rag_viz.html" target="_blank" rel="noopener">
+      Open demo →
+    </a>
+  </div>
+
+  <!-- ARCHITECTURE -->
+  <p class="section-label">Architecture</p>
+  <div class="figure-block">
+    <div class="arch-wrap">
+      <svg viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg" aria-label="RAG pipeline architecture diagram">
+        <rect width="800" height="300" fill="#111111"/>
+
+        <!-- Top header label -->
+        <text x="400" y="18" fill="#374151" font-size="8.5" font-family="monospace" text-anchor="middle" letter-spacing="1">RAG PIPELINE · 6 papers · sentence-transformers/all-MiniLM-L6-v2 · ChromaDB · Groq llama-3.3-70b</text>
+
+        <!-- ── INGESTION ROW (top) ── -->
+        <!-- Node 1: PDFs -->
+        <rect x="30" y="48" width="110" height="64" rx="5" fill="#1a1a1a" stroke="#374151" stroke-width="1"/>
+        <text x="85" y="72" fill="#9CA3AF" font-size="9" font-family="monospace" text-anchor="middle">INPUT</text>
+        <text x="85" y="87" fill="#c8b89a" font-size="10.5" font-family="monospace" text-anchor="middle" font-weight="bold">6 PDFs</text>
+        <text x="85" y="101" fill="#4B5563" font-size="8" font-family="monospace" text-anchor="middle">biomedical papers</text>
+
+        <!-- Arrow 1→2 -->
+        <line x1="140" y1="80" x2="178" y2="80" stroke="#374151" stroke-width="1.2"/>
+        <polygon points="178,76 185,80 178,84" fill="#374151"/>
+
+        <!-- Node 2: Chunker -->
+        <rect x="185" y="48" width="120" height="64" rx="5" fill="#1a1a1a" stroke="#374151" stroke-width="1"/>
+        <text x="245" y="72" fill="#9CA3AF" font-size="9" font-family="monospace" text-anchor="middle">chunker.py</text>
+        <text x="245" y="87" fill="#c8b89a" font-size="10.5" font-family="monospace" text-anchor="middle" font-weight="bold">Chunker</text>
+        <text x="245" y="101" fill="#4B5563" font-size="8" font-family="monospace" text-anchor="middle">pdfminer · Camelot</text>
+
+        <!-- Arrow 2→3 -->
+        <line x1="305" y1="80" x2="343" y2="80" stroke="#374151" stroke-width="1.2"/>
+        <polygon points="343,76 350,80 343,84" fill="#374151"/>
+
+        <!-- Node 3: chunks.jsonl -->
+        <rect x="350" y="48" width="120" height="64" rx="5" fill="#1a1a1a" stroke="#374151" stroke-width="1"/>
+        <text x="410" y="72" fill="#9CA3AF" font-size="9" font-family="monospace" text-anchor="middle">chunks.jsonl</text>
+        <text x="410" y="87" fill="#c8b89a" font-size="10.5" font-family="monospace" text-anchor="middle" font-weight="bold">Chunks</text>
+        <text x="410" y="101" fill="#4B5563" font-size="8" font-family="monospace" text-anchor="middle">text · tables · figures</text>
+
+        <!-- Arrow 3→4 -->
+        <line x1="470" y1="80" x2="508" y2="80" stroke="#374151" stroke-width="1.2"/>
+        <polygon points="508,76 515,80 508,84" fill="#374151"/>
+
+        <!-- Node 4: Embedder -->
+        <rect x="515" y="48" width="120" height="64" rx="5" fill="#1a1a1a" stroke="#374151" stroke-width="1"/>
+        <text x="575" y="72" fill="#9CA3AF" font-size="9" font-family="monospace" text-anchor="middle">embedder.py</text>
+        <text x="575" y="87" fill="#c8b89a" font-size="10.5" font-family="monospace" text-anchor="middle" font-weight="bold">Embedder</text>
+        <text x="575" y="101" fill="#4B5563" font-size="8" font-family="monospace" text-anchor="middle">all-MiniLM-L6-v2</text>
+
+        <!-- Arrow 4→5 -->
+        <line x1="635" y1="80" x2="673" y2="80" stroke="#374151" stroke-width="1.2"/>
+        <polygon points="673,76 680,80 673,84" fill="#374151"/>
+
+        <!-- Node 5: ChromaDB -->
+        <rect x="680" y="48" width="100" height="64" rx="5" fill="#1a1a1a" stroke="#7eb8c0" stroke-width="1.5"/>
+        <text x="730" y="72" fill="#9CA3AF" font-size="9" font-family="monospace" text-anchor="middle">chroma_db/</text>
+        <text x="730" y="87" fill="#7eb8c0" font-size="10.5" font-family="monospace" text-anchor="middle" font-weight="bold">ChromaDB</text>
+        <text x="730" y="101" fill="#4B5563" font-size="8" font-family="monospace" text-anchor="middle">cosine · persist</text>
+
+        <!-- Section divider -->
+        <line x1="30" y1="132" x2="770" y2="132" stroke="#1f2937" stroke-width="1" stroke-dasharray="4 4"/>
+        <text x="400" y="142" fill="#374151" font-size="7.5" font-family="monospace" text-anchor="middle" letter-spacing="1">QUERY PATH</text>
+
+        <!-- ── QUERY ROW (bottom) ── -->
+        <!-- Node A: User Query -->
+        <rect x="30" y="158" width="110" height="64" rx="5" fill="#1a1a1a" stroke="#374151" stroke-width="1"/>
+        <text x="85" y="182" fill="#9CA3AF" font-size="9" font-family="monospace" text-anchor="middle">user input</text>
+        <text x="85" y="197" fill="#c8b89a" font-size="10.5" font-family="monospace" text-anchor="middle" font-weight="bold">Query</text>
+        <text x="85" y="211" fill="#4B5563" font-size="8" font-family="monospace" text-anchor="middle">natural language</text>
+
+        <!-- Arrow A→B -->
+        <line x1="140" y1="190" x2="178" y2="190" stroke="#374151" stroke-width="1.2"/>
+        <polygon points="178,186 185,190 178,194" fill="#374151"/>
+
+        <!-- Node B: Retriever -->
+        <rect x="185" y="158" width="120" height="64" rx="5" fill="#1a1a1a" stroke="#374151" stroke-width="1"/>
+        <text x="245" y="182" fill="#9CA3AF" font-size="9" font-family="monospace" text-anchor="middle">retriever.py</text>
+        <text x="245" y="197" fill="#c8b89a" font-size="10.5" font-family="monospace" text-anchor="middle" font-weight="bold">Retriever</text>
+        <text x="245" y="211" fill="#4B5563" font-size="8" font-family="monospace" text-anchor="middle">embed → cosine top-k</text>
+
+        <!-- ChromaDB → Retriever (vertical from ChromaDB down) -->
+        <line x1="730" y1="112" x2="730" y2="175" stroke="#7eb8c0" stroke-width="1" stroke-dasharray="3 3" opacity="0.6"/>
+        <line x1="730" y1="175" x2="312" y2="175" stroke="#7eb8c0" stroke-width="1" stroke-dasharray="3 3" opacity="0.6"/>
+        <line x1="312" y1="175" x2="312" y2="190" stroke="#7eb8c0" stroke-width="1" stroke-dasharray="3 3" opacity="0.6"/>
+        <polygon points="308,190 312,197 316,190" fill="#7eb8c0" opacity="0.6"/>
+
+        <!-- Arrow B→C -->
+        <line x1="305" y1="190" x2="343" y2="190" stroke="#374151" stroke-width="1.2"/>
+        <polygon points="343,186 350,190 343,194" fill="#374151"/>
+
+        <!-- Node C: Top-k Chunks -->
+        <rect x="350" y="158" width="120" height="64" rx="5" fill="#1a1a1a" stroke="#374151" stroke-width="1"/>
+        <text x="410" y="182" fill="#9CA3AF" font-size="9" font-family="monospace" text-anchor="middle">ranked results</text>
+        <text x="410" y="197" fill="#c8b89a" font-size="10.5" font-family="monospace" text-anchor="middle" font-weight="bold">Top-k Chunks</text>
+        <text x="410" y="211" fill="#4B5563" font-size="8" font-family="monospace" text-anchor="middle">k=3 or k=5</text>
+
+        <!-- Arrow C→D -->
+        <line x1="470" y1="190" x2="508" y2="190" stroke="#374151" stroke-width="1.2"/>
+        <polygon points="508,186 515,190 508,194" fill="#374151"/>
+
+        <!-- Node D: Generator / Groq -->
+        <rect x="515" y="158" width="120" height="64" rx="5" fill="#1a1a1a" stroke="#c8b89a" stroke-width="1.5"/>
+        <text x="575" y="182" fill="#9CA3AF" font-size="9" font-family="monospace" text-anchor="middle">generator.py · Groq</text>
+        <text x="575" y="197" fill="#c8b89a" font-size="10.5" font-family="monospace" text-anchor="middle" font-weight="bold">LLM</text>
+        <text x="575" y="211" fill="#4B5563" font-size="8" font-family="monospace" text-anchor="middle">llama-3.3-70b</text>
+
+        <!-- Arrow D→E -->
+        <line x1="635" y1="190" x2="673" y2="190" stroke="#374151" stroke-width="1.2"/>
+        <polygon points="673,186 680,190 673,194" fill="#374151"/>
+
+        <!-- Node E: Answer -->
+        <rect x="680" y="158" width="100" height="64" rx="5" fill="#1a1a1a" stroke="#c8b89a" stroke-width="1.5"/>
+        <text x="730" y="182" fill="#9CA3AF" font-size="9" font-family="monospace" text-anchor="middle">Streamlit UI</text>
+        <text x="730" y="197" fill="#c8b89a" font-size="10.5" font-family="monospace" text-anchor="middle" font-weight="bold">Answer</text>
+        <text x="730" y="211" fill="#4B5563" font-size="8" font-family="monospace" text-anchor="middle">cited · grounded</text>
+
+        <!-- Bottom legend -->
+        <rect x="180" y="252" width="10" height="10" fill="none" stroke="#7eb8c0" stroke-width="1.5" rx="1"/>
+        <text x="196" y="261" fill="#4B5563" font-size="8" font-family="monospace">vector index path</text>
+        <rect x="330" y="252" width="10" height="10" fill="none" stroke="#c8b89a" stroke-width="1.5" rx="1"/>
+        <text x="346" y="261" fill="#4B5563" font-size="8" font-family="monospace">generation path</text>
+        <text x="400" y="282" fill="#374151" font-size="7.5" font-family="monospace" text-anchor="middle">persistent chroma_db/ · cosine similarity space · 384-dim embeddings</text>
+      </svg>
+    </div>
+    <p class="figure-caption"><strong>End-to-end RAG pipeline.</strong> Ingestion (top row): PDFs are parsed with pdfminer and Camelot, split into typed chunks, embedded with all-MiniLM-L6-v2, and stored in a persistent ChromaDB collection. Query path (bottom row): a user question is embedded and matched against the index; the top-k chunks are passed to Groq's llama-3.3-70b for grounded answer generation with inline citations.</p>
+  </div>
+  <hr class="divider">
+
+  <!-- METRICS -->
+  <p class="section-label">Retrieval Evaluation</p>
+  <div class="metric-row">
+    <div class="metric-card">
+      <div class="metric-val">0.444</div>
+      <div class="metric-label">Precision@3</div>
+      <div class="metric-sub">8 / 18 questions</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val">0.611</div>
+      <div class="metric-label">Precision@5</div>
+      <div class="metric-sub">11 / 18 questions</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val">18</div>
+      <div class="metric-label">Eval questions</div>
+      <div class="metric-sub">3 per paper · audited</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val">6</div>
+      <div class="metric-label">Source papers</div>
+      <div class="metric-sub">biomedical / genomics</div>
+    </div>
+  </div>
+
+  <table class="breakdown-table">
+    <thead>
+      <tr>
+        <th>Question type</th>
+        <th>P@3</th>
+        <th>P@5</th>
+        <th>n</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>factual</td>
+        <td><span class="mono">0.545</span></td>
+        <td><span class="mono">0.636</span></td>
+        <td>11</td>
+      </tr>
+      <tr>
+        <td>comparative</td>
+        <td><span class="mono">0.286</span></td>
+        <td><span class="mono">0.571</span></td>
+        <td>7</td>
+      </tr>
+    </tbody>
+  </table>
+  <hr class="divider">
+
+  <!-- HOW IT WORKS -->
+  <p class="section-label">Design Decisions</p>
+  <div class="prose">
+    <p><strong>Chunking strategy.</strong> PDFs are parsed with pdfminer for text and Camelot for tables, then split into typed chunks (text, table, figure) with overlap-free boundaries at detected section headings. A garble filter discards chunks whose space-to-character ratio exceeds a threshold — this eliminates corrupted figure captions and ligature-encoded garbage that would poison the retrieval index. Chunks below 30 tokens are dropped; chunks above 512 tokens are split at sentence boundaries.</p>
+    <p><strong>Embedding model choice.</strong> all-MiniLM-L6-v2 (384 dimensions) was chosen over larger models for speed and memory footprint — the full corpus embeds in under 30 seconds on CPU. ChromaDB uses cosine similarity in a persistent on-disk collection so the embedding step runs once; subsequent queries hit only the index.</p>
+    <p><strong>Eval set construction.</strong> An initial set of 23 LLM-generated candidate questions was audited against strict criteria: remove exact duplicates, remove locating questions where the answer is just a filename or section name, remove metadata questions answerable without retrieval. Nine questions were dropped; four replacements were generated via Groq targeting factual and comparative types only. The final 18-question set has 3 questions per paper and excludes trivially answerable questions — making it a conservative upper bound on retrieval quality.</p>
+    <p><strong>Grounded generation.</strong> The generator constructs a context block from the top-k retrieved chunks, each prefixed with source file, section, and page range. The system prompt instructs the model to cite sources for every factual claim using the [Source N: ...] convention and to explicitly state when the context is insufficient. Temperature is set to 0.1 to minimise hallucination.</p>
+    <p><strong>P@5 vs P@3 gap.</strong> The 16.7 pp gap between P@3 (0.444) and P@5 (0.611) shows that the relevant chunk typically lands in positions 4–5 for misses — the retriever is finding the right document but not always ranking the exact chunk first. The comparative question type is harder (P@3=0.286) because comparative answers often span multiple chunks, but evaluation uses a single relevant chunk ID per question.</p>
+  </div>
+  <hr class="divider">
+
+  <!-- STACK -->
+  <p class="section-label">Stack</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:36px">
+    <span class="badge">pdfminer.six</span>
+    <span class="badge">Camelot</span>
+    <span class="badge">sentence-transformers</span>
+    <span class="badge">ChromaDB</span>
+    <span class="badge">Groq API</span>
+    <span class="badge">llama-3.3-70b-versatile</span>
+    <span class="badge">Streamlit</span>
+    <span class="badge">python-dotenv</span>
+  </div>
+
+  <footer>
+    <a class="footer-back" href="/">← Back to portfolio</a>
+  </footer>
+
+</div>
+</body>
+</html>
