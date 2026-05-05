@@ -1,0 +1,53 @@
+<svg viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg" aria-label="TB Drug Resistance Prediction thumbnail">
+  <rect width="800" height="450" fill="#ffffff"/>
+  <text x="430" y="16" fill="#9ca3af" font-size="9" font-family="monospace" text-anchor="middle">M. tuberculosis · 3,393 isolates · Whole Genome Sequencing · XGBoost ensemble</text>
+  <!-- Gridlines -->
+  <line x1="430" y1="22" x2="430" y2="408" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="3 3"/>
+  <line x1="670" y1="22" x2="670" y2="408" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="3 3"/>
+  <line x1="730" y1="22" x2="730" y2="408" stroke="#e5e7eb" stroke-width="0.8"/>
+  <!-- x-axis -->
+  <line x1="130" y1="408" x2="730" y2="408" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="130" y="422" fill="#9ca3af" font-size="9" font-family="monospace" text-anchor="middle">0.90</text>
+  <text x="430" y="422" fill="#9ca3af" font-size="9" font-family="monospace" text-anchor="middle">0.95</text>
+  <text x="670" y="422" fill="#9ca3af" font-size="9" font-family="monospace" text-anchor="middle">0.99</text>
+  <text x="730" y="422" fill="#9ca3af" font-size="9" font-family="monospace" text-anchor="middle">1.00</text>
+  <text x="430" y="440" fill="#6b7280" font-size="9" font-family="monospace" text-anchor="middle">AUROC</text>
+  <!-- First-line drugs — rich amber #C17F3C -->
+  <rect x="130" y="28" width="582" height="22" fill="#C17F3C" rx="2"/>
+  <text x="125" y="43" fill="#374151" font-size="10" font-family="monospace" text-anchor="end">RIF</text>
+  <text x="718" y="43" fill="#C17F3C" font-size="9" font-family="monospace">0.997</text>
+  <rect x="130" y="60" width="534" height="22" fill="#C17F3C" rx="2"/>
+  <text x="125" y="75" fill="#374151" font-size="10" font-family="monospace" text-anchor="end">INH</text>
+  <text x="670" y="75" fill="#C17F3C" font-size="9" font-family="monospace">0.989</text>
+  <rect x="130" y="92" width="432" height="22" fill="#C17F3C" rx="2"/>
+  <text x="125" y="107" fill="#374151" font-size="10" font-family="monospace" text-anchor="end">EMB</text>
+  <text x="568" y="107" fill="#C17F3C" font-size="9" font-family="monospace">0.972</text>
+  <rect x="130" y="124" width="366" height="22" fill="#C17F3C" rx="2"/>
+  <text x="125" y="139" fill="#374151" font-size="10" font-family="monospace" text-anchor="end">PZA</text>
+  <text x="502" y="139" fill="#C17F3C" font-size="9" font-family="monospace">0.961</text>
+  <rect x="130" y="156" width="348" height="22" fill="#C17F3C" rx="2"/>
+  <text x="125" y="171" fill="#374151" font-size="10" font-family="monospace" text-anchor="end">STR</text>
+  <text x="484" y="171" fill="#C17F3C" font-size="9" font-family="monospace">0.958</text>
+  <!-- Section divider -->
+  <line x1="115" y1="186" x2="745" y2="186" stroke="#f3f4f6" stroke-width="1"/>
+  <text x="131" y="196" fill="#9ca3af" font-size="7.5" font-family="monospace">second-line</text>
+  <!-- Second-line drugs — deep cognac #8B5E28 -->
+  <rect x="130" y="200" width="498" height="22" fill="#8B5E28" rx="2"/>
+  <text x="125" y="215" fill="#374151" font-size="10" font-family="monospace" text-anchor="end">ETH</text>
+  <text x="634" y="215" fill="#8B5E28" font-size="9" font-family="monospace">0.983</text>
+  <rect x="130" y="232" width="570" height="22" fill="#8B5E28" rx="2"/>
+  <text x="125" y="247" fill="#374151" font-size="10" font-family="monospace" text-anchor="end">KAN</text>
+  <text x="706" y="247" fill="#8B5E28" font-size="9" font-family="monospace">0.995</text>
+  <rect x="130" y="264" width="576" height="22" fill="#8B5E28" rx="2"/>
+  <text x="125" y="279" fill="#374151" font-size="10" font-family="monospace" text-anchor="end">AMK</text>
+  <text x="712" y="279" fill="#8B5E28" font-size="9" font-family="monospace">0.996</text>
+  <rect x="130" y="296" width="546" height="22" fill="#8B5E28" rx="2"/>
+  <text x="125" y="311" fill="#374151" font-size="10" font-family="monospace" text-anchor="end">CAP</text>
+  <text x="682" y="311" fill="#8B5E28" font-size="9" font-family="monospace">0.991</text>
+  <rect x="130" y="328" width="564" height="22" fill="#8B5E28" rx="2"/>
+  <text x="125" y="343" fill="#374151" font-size="10" font-family="monospace" text-anchor="end">OFX</text>
+  <text x="700" y="343" fill="#8B5E28" font-size="9" font-family="monospace">0.994</text>
+  <rect x="130" y="360" width="552" height="22" fill="#8B5E28" rx="2"/>
+  <text x="125" y="375" fill="#374151" font-size="10" font-family="monospace" text-anchor="end">MXF</text>
+  <text x="688" y="375" fill="#8B5E28" font-size="9" font-family="monospace">0.992</text>
+</svg>
