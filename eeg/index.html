@@ -269,7 +269,7 @@ footer{padding:56px 0 72px;text-align:center;border-top:1px solid var(--border);
       </span>
       <span>
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-        64ch · 10 subj  &amp;  22ch · 9 subj  &amp;  64ch · 15 subj
+        64ch · 10 subj  &amp;  22ch · 9 subj  &amp;  64ch · 52 subj
       </span>
       <span>
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
@@ -896,7 +896,7 @@ skf = <span class="fn">StratifiedKFold</span>(
     <div class="stat-card">
       <div class="stat-label">Cho2017 CSP+LDA</div>
       <div class="stat-value" id="cho-lda-acc">—</div>
-      <div class="stat-sub">64-channel · 15 subjects</div>
+      <div class="stat-sub">64-channel · 52 subjects</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Cho2017 LOSO</div>
@@ -906,7 +906,7 @@ skf = <span class="fn">StratifiedKFold</span>(
     <div class="stat-card">
       <div class="stat-label">BCI-Illiteracy Rate</div>
       <div class="stat-value" id="cho-illiteracy">—</div>
-      <div class="stat-sub">below 55% within-subj · Cho2017 (15 subj)</div>
+      <div class="stat-sub">below 55% LOSO acc · Cho2017 (52 subj)</div>
     </div>
   </div>
 
@@ -938,7 +938,7 @@ skf = <span class="fn">StratifiedKFold</span>(
       <strong>Figure 7: Cross-dataset comparison, same pipeline across three independent labs.</strong>
       Blue bars: PhysioNet EEGBCI (64 channels, research cap, 10 subjects).
       Green bars: BCI Competition IV Dataset 2a loaded via MOABB (22 channels, consumer-style cap, 9 subjects).
-      Orange bars: Cho2017 GigaDB (64 channels, BrainAmp, 15 subjects from the 52-subject cohort).
+      Orange bars: Cho2017 GigaDB (64 channels, BrainAmp, full 52-subject cohort).
       Error bars show ± 1 standard deviation across subjects. The pipeline generalises across all three
       recording setups, demonstrating hardware-agnostic performance.
     </p>
@@ -951,19 +951,19 @@ skf = <span class="fn">StratifiedKFold</span>(
     <strong>Inter-subject variability across three datasets:</strong>
     The LOSO mean on BCI-IV 2a is <span id="moabb-loso-inline">—</span>,
     <span id="physio-loso-inline">—</span> on PhysioNet, and
-    <span id="cho-loso-inline">—</span> on Cho2017 (15 subjects).
+    <span id="cho-loso-inline">—</span> on Cho2017 (52 subjects).
     The 3 below-chance subjects on PhysioNet (S3, S6, S9) are consistent
     with published BCI-illiteracy rates (~15–30% of the population).
-    <strong>The Cho2017 dataset (52 subjects) provides the statistical power to
+    <strong>The full Cho2017 cohort (52 subjects) provides the statistical power to
     estimate this rate with confidence intervals</strong>, which is the critical metric
     for any consumer headset company evaluating "what fraction of customers will this work for?"
-    The full 52-subject dataset is available; this analysis uses 15 for pipeline efficiency.
+    Empirically, <span class="cho-illiteracy-inline">21.2%</span> of subjects fell below the 55% accuracy threshold.
   </div>
 
   <!-- Figure 8: BCI-Illiteracy distribution (Cho2017) -->
   <div class="figure-block reveal">
     <p class="figure-caption">
-      <strong>Figure 8: BCI-Illiteracy distribution, per-subject accuracy across 15 users (Cho2017).</strong>
+      <strong>Figure 8: BCI-Illiteracy distribution, per-subject accuracy across all 52 users (Cho2017).</strong>
       Each bar represents one of 52 subjects. Green ≥ 70%, amber 55–70%, red &lt; 55%.
       Subjects below the dashed chance line (50%) produce no detectable ERD lateralisation
       and are "BCI-illiterate" for this task. The fraction of red bars is the empirical
@@ -977,7 +977,7 @@ skf = <span class="fn">StratifiedKFold</span>(
   <div class="insight insight-blue reveal">
     <strong>Why 52 subjects matters for consumer BCI:</strong>
     With 10 subjects you can say "some people can't use BCI." With 15+ subjects you can say
-    "<span id="cho-illiteracy-inline">—</span> of users scored below chance, consistent with
+    "<span class="cho-illiteracy-inline">—</span> of users scored below chance, consistent with
     the published 15–30% BCI-illiteracy rate (Blankertz et al. 2010)." That's the difference
     between a research observation and a product specification: the kind of data a Temple or
     Resonant engineering team needs to size their adaptive calibration budget.
@@ -1567,23 +1567,23 @@ function initCho2017() {
     if (ci) ci.textContent = `${(ch.loso_mdm_ea.mean_acc * 100).toFixed(1)}%`;
   }
 
-  // BCI-illiteracy rate: count subjects below 55% best within-subject accuracy
-  const bestAccs = [];
-  const nSubj = ch.lda?.fold_accs?.length || 0;
-  for (let i = 0; i < nSubj; i++) {
-    const accs = ['lda', 'svm', 'riemann'].map(k => ch[k]?.fold_accs?.[i] || 0);
-    bestAccs.push(Math.max(...accs));
-  }
-  const nBelow = bestAccs.filter(a => a < 0.55).length;
-  const illitRate = nSubj > 0 ? ((nBelow / nSubj) * 100).toFixed(0) : '?';
+  // BCI-illiteracy rate: use LOSO TS+LR fold accs (no calibration = real-world signal)
+  const losoAccs = ch.loso_ts_lr?.fold_accs || [];
+  const nSubj    = losoAccs.length;
+  const nBelow   = losoAccs.filter(a => a < 0.55).length;
+  // Prefer pre-computed value from JSON, fall back to recompute
+  const illitPct = clfData?.cross_dataset_cho2017?.bci_illiteracy_pct
+                ?? (nSubj > 0 ? +((nBelow / nSubj) * 100).toFixed(1) : null);
+  const illitRate = illitPct != null ? illitPct.toFixed(illitPct % 1 === 0 ? 0 : 1) : '?';
 
   const illEl = document.getElementById('cho-illiteracy');
   if (illEl) illEl.textContent = `${illitRate}%`;
-  const illInline = document.getElementById('cho-illiteracy-inline');
-  if (illInline) illInline.textContent = `${illitRate}% (${nBelow}/${nSubj})`;
+  document.querySelectorAll('.cho-illiteracy-inline').forEach(el => {
+    el.textContent = `${illitRate}% (${nBelow}/${nSubj})`;
+  });
 
-  // Figure 8: per-subject accuracy distribution
-  drawChoDistChart(bestAccs);
+  // Figure 8: per-subject LOSO accuracy distribution
+  drawChoDistChart(losoAccs);
 }
 
 function drawChoDistChart(bestAccs) {
