@@ -187,6 +187,19 @@ footer{padding:48px 0 64px;text-align:center}
     </div>
   </div>
 
+  <!-- Architecture diagram -->
+  <div class="figure-block">
+    <p class="figure-caption"><strong>Pipeline architecture.</strong> End-to-end flow from raw NIfTI scan to prediction — preprocessing, Fisher-Z functional connectivity, literature feature selection, ComBat harmonisation, and soft-vote ensemble. Steps new in v2.0 are highlighted.</p>
+    <a href="architecture_diagram.html" target="_blank" rel="noopener" style="display:block;text-decoration:none;">
+      <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#0d1117;position:relative;">
+        <iframe src="architecture_diagram.html" title="Pipeline architecture diagram" style="width:100%;height:400px;border:none;display:block;pointer-events:none;" loading="lazy" scrolling="no"></iframe>
+        <div style="position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:flex-end;padding:12px;background:linear-gradient(to top,rgba(13,17,23,0.65) 0%,transparent 55%);">
+          <span style="font-size:0.78rem;font-weight:600;color:#e6edf3;font-family:'JetBrains Mono',monospace;letter-spacing:0.05em;">View full diagram ↗</span>
+        </div>
+      </div>
+    </a>
+  </div>
+  <hr class="divider">
   <!-- ═══════════════════════════════════════════════════ PARKINSON -->
   <p class="section-label">Parkinson's Disease Detection</p>
 
@@ -228,19 +241,6 @@ footer{padding:48px 0 64px;text-align:center}
 
   <!-- ═══════════════════════════════════════════════════ COURSE -->
   
-  <p class="section-label">Pipeline architecture</p>
-  <div class="figure-block">
-    <p class="figure-caption"><strong>Full pipeline architecture.</strong> End-to-end flow from raw NIfTI scan to prediction — preprocessing, Fisher-Z functional connectivity, literature feature selection, ComBat harmonisation, and soft-vote ensemble. New steps added in v2.0 highlighted in red.</p>
-    <a href="architecture_diagram.html" target="_blank" rel="noopener" style="display:block;text-decoration:none;">
-      <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#0d1117;padding:0;position:relative;">
-        <iframe src="architecture_diagram.html" title="Pipeline architecture diagram" style="width:100%;height:420px;border:none;display:block;pointer-events:none;" loading="lazy" scrolling="no"></iframe>
-        <div style="position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:flex-end;padding:12px;background:linear-gradient(to top,rgba(13,17,23,0.7) 0%,transparent 60%);">
-          <span style="font-size:0.78rem;font-weight:600;color:#e6edf3;font-family:'JetBrains Mono',monospace;letter-spacing:0.05em;">View full diagram ↗</span>
-        </div>
-      </div>
-    </a>
-  </div>
-  <hr class="divider">
 <p class="section-label">Interactive course</p>
   <p style="font-size:0.88rem;color:var(--text-muted);margin-bottom:12px">A guided walkthrough of the full pipeline — from fMRI preprocessing to model deployment — with inline explanations of every design decision.</p>
   <div class="course-wrapper">
