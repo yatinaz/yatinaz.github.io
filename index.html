@@ -631,11 +631,11 @@
 
                 <!-- Parkinson's -->
                 <text x="568" y="187" fill="#908070" font-size="10" font-family="monospace">Parkinson's</text>
-                <text x="568" y="219" fill="#e8d8b8" font-size="32" font-family="monospace" font-weight="bold">0.677</text>
+                <text x="568" y="219" fill="#e8d8b8" font-size="32" font-family="monospace" font-weight="bold">0.595</text>
                 <text x="730" y="219" fill="#706050" font-size="11" font-family="monospace">AUC</text>
-                <!-- AUC bar: 0.677*175=118.5 ≈ 118 -->
+                <!-- AUC bar: 0.595*175=104.1 ≈ 104 -->
                 <rect x="568" y="227" width="175" height="7" rx="3" fill="#1e1c18"/>
-                <rect x="568" y="227" width="118" height="7" rx="3" fill="#c8b89a" opacity="0.45"/>
+                <rect x="568" y="227" width="104" height="7" rx="3" fill="#c8b89a" opacity="0.45"/>
 
                 <line x1="558" y1="248" x2="764" y2="248" stroke="#1e1c18" stroke-width="1"/>
 
@@ -654,7 +654,7 @@
                   <p class="card-overlay-label">What the data said</p>
                   <h3 class="card-overlay-title">fMRI Biomarker Detection</h3>
                   <ul>
-                    <li>Schizophrenia AUC 0.718 ± 0.034; Parkinson's AUC 0.677</li>
+                    <li>Schizophrenia AUC 0.718 ± 0.034; Parkinson's AUC 0.595 (pilot, N=55)</li>
                     <li>Insula–cingulate FC pair was the top predictive feature (LR coeff 0.87)</li>
                     <li>ComBat harmonisation recovered signal lost to site effects</li>
                   </ul>
@@ -664,10 +664,11 @@
             <div class="card-body">
               <div class="tag-row"><span class="tag">326 subjects</span><span class="tag">COBRE</span><span class="tag">UCLA</span><span class="tag">UWA</span></div>
               <h2 class="card-title">Multi-Disease fMRI Biomarker Detection</h2>
-              <p class="card-desc">Can resting-state connectivity patterns distinguish psychiatric and neurodegenerative disease from healthy controls? Functional connectivity matrices from 326 subjects (COBRE + UCLA) fed to an ensemble classifier. Schizophrenia AUC 0.718, Parkinson's AUC 0.677. The insula–cingulate pair drove most of the predictive signal.</p>
+              <p class="card-desc">Can resting-state connectivity patterns distinguish psychiatric and neurodegenerative disease from healthy controls? Functional connectivity matrices from 326 subjects (COBRE + UCLA) fed to an ensemble classifier. Schizophrenia AUC 0.718. Parkinson's pilot at AUC 0.595 (N=55, preliminary). The insula–cingulate FC pair drove most of the schizophrenia predictive signal.</p>
               <div class="card-actions">
                 <a class="ghost-link text-link" href="https://github.com/yatinaz/schizo-detect-biomarkerv2" target="_blank" rel="noopener">Code &rarr;</a>
                 <a class="ghost-link text-link" href="https://yatinaz.github.io/fmri/" target="_blank" rel="noopener">Figures &rarr;</a>
+                <a class="ghost-link text-link" href="https://yatinaz.github.io/fmri/architecture_diagram.html" target="_blank" rel="noopener">Architecture &rarr;</a>
               </div>
             </div>
           </article>

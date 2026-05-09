@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Schizophrenia fMRI Classifier — Architecture</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0d1117;
+    color: #c9d1d9;
+    font-family: 'Inter', sans-serif;
+    padding: 48px 40px 60px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 44px;
+  }
+  .header h1 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #e6edf3;
+    margin-bottom: 6px;
+  }
+  .header p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: #484f58;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .canvas {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Phase card ── */
+  .phase {
+    border: 1px solid #21262d;
+    border-radius: 12px;
+    padding: 22px 24px 26px;
+    margin-bottom: 10px;
+  }
+  .phase-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .phase-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.12;
+  }
+
+  .phase-prep  { background: #0d1520; border-color: #1f3a5f; }
+  .phase-prep  .phase-title { color: #388bfd; }
+  .phase-feat  { background: #120d20; border-color: #3d2070; }
+  .phase-feat  .phase-title { color: #a371f7; }
+  .phase-train { background: #0d1a0f; border-color: #1a4020; }
+  .phase-train .phase-title { color: #3fb950; }
+  .phase-out   { background: #1a1200; border-color: #4a3000; }
+  .phase-out   .phase-title { color: #d29922; }
+
+  /* ── Node row ── */
+  .node-row {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+  }
+
+  /* ── Arrow ── */
+  .arr {
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    flex-shrink: 0;
+  }
+
+  /* ── Node ── */
+  .node {
+    flex: 1;
+    border-radius: 8px;
+    border: 1px solid #30363d;
+    background: #161b22;
+    padding: 14px 16px;
+    min-width: 0;
+  }
+  .node-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.45;
+    margin-bottom: 4px;
+  }
+  .node-name {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #e6edf3;
+    line-height: 1.3;
+  }
+  .node-detail {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    color: #6e7681;
+    line-height: 1.55;
+    margin-top: 5px;
+  }
+
+  .phase-prep  .node { border-color: #1f3a5f; background: #0a1628; }
+  .phase-prep  .node-label { color: #388bfd; }
+  .phase-prep  .node-name  { color: #79c0ff; }
+
+  .phase-feat  .node { border-color: #3d2070; background: #100a28; }
+  .phase-feat  .node-label { color: #a371f7; }
+  .phase-feat  .node-name  { color: #d2a8ff; }
+
+  .phase-train .node { border-color: #1a4020; background: #091410; }
+  .phase-train .node-label { color: #3fb950; }
+  .phase-train .node-name  { color: #56d364; }
+
+  .phase-out   .node { border-color: #4a3000; background: #140e00; }
+  .phase-out   .node-label { color: #d29922; }
+  .phase-out   .node-name  { color: #e3b341; }
+
+  .node-hi {
+    border-color: #e3b341 !important;
+    box-shadow: 0 0 0 1px #e3b34118, 0 0 14px #e3b34110;
+  }
+
+  /* ── NEW badge ── */
+  .new {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.5rem;
+    font-weight: 700;
+    background: #da3633;
+    color: #fff;
+    padding: 1px 4px;
+    border-radius: 3px;
+    margin-left: 5px;
+    vertical-align: middle;
+  }
+
+  /* ── Down arrow between phases ── */
+  .phase-arrow {
+    display: flex;
+    justify-content: center;
+    padding: 2px 0;
+  }
+
+  /* ── Classifier grid ── */
+  .clf-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .clf-node {
+    border-radius: 8px;
+    border: 1px solid #1a4020;
+    background: #091410;
+    padding: 12px 14px;
+  }
+  .clf-node .clf-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.56rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #3fb950;
+    opacity: 0.45;
+    margin-bottom: 4px;
+  }
+  .clf-node .clf-name {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #56d364;
+  }
+
+  /* ── Legend ── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    justify-content: center;
+    margin-top: 28px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    color: #6e7681;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot  { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+
+  .footer {
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.56rem;
+    color: #21262d;
+    margin-top: 16px;
+    letter-spacing: 0.07em;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Schizophrenia fMRI Classifier — Architecture</h1>
+  <p>AAL-116 · Fisher-Z FC · ComBat harmonisation · LR + SVM + LightGBM ensemble · 326 subjects · 2 sites</p>
+</div>
+
+<div class="canvas">
+
+  <!-- ① PREPROCESSING -->
+  <div class="phase phase-prep">
+    <div class="phase-title">① Preprocessing &nbsp;·&nbsp; per subject</div>
+    <div class="node-row">
+
+      <div class="node">
+        <div class="node-label">input</div>
+        <div class="node-name">Raw fMRI</div>
+        <div class="node-detail">4D BOLD · NIfTI<br>64 × 64 × 34 × T</div>
+      </div>
+
+      <div class="arr"><svg width="22" height="12"><line x1="0" y1="6" x2="14" y2="6" stroke="#1f6feb" stroke-width="1.5"/><polyline points="10,2 16,6 10,10" fill="none" stroke="#1f6feb" stroke-width="1.5"/></svg></div>
+
+      <div class="node">
+        <div class="node-label">spatial</div>
+        <div class="node-name">MNI Resample</div>
+        <div class="node-detail">4 mm isotropic<br>continuous interp</div>
+      </div>
+
+      <div class="arr"><svg width="22" height="12"><line x1="0" y1="6" x2="14" y2="6" stroke="#1f6feb" stroke-width="1.5"/><polyline points="10,2 16,6 10,10" fill="none" stroke="#1f6feb" stroke-width="1.5"/></svg></div>
+
+      <div class="node">
+        <div class="node-label">atlas</div>
+        <div class="node-name">AAL-116 ROI Extract</div>
+        <div class="node-detail">mean signal / region<br>T × 116 timeseries</div>
+      </div>
+
+      <div class="arr"><svg width="22" height="12"><line x1="0" y1="6" x2="14" y2="6" stroke="#1f6feb" stroke-width="1.5"/><polyline points="10,2 16,6 10,10" fill="none" stroke="#1f6feb" stroke-width="1.5"/></svg></div>
+
+      <div class="node">
+        <div class="node-label">temporal</div>
+        <div class="node-name">Detrend</div>
+        <div class="node-detail">remove linear<br>scanner drift</div>
+      </div>
+
+      <div class="arr"><svg width="22" height="12"><line x1="0" y1="6" x2="14" y2="6" stroke="#1f6feb" stroke-width="1.5"/><polyline points="10,2 16,6 10,10" fill="none" stroke="#1f6feb" stroke-width="1.5"/></svg></div>
+
+      <div class="node">
+        <div class="node-label">confound <span class="new">new</span></div>
+        <div class="node-name">Global Signal Regression</div>
+        <div class="node-detail">removes respiration<br>and cardiac noise</div>
+      </div>
+
+      <div class="arr"><svg width="22" height="12"><line x1="0" y1="6" x2="14" y2="6" stroke="#1f6feb" stroke-width="1.5"/><polyline points="10,2 16,6 10,10" fill="none" stroke="#1f6feb" stroke-width="1.5"/></svg></div>
+
+      <div class="node">
+        <div class="node-label">temporal</div>
+        <div class="node-name">Bandpass 0.01–0.1 Hz</div>
+        <div class="node-detail">Butterworth 5th order<br>resting-state band</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="phase-arrow">
+    <svg width="12" height="24"><line x1="6" y1="0" x2="6" y2="16" stroke="#30363d" stroke-width="1.5"/><polyline points="2,12 6,18 10,12" fill="none" stroke="#30363d" stroke-width="1.5"/></svg>
+  </div>
+
+  <!-- ② FEATURE ENGINEERING -->
+  <div class="phase phase-feat">
+    <div class="phase-title">② Feature Engineering</div>
+    <div class="node-row">
+
+      <div class="node">
+        <div class="node-label">connectivity <span class="new">new</span></div>
+        <div class="node-name">Fisher-Z FC Matrix</div>
+        <div class="node-detail">Pearson r → arctanh(r)<br>116 × 116 → 6,670 features</div>
+      </div>
+
+      <div class="arr"><svg width="22" height="12"><line x1="0" y1="6" x2="14" y2="6" stroke="#6e40c9" stroke-width="1.5"/><polyline points="10,2 16,6 10,10" fill="none" stroke="#6e40c9" stroke-width="1.5"/></svg></div>
+
+      <div class="node">
+        <div class="node-label">selection · LR / SVM</div>
+        <div class="node-name">15 Literature FC Pairs</div>
+        <div class="node-detail">DMN · thalamo-cortical<br>fronto-temporal · hippo-PFC</div>
+      </div>
+
+      <div class="arr"><svg width="22" height="12"><line x1="0" y1="6" x2="14" y2="6" stroke="#6e40c9" stroke-width="1.5"/><polyline points="10,2 16,6 10,10" fill="none" stroke="#6e40c9" stroke-width="1.5"/></svg></div>
+
+      <div class="node">
+        <div class="node-label">selection · XGB / LGBM</div>
+        <div class="node-name">~2,110 Literature Features</div>
+        <div class="node-detail">all pairs involving<br>20 SZ-relevant ROIs</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="phase-arrow">
+    <svg width="12" height="24"><line x1="6" y1="0" x2="6" y2="16" stroke="#30363d" stroke-width="1.5"/><polyline points="2,12 6,18 10,12" fill="none" stroke="#30363d" stroke-width="1.5"/></svg>
+  </div>
+
+  <!-- ③ TRAINING -->
+  <div class="phase phase-train">
+    <div class="phase-title">③ Training &nbsp;·&nbsp; 5-fold cross-validation · 326 subjects</div>
+
+    <div class="node-row">
+
+      <div class="node">
+        <div class="node-label">cv split</div>
+        <div class="node-name">Stratified 5-Fold CV</div>
+        <div class="node-detail">stratum = label × site<br>both sites in every fold</div>
+      </div>
+
+      <div class="arr"><svg width="22" height="12"><line x1="0" y1="6" x2="14" y2="6" stroke="#238636" stroke-width="1.5"/><polyline points="10,2 16,6 10,10" fill="none" stroke="#238636" stroke-width="1.5"/></svg></div>
+
+      <div class="node">
+        <div class="node-label">harmonise</div>
+        <div class="node-name">ComBat Site Removal</div>
+        <div class="node-detail">COBRE ↔ UCLA<br>fit on train fold only</div>
+      </div>
+
+      <div class="arr"><svg width="22" height="12"><line x1="0" y1="6" x2="14" y2="6" stroke="#238636" stroke-width="1.5"/><polyline points="10,2 16,6 10,10" fill="none" stroke="#238636" stroke-width="1.5"/></svg></div>
+
+      <div class="node">
+        <div class="node-label">normalise</div>
+        <div class="node-name">StandardScaler</div>
+        <div class="node-detail">μ = 0, σ = 1<br>fit on train fold only</div>
+      </div>
+
+      <div class="arr"><svg width="22" height="12"><line x1="0" y1="6" x2="14" y2="6" stroke="#238636" stroke-width="1.5"/><polyline points="10,2 16,6 10,10" fill="none" stroke="#238636" stroke-width="1.5"/></svg></div>
+
+      <div class="node">
+        <div class="node-label">threshold <span class="new">new</span></div>
+        <div class="node-name">Youden's J Threshold</div>
+        <div class="node-detail">max(TPR − FPR)<br>corrects class imbalance</div>
+      </div>
+
+    </div>
+
+    <div class="clf-grid">
+      <div class="clf-node">
+        <div class="clf-label">A</div>
+        <div class="clf-name">Logistic Regression</div>
+      </div>
+      <div class="clf-node">
+        <div class="clf-label">B</div>
+        <div class="clf-name">SVM</div>
+      </div>
+      <div class="clf-node">
+        <div class="clf-label">C</div>
+        <div class="clf-name">XGBoost</div>
+      </div>
+      <div class="clf-node">
+        <div class="clf-label">D</div>
+        <div class="clf-name">LightGBM</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="phase-arrow">
+    <svg width="12" height="24"><line x1="6" y1="0" x2="6" y2="16" stroke="#30363d" stroke-width="1.5"/><polyline points="2,12 6,18 10,12" fill="none" stroke="#30363d" stroke-width="1.5"/></svg>
+  </div>
+
+  <!-- ④ OUTPUT -->
+  <div class="phase phase-out">
+    <div class="phase-title">④ Output</div>
+    <div class="node-row">
+
+      <div class="node node-hi">
+        <div class="node-label">ensemble</div>
+        <div class="node-name">Soft-Vote Ensemble</div>
+        <div class="node-detail">LR × 0.5 · SVM × 0.25<br>LightGBM × 0.25</div>
+      </div>
+
+      <div class="arr"><svg width="22" height="12"><line x1="0" y1="6" x2="14" y2="6" stroke="#d29922" stroke-width="1.5"/><polyline points="10,2 16,6 10,10" fill="none" stroke="#d29922" stroke-width="1.5"/></svg></div>
+
+      <div class="node node-hi">
+        <div class="node-label">prediction</div>
+        <div class="node-name">HC / Schizophrenia</div>
+        <div class="node-detail">probability score<br>AUC 0.718 baseline</div>
+      </div>
+
+      <div class="arr"><svg width="22" height="12"><line x1="0" y1="6" x2="14" y2="6" stroke="#d29922" stroke-width="1.5"/><polyline points="10,2 16,6 10,10" fill="none" stroke="#d29922" stroke-width="1.5"/></svg></div>
+
+      <div class="node node-hi">
+        <div class="node-label">explainability</div>
+        <div class="node-name">SHAP + Circuit Explanation</div>
+        <div class="node-detail">which FC pairs drove it<br>DMN · thalamo-cortical</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#388bfd"></div>preprocessing</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#a371f7"></div>feature engineering</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#3fb950"></div>training / cv</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#d29922"></div>output</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#da3633"></div>new in v2.0</div>
+</div>
+
+<div class="footer">
+  326 subjects · COBRE (146) + ds000030 (180) · AAL-116 atlas · 6,670 FC features → 15 literature pairs · ComBat per fold
+</div>
+
+</body>
+</html>
