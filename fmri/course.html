@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -213,7 +213,7 @@ tr:last-child td{border-bottom:none;}
   <button class="hero-cta" onclick="startFlow('main-flow')">▶ Watch the data journey</button>
 
   <div class="stat-row">
-    <div class="stat"><div class="stat-num">0.718</div><div class="stat-label">AUC — Schizophrenia</div></div>
+    <div class="stat"><div class="stat-num">0.731</div><div class="stat-label">AUC — Schizophrenia</div></div>
     <div class="stat"><div class="stat-num">326</div><div class="stat-label">Training subjects</div></div>
     <div class="stat"><div class="stat-num">6,670</div><div class="stat-label">Brain connections measured</div></div>
     <div class="stat"><div class="stat-num">15</div><div class="stat-label">Literature features used</div></div>
@@ -404,7 +404,7 @@ tr:last-child td{border-bottom:none;}
 <div class="module-inner">
   <div class="mod-num">Module 4</div>
   <h2 class="mod-title" id="m3-title">Teaching the Machine</h2>
-  <p class="mod-sub">The full model development story — from a broken baseline to the 0.718 AUC ensemble. Every wrong turn included.</p>
+  <p class="mod-sub">The full model development story — from a broken baseline to the 0.731 AUC ensemble. Every wrong turn included.</p>
 
   <h3 style="font-size:20px;margin-bottom:16px;">The AUC Journey</h3>
   <div class="auc-timeline" id="aucTimeline">
@@ -414,9 +414,15 @@ tr:last-child td{border-bottom:none;}
     <div class="auc-row"><div class="auc-version">v5-mixed</div><div class="auc-bar-wrap"><div class="auc-bar" style="width:0%;background:#D94F3D" data-w="36%">0.524</div></div><div class="auc-val">0.524 ↓</div></div>
     <div class="auc-row"><div class="auc-version">v5-REST</div><div class="auc-bar-wrap"><div class="auc-bar" style="width:0%;background:#4B9BE8" data-w="72%">0.693</div></div><div class="auc-val">0.693 ↑</div></div>
     <div class="auc-row"><div class="auc-version">v6 GNN</div><div class="auc-bar-wrap"><div class="auc-bar" style="width:0%;background:#6C7086" data-w="62%">0.655</div></div><div class="auc-val">0.655</div></div>
-    <div class="auc-row"><div class="auc-version">Ensemble ✓</div><div class="auc-bar-wrap"><div class="auc-bar" style="width:0%;background:#34C786" data-w="88%">0.718</div></div><div class="auc-val">0.718 ✓</div></div>
+    <div class="auc-row"><div class="auc-version">v5 Ensemble</div><div class="auc-bar-wrap"><div class="auc-bar" style="width:0%;background:#4B9BE8" data-w="72%">0.693</div></div><div class="auc-val">0.693</div></div>
+    <div class="auc-row"><div class="auc-version">v5 + Fisher-Z/GSR ✓</div><div class="auc-bar-wrap"><div class="auc-bar" style="width:0%;background:#34C786" data-w="91%">0.731</div></div><div class="auc-val">0.731 ✓</div></div>
   </div>
   <button class="flow-btn" onclick="animateAUC()" style="margin-top:8px">▶ Animate journey</button>
+
+  <div class="callout callout-aha" style="margin-top:24px">
+    <div class="callout-title">🔬 v2.0 Preprocessing Improvements</div>
+    <p>The jump from 0.693 → 0.731 came from three changes to the preprocessing pipeline: <strong>Fisher-Z transform</strong> on Pearson correlations (stabilises variance near ±1), <strong>global signal regression</strong> (removes shared cardiac/respiratory noise), and reading <strong>TR from the BIDS sidecar</strong> so the bandpass filter is correct for each scan. Model selection was also changed from max-AUC to <strong>balanced accuracy</strong> — the old criterion was picking XGBoost (AUC 0.722, SZ recall 23%) over SVM (AUC 0.711, SZ recall 62%).</p>
+  </div>
 
   <div class="callout callout-warn">
     <div class="callout-title">🚨 The Bug That Caused v2.1 to Fail</div>
