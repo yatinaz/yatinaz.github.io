@@ -90,7 +90,7 @@ footer{padding:48px 0 64px;text-align:center}
   <header>
     <h1>Multi-Disease fMRI Biomarker Detection</h1>
     <p class="subtitle">Machine learning pipeline for schizophrenia and Parkinson's disease detection from resting-state fMRI functional connectivity matrices. Built with nilearn, scikit-learn, XGBoost and LightGBM. Deployed as a FastAPI service in Docker. University of Western Australia thesis project.</p>
-    <span class="badge">Schizophrenia AUC 0.718</span>
+    <span class="badge">Schizophrenia AUC 0.731</span>
     <span class="badge">326 subjects · 2 sites</span>
     <span class="badge">FastAPI · Docker · nilearn</span>
     <br>
@@ -106,7 +106,7 @@ footer{padding:48px 0 64px;text-align:center}
   <!-- Metric cards -->
   <div class="metric-row">
     <div class="metric-card">
-      <div class="metric-val">0.718</div>
+      <div class="metric-val">0.731</div>
       <div class="metric-label">Ensemble AUC</div>
     </div>
     <div class="metric-card">
@@ -143,7 +143,7 @@ footer{padding:48px 0 64px;text-align:center}
 
   <!-- ROC curves -->
   <div class="figure-block">
-    <p class="figure-caption"><strong>ROC curves — model comparison.</strong> 5-fold cross-validated ROC on 326 subjects across two independent sites (COBRE + ds000030). The ensemble (LR + SVM + LGBM) reaches AUC 0.718. Multi-site confounding makes this harder than single-site benchmarks.</p>
+    <p class="figure-caption"><strong>ROC curves — model comparison.</strong> 5-fold cross-validated ROC on 326 subjects across two independent sites (COBRE + ds000030). The ensemble (LR + SVM + LGBM) reaches AUC 0.731. Multi-site confounding makes this harder than single-site benchmarks.</p>
     <div class="toggle-row" id="roc-toggles">
       <button class="tog active" data-model="ens" style="background:#DC2626;border-color:#DC2626">Ensemble</button>
       <button class="tog active" data-model="lr"  style="background:#2563EB;border-color:#2563EB">LR</button>
